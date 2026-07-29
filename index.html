@@ -192,7 +192,6 @@
       border-left: 4px solid #f1c40f; animation: fadeIn 0.5s ease;
     }
 
-    /* Ẩn admin hoàn toàn */
     .admin-link, .admin-hidden {
       display: none !important;
     }
@@ -226,7 +225,6 @@
     }
     .promo-banner span { color: white; }
 
-    /* Admin Access - Hidden button for admin access */
     .admin-access-trigger {
       position: fixed;
       bottom: 20px;
@@ -668,39 +666,6 @@
     };
 
     // ============================================
-    // ADMIN ACCESS - Hidden Trigger
-    // ============================================
-    function setupAdminTrigger() {
-      const trigger = document.getElementById('adminTrigger');
-      if (!trigger) return;
-      
-      trigger.addEventListener('click', function(e) {
-        adminTriggerCount++;
-        if (adminTriggerCount >= 5) {
-          adminTriggerCount = 0;
-          // Hiển thị prompt yêu cầu mật khẩu
-          if (window.Security && window.Security.showAdminWithPassword) {
-            window.Security.showAdminWithPassword();
-          } else {
-            // Fallback
-            const password = prompt('Nhập mật khẩu admin:');
-            if (password === 'Admin@2024') {
-              window.location.href = 'admin.html';
-            } else {
-              alert('Mật khẩu sai!');
-            }
-          }
-        }
-        
-        // Reset count sau 3 giây nếu không click tiếp
-        clearTimeout(trigger._resetTimer);
-        trigger._resetTimer = setTimeout(() => {
-          adminTriggerCount = 0;
-        }, 3000);
-      });
-    }
-
-    // ============================================
     // SOUND EFFECTS
     // ============================================
     const sounds = {
@@ -813,9 +778,13 @@
       try {
         const bannedIPs = JSON.parse(localStorage.getItem('banned_ips') || '[]');
         if (bannedIPs.includes(userIP)) {
-          document.getElementById('banNotification').classList.remove('hidden');
-          document.querySelector('.main-wrapper').style.opacity = '0.3';
-          document.querySelector('.main-wrapper').style.pointerEvents = 'none';
+          const banEl = document.getElementById('banNotification');
+          const mainEl = document.querySelector('.main-wrapper');
+          if (banEl) banEl.classList.remove('hidden');
+          if (mainEl) {
+            mainEl.style.opacity = '0.3';
+            mainEl.style.pointerEvents = 'none';
+          }
           return true;
         }
       } catch (e) {}
@@ -885,9 +854,14 @@
 
     function handleOrderApproved(order) {
       const box = document.getElementById('resultBox');
+      const btn = document.getElementById('submitRequestBtn');
+      if (!box) return;
+      
       box.classList.remove('hidden');
-      document.getElementById('submitRequestBtn').disabled = false;
-      document.getElementById('submitRequestBtn').innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
+      }
 
       box.innerHTML = `
         <div style="color:#2ecc71;">
@@ -895,10 +869,16 @@
           <p>Tool đang tự động xử lý mở band cho tài khoản của bạn...</p>
         </div>
       `;
-      document.getElementById('progressBar').classList.remove('hidden');
+      
+      const progressBar = document.getElementById('progressBar');
+      if (progressBar) progressBar.classList.remove('hidden');
       resetProgress();
-      document.getElementById('progressDuyet').classList.add('completed');
-      document.getElementById('progressXuLy').classList.add('active');
+      
+      const duyetEl = document.getElementById('progressDuyet');
+      const xuLyEl = document.getElementById('progressXuLy');
+      if (duyetEl) duyetEl.classList.add('completed');
+      if (xuLyEl) xuLyEl.classList.add('active');
+      
       showWarranty(order.id, order.plan);
       
       const processingTime = order.plan === 'ultimate' ? 300 + Math.random() * 300 : 
@@ -918,9 +898,14 @@
 
     function handleOrderRejected(order) {
       const box = document.getElementById('resultBox');
+      const btn = document.getElementById('submitRequestBtn');
+      if (!box) return;
+      
       box.classList.remove('hidden');
-      document.getElementById('submitRequestBtn').disabled = false;
-      document.getElementById('submitRequestBtn').innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
+      }
 
       box.innerHTML = `
         <div style="color:#ff6b6b;">
@@ -929,14 +914,18 @@
           <p style="font-size:0.9rem; color:#9aa9c1;">Vui lòng kiểm tra lại thông tin hoặc liên hệ admin để được hỗ trợ.</p>
         </div>
       `;
-      document.getElementById('progressBar').classList.add('hidden');
-      document.getElementById('timerDisplay').classList.add('hidden');
+      
+      const progressBar = document.getElementById('progressBar');
+      const timerDisplay = document.getElementById('timerDisplay');
+      if (progressBar) progressBar.classList.add('hidden');
+      if (timerDisplay) timerDisplay.classList.add('hidden');
       playSound('error');
     }
 
     function resetProgress() {
-      ['progressDuyet', 'progressXuLy', 'progressDone'].forEach(s => {
-        document.getElementById(s).classList.remove('active', 'completed');
+      ['progressDuyet', 'progressXuLy', 'progressDone'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active', 'completed');
       });
     }
 
@@ -946,6 +935,9 @@
       
       const existing = document.getElementById('warrantySection');
       if (existing) existing.remove();
+      
+      const resultBox = document.getElementById('resultBox');
+      if (!resultBox) return;
       
       const warrantyDiv = document.createElement('div');
       warrantyDiv.id = 'warrantySection';
@@ -961,11 +953,13 @@
         </button>
       `;
       
-      document.getElementById('resultBox').after(warrantyDiv);
+      resultBox.after(warrantyDiv);
     }
 
     function downloadWarranty(orderId) {
       const element = document.getElementById('warrantySection');
+      if (!element) return;
+      
       const html = element.outerHTML;
       const blob = new Blob([`
         <html>
@@ -989,6 +983,8 @@
 
     function startCountdown(duration, orderId) {
       const display = document.getElementById('timerDisplay');
+      if (!display) return;
+      
       display.classList.remove('hidden');
       let remaining = duration;
       
@@ -1023,9 +1019,14 @@
         if (remaining <= 0) {
           clearInterval(state.countdownInterval);
           display.textContent = '✅ HOÀN THÀNH! Kiểm tra tài khoản ngay.';
-          document.getElementById('progressXuLy').classList.add('completed');
-          document.getElementById('progressDone').classList.add('completed');
-          document.getElementById('progressDone').classList.remove('active');
+          
+          const xuLyEl = document.getElementById('progressXuLy');
+          const doneEl = document.getElementById('progressDone');
+          if (xuLyEl) xuLyEl.classList.add('completed');
+          if (doneEl) {
+            doneEl.classList.add('completed');
+            doneEl.classList.remove('active');
+          }
           playSound('complete');
           
           // Update order status to completed
@@ -1059,11 +1060,15 @@
     };
 
     function applyDiscount() {
-      const code = document.getElementById('discountInput').value.trim().toUpperCase();
+      const input = document.getElementById('discountInput');
+      const display = document.getElementById('discountDisplay');
+      if (!input || !display) return;
+      
+      const code = input.value.trim().toUpperCase();
       if (discountCodes[code]) {
         discountApplied = discountCodes[code];
-        document.getElementById('discountDisplay').textContent = `${(discountApplied * 100)}%`;
-        document.getElementById('discountDisplay').style.color = '#2ecc71';
+        display.textContent = `${(discountApplied * 100)}%`;
+        display.style.color = '#2ecc71';
         updatePrices();
         Swal.fire({
           icon: 'success',
@@ -1148,6 +1153,8 @@
       const progressDiv = document.getElementById('uploadProgress');
       const progressBar = document.getElementById('uploadProgressBar');
       const percentText = document.getElementById('uploadPercent');
+      if (!progressDiv || !progressBar || !percentText) return;
+      
       progressDiv.classList.remove('hidden');
       
       let progress = 0;
@@ -1170,11 +1177,18 @@
       const reader = new FileReader();
       reader.onload = (e) => {
         uploadedImageData = e.target.result;
-        document.getElementById('imagePreview').src = e.target.result;
-        document.getElementById('uploadPlaceholder').style.display = 'none';
-        document.getElementById('imagePreviewContainer').style.display = 'block';
-        document.getElementById('fileUploadArea').style.borderStyle = 'solid';
-        document.getElementById('fileUploadArea').style.borderColor = '#2ecc71';
+        const preview = document.getElementById('imagePreview');
+        const placeholder = document.getElementById('uploadPlaceholder');
+        const container = document.getElementById('imagePreviewContainer');
+        const area = document.getElementById('fileUploadArea');
+        
+        if (preview) preview.src = e.target.result;
+        if (placeholder) placeholder.style.display = 'none';
+        if (container) container.style.display = 'block';
+        if (area) {
+          area.style.borderStyle = 'solid';
+          area.style.borderColor = '#2ecc71';
+        }
         
         Swal.fire({
           icon: 'success',
@@ -1191,16 +1205,27 @@
     function removeImage() {
       uploadedImageFile = null;
       uploadedImageData = null;
-      document.getElementById('paymentImage').value = '';
-      document.getElementById('imagePreview').src = '';
-      document.getElementById('uploadPlaceholder').style.display = 'block';
-      document.getElementById('imagePreviewContainer').style.display = 'none';
-      document.getElementById('fileUploadArea').style.borderStyle = 'dashed';
-      document.getElementById('fileUploadArea').style.borderColor = '#3f5580';
+      const input = document.getElementById('paymentImage');
+      const preview = document.getElementById('imagePreview');
+      const placeholder = document.getElementById('uploadPlaceholder');
+      const container = document.getElementById('imagePreviewContainer');
+      const area = document.getElementById('fileUploadArea');
+      
+      if (input) input.value = '';
+      if (preview) preview.src = '';
+      if (placeholder) placeholder.style.display = 'block';
+      if (container) container.style.display = 'none';
+      if (area) {
+        area.style.borderStyle = 'dashed';
+        area.style.borderColor = '#3f5580';
+      }
     }
 
     function zoomImage() {
-      const imgSrc = document.getElementById('imagePreview').src;
+      const preview = document.getElementById('imagePreview');
+      if (!preview) return;
+      
+      const imgSrc = preview.src;
       if (imgSrc) {
         Swal.fire({
           imageUrl: imgSrc,
@@ -1224,6 +1249,8 @@
     // ============================================
     function createParticles() {
       const container = document.getElementById('particlesContainer');
+      if (!container) return;
+      
       const emojis = ['✨', '⭐', '💫', '🌟', '💰', '💎', '🪙', '🎮', '🏆'];
       for (let i = 0; i < 30; i++) {
         const particle = document.createElement('div');
@@ -1262,6 +1289,9 @@
         const color = colors[Math.floor(Math.random() * colors.length)];
         const initials = name.charAt(0) + name.split(' ').pop().charAt(0);
         
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        
         const toast = document.createElement('div');
         toast.className = 'toast-notification';
         toast.innerHTML = `
@@ -1276,7 +1306,7 @@
             <br><small style="color:#9aa9c1;">• ${time}</small>
           </div>
         `;
-        document.getElementById('toastContainer').appendChild(toast);
+        container.appendChild(toast);
         
         setTimeout(() => {
           if (toast.parentNode) {
@@ -1348,12 +1378,14 @@
       else if (hour >= 0 && hour <= 5) base = 30 + Math.floor(Math.random() * 30);
       else base = 80 + Math.floor(Math.random() * 80);
       
-      document.getElementById('onlineCount').textContent = base;
+      const el = document.getElementById('onlineCount');
+      if (el) el.textContent = base;
       
       setInterval(() => {
-        const current = parseInt(document.getElementById('onlineCount').textContent);
+        const current = parseInt(document.getElementById('onlineCount')?.textContent || '100');
         const change = Math.floor(Math.random() * 6) - 3;
-        document.getElementById('onlineCount').textContent = Math.max(10, current + change);
+        const el2 = document.getElementById('onlineCount');
+        if (el2) el2.textContent = Math.max(10, current + change);
       }, 30000);
     }
 
@@ -1374,12 +1406,20 @@
       if (discountApplied > 0) {
         finalPrice = Math.round(finalPrice * (1 - discountApplied));
       }
-      document.getElementById('bankAmount').textContent = finalPrice.toLocaleString();
-      document.getElementById('cardAmount').textContent = finalPrice.toLocaleString();
-      document.getElementById('momoAmount').textContent = finalPrice.toLocaleString();
+      
+      const bankAmt = document.getElementById('bankAmount');
+      const cardAmt = document.getElementById('cardAmount');
+      const momoAmt = document.getElementById('momoAmount');
       const content = `MOBAND${state.game.toUpperCase().substring(0, 4)}`;
-      document.getElementById('transferContent').textContent = content;
-      document.getElementById('momoContent').textContent = content;
+      
+      if (bankAmt) bankAmt.textContent = finalPrice.toLocaleString();
+      if (cardAmt) cardAmt.textContent = finalPrice.toLocaleString();
+      if (momoAmt) momoAmt.textContent = finalPrice.toLocaleString();
+      
+      const transferEl = document.getElementById('transferContent');
+      const momoContent = document.getElementById('momoContent');
+      if (transferEl) transferEl.textContent = content;
+      if (momoContent) momoContent.textContent = content;
     }
 
     function getFinalPrice() {
@@ -1398,7 +1438,8 @@
       const a = Math.floor(Math.random() * 10) + 1;
       const b = Math.floor(Math.random() * 10) + 1;
       state.captchaResult = a + b;
-      document.getElementById('captchaQuestion').textContent = `${a} + ${b}`;
+      const el = document.getElementById('captchaQuestion');
+      if (el) el.textContent = `${a} + ${b}`;
     }
 
     // ============================================
@@ -1431,6 +1472,8 @@
     function togglePasswordVisibility() {
       const input = document.getElementById('passwordInput');
       const icon = document.getElementById('togglePassword');
+      if (!input || !icon) return;
+      
       if (input.type === 'password') {
         input.type = 'text';
         icon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -1441,15 +1484,20 @@
     }
 
     function toggleChat() {
-      document.getElementById('chatPopup').classList.toggle('hidden');
+      const popup = document.getElementById('chatPopup');
+      if (popup) popup.classList.toggle('hidden');
     }
 
     function sendChat() {
       const input = document.getElementById('chatInput');
+      if (!input) return;
+      
       const msg = input.value.trim();
       if (!msg) return;
       
       const messages = document.getElementById('chatMessages');
+      if (!messages) return;
+      
       const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
       
       messages.innerHTML += `
@@ -1462,10 +1510,10 @@
       `;
       
       const typingDiv = document.getElementById('typingIndicator');
-      typingDiv.classList.remove('hidden');
+      if (typingDiv) typingDiv.classList.remove('hidden');
       
       setTimeout(() => {
-        typingDiv.classList.add('hidden');
+        if (typingDiv) typingDiv.classList.add('hidden');
         
         const lowerMsg = msg.toLowerCase();
         let response = 'Cảm ơn bạn đã liên hệ! Admin sẽ phản hồi trong giây lát.';
@@ -1496,15 +1544,45 @@
     }
 
     // ============================================
+    // ADMIN TRIGGER
+    // ============================================
+    function setupAdminTrigger() {
+      const trigger = document.getElementById('adminTrigger');
+      if (!trigger) return;
+      
+      trigger.addEventListener('click', function(e) {
+        adminTriggerCount++;
+        if (adminTriggerCount >= 5) {
+          adminTriggerCount = 0;
+          if (window.Security && window.Security.showAdminWithPassword) {
+            window.Security.showAdminWithPassword();
+          } else {
+            const password = prompt('Nhập mật khẩu admin:');
+            if (password === 'Admin@2024') {
+              window.location.href = 'admin.html';
+            } else {
+              alert('Mật khẩu sai!');
+            }
+          }
+        }
+        
+        clearTimeout(trigger._resetTimer);
+        trigger._resetTimer = setTimeout(() => {
+          adminTriggerCount = 0;
+        }, 3000);
+      });
+    }
+
+    // ============================================
     // FORM SUBMISSION
     // ============================================
-    document.getElementById('submitRequestBtn').addEventListener('click', async function() {
-      const ffId = document.getElementById('ffIdInput').value.trim();
-      const platformAcc = document.getElementById('platformAccountInput').value.trim();
-      const password = document.getElementById('passwordInput').value.trim();
-      const captchaAnswer = parseInt(document.getElementById('captchaAnswer').value);
-      const honeypot = document.getElementById('honeypotField').value;
-      const note = document.getElementById('noteInput').value.trim();
+    document.getElementById('submitRequestBtn')?.addEventListener('click', async function() {
+      const ffId = document.getElementById('ffIdInput')?.value.trim() || '';
+      const platformAcc = document.getElementById('platformAccountInput')?.value.trim() || '';
+      const password = document.getElementById('passwordInput')?.value.trim() || '';
+      const captchaAnswer = parseInt(document.getElementById('captchaAnswer')?.value || '');
+      const honeypot = document.getElementById('honeypotField')?.value || '';
+      const note = document.getElementById('noteInput')?.value.trim() || '';
 
       if (honeypot.length > 0) {
         Swal.fire('🤖', 'Phát hiện hoạt động đáng ngờ! Vui lòng thử lại.', 'error');
@@ -1518,7 +1596,8 @@
 
       if (isNaN(captchaAnswer) || captchaAnswer !== state.captchaResult) {
         generateCaptcha();
-        document.getElementById('captchaAnswer').value = '';
+        const ansEl = document.getElementById('captchaAnswer');
+        if (ansEl) ansEl.value = '';
         Swal.fire('❌', 'Xác nhận bảo mật sai! Vui lòng thử lại.', 'error');
         return;
       }
@@ -1529,8 +1608,8 @@
       }
 
       if (state.paymentMethod === 'card') {
-        const cardCode = document.getElementById('cardCode').value.trim();
-        const cardSerial = document.getElementById('cardSerial').value.trim();
+        const cardCode = document.getElementById('cardCode')?.value.trim() || '';
+        const cardSerial = document.getElementById('cardSerial')?.value.trim() || '';
         if (!cardCode || !cardSerial) {
           Swal.fire('❌', 'Vui lòng nhập đầy đủ mã thẻ và số seri!', 'error');
           return;
@@ -1569,15 +1648,21 @@
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi yêu cầu...';
 
-      document.getElementById('progressBar').classList.add('hidden');
-      document.getElementById('timerDisplay').classList.add('hidden');
+      const progressBar = document.getElementById('progressBar');
+      const timerDisplay = document.getElementById('timerDisplay');
       const existingWarranty = document.getElementById('warrantySection');
+      
+      if (progressBar) progressBar.classList.add('hidden');
+      if (timerDisplay) timerDisplay.classList.add('hidden');
       if (existingWarranty) existingWarranty.remove();
+      
       if (state.countdownInterval) clearInterval(state.countdownInterval);
       if (state.pollingInterval) clearInterval(state.pollingInterval);
       resetProgress();
 
       const resultBox = document.getElementById('resultBox');
+      if (!resultBox) return;
+      
       resultBox.classList.remove('hidden');
       resultBox.innerHTML = `
         <div style="text-align:center;">
@@ -1608,9 +1693,9 @@
         };
 
         if (state.paymentMethod === 'card') {
-          orderData.cardType = document.getElementById('cardType').value;
-          orderData.cardCode = document.getElementById('cardCode').value.trim();
-          orderData.cardSerial = document.getElementById('cardSerial').value.trim();
+          orderData.cardType = document.getElementById('cardType')?.value || '';
+          orderData.cardCode = document.getElementById('cardCode')?.value.trim() || '';
+          orderData.cardSerial = document.getElementById('cardSerial')?.value.trim() || '';
         }
 
         const order = createOrder(orderData);
@@ -1626,8 +1711,9 @@
           </div>
         `;
         
-        document.getElementById('progressBar').classList.remove('hidden');
-        document.getElementById('progressDuyet').classList.add('active');
+        if (progressBar) progressBar.classList.remove('hidden');
+        const duyetEl = document.getElementById('progressDuyet');
+        if (duyetEl) duyetEl.classList.add('active');
         
         playSound('notification');
         
@@ -1643,8 +1729,10 @@
         });
         
         generateCaptcha();
-        document.getElementById('captchaAnswer').value = '';
-        document.getElementById('noteInput').value = '';
+        const ansEl = document.getElementById('captchaAnswer');
+        if (ansEl) ansEl.value = '';
+        const noteEl = document.getElementById('noteInput');
+        if (noteEl) noteEl.value = '';
         removeImage();
         
       } catch (error) {
@@ -1703,14 +1791,21 @@
         this.classList.add('active');
         state.paymentMethod = this.dataset.method;
         
-        document.getElementById('bankInfo').classList.toggle('hidden', state.paymentMethod !== 'bank');
-        document.getElementById('cardInfo').classList.toggle('hidden', state.paymentMethod !== 'card');
-        document.getElementById('momoInfo').classList.toggle('hidden', state.paymentMethod !== 'momo');
-        document.getElementById('uploadSection').classList.toggle('hidden', state.paymentMethod === 'card');
+        const bankInfo = document.getElementById('bankInfo');
+        const cardInfo = document.getElementById('cardInfo');
+        const momoInfo = document.getElementById('momoInfo');
+        const uploadSection = document.getElementById('uploadSection');
+        
+        if (bankInfo) bankInfo.classList.toggle('hidden', state.paymentMethod !== 'bank');
+        if (cardInfo) cardInfo.classList.toggle('hidden', state.paymentMethod !== 'card');
+        if (momoInfo) momoInfo.classList.toggle('hidden', state.paymentMethod !== 'momo');
+        if (uploadSection) uploadSection.classList.toggle('hidden', state.paymentMethod === 'card');
         
         if (state.paymentMethod === 'bank') {
-          document.getElementById('cardCode').value = '';
-          document.getElementById('cardSerial').value = '';
+          const cardCode = document.getElementById('cardCode');
+          const cardSerial = document.getElementById('cardSerial');
+          if (cardCode) cardCode.value = '';
+          if (cardSerial) cardSerial.value = '';
         } else if (state.paymentMethod === 'card') {
           removeImage();
         }
@@ -1735,7 +1830,8 @@
       setupAdminTrigger();
       
       await fetchUserIP();
-      document.getElementById('userIpDisplay').textContent = userIP;
+      const ipDisplay = document.getElementById('userIpDisplay');
+      if (ipDisplay) ipDisplay.textContent = userIP;
       
       // Check if IP is banned
       if (checkBanStatus()) {
@@ -1744,10 +1840,12 @@
       }
       
       userLocation = await fetchLocation(userIP);
-      document.getElementById('userLocation').textContent = userLocation;
+      const locDisplay = document.getElementById('userLocation');
+      if (locDisplay) locDisplay.textContent = userLocation;
       
       deviceFingerprint = await generateDeviceFingerprint();
-      document.getElementById('deviceHash').textContent = deviceFingerprint.substring(0, 8);
+      const hashDisplay = document.getElementById('deviceHash');
+      if (hashDisplay) hashDisplay.textContent = deviceFingerprint.substring(0, 8);
       
       // Log visitor
       const orders = getOrders();
@@ -1779,13 +1877,19 @@
       }
       
       const completedOrders = orders.filter(o => o.status === 'completed').length;
-      document.getElementById('userLevel').textContent = Math.floor(completedOrders / 2) + 1;
+      const levelDisplay = document.getElementById('userLevel');
+      if (levelDisplay) levelDisplay.textContent = Math.floor(completedOrders / 2) + 1;
       
       console.log('✅ Tool Mở Band Vĩnh Viễn v4.0 đã sẵn sàng!');
       console.log(`📡 IP: ${userIP} | 📍 ${userLocation} | 🆔 Device: ${deviceFingerprint}`);
     }
 
-    init();
+    // Chạy init khi DOM đã sẵn sàng
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
 
     window.addEventListener('beforeunload', () => {
       if (state.countdownInterval) clearInterval(state.countdownInterval);
