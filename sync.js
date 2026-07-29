@@ -7,7 +7,7 @@
 class SyncManager {
   constructor() {
     this.syncInterval = null;
-    this.intervalTime = 5000; // 5 giây
+    this.intervalTime = 5000;
     this.lastSyncTime = null;
     this.isSyncing = false;
     this.listeners = [];
@@ -15,7 +15,6 @@ class SyncManager {
     this.dataKeys = ['orders', 'banned_ips', 'visitors', 'security_logs'];
     this.broadcastChannel = null;
     
-    // Khởi tạo Broadcast Channel cho đồng bộ real-time
     try {
       this.broadcastChannel = new BroadcastChannel('sync_channel');
       this.broadcastChannel.onmessage = (event) => {
@@ -34,7 +33,6 @@ class SyncManager {
   init() {
     console.log('🔄 Sync Manager khởi động...');
     
-    // Lắng nghe sự kiện storage từ các tab khác
     window.addEventListener('storage', (e) => {
       if (this.dataKeys.includes(e.key) || e.key === this.syncKey) {
         this.notifyListeners('syncing');
@@ -43,10 +41,8 @@ class SyncManager {
       }
     });
 
-    // Bắt đầu đồng bộ
     this.startSync();
 
-    // Theo dõi trạng thái mạng
     window.addEventListener('online', () => {
       console.log('🔄 Kết nối mạng khôi phục, bắt đầu đồng bộ...');
       this.startSync();
@@ -58,17 +54,13 @@ class SyncManager {
       this.notifyListeners('disconnected');
     });
 
-    // Đồng bộ định kỳ
     setInterval(() => {
       if (navigator.onLine && !this.isSyncing) {
         this.syncData();
       }
     }, this.intervalTime);
 
-    // Đồng bộ ngay khi khởi động
     setTimeout(() => this.syncData(), 1000);
-
-    // Theo dõi thay đổi dữ liệu
     this.watchDataChanges();
   }
 
@@ -95,7 +87,6 @@ class SyncManager {
     try {
       const newTimestamp = Date.now().toString();
       
-      // Đồng bộ tất cả dữ liệu
       const dataSnapshot = {};
       this.dataKeys.forEach(key => {
         const value = localStorage.getItem(key);
@@ -108,10 +99,8 @@ class SyncManager {
         }
       });
       
-      // Lưu timestamp
       localStorage.setItem(this.syncKey, newTimestamp);
       
-      // Gửi tín hiệu đồng bộ qua Broadcast Channel
       if (this.broadcastChannel) {
         this.broadcastChannel.postMessage({
           type: 'sync',
@@ -120,7 +109,6 @@ class SyncManager {
         });
       }
       
-      // Log
       const ordersCount = dataSnapshot.orders ? dataSnapshot.orders.length : 0;
       const bannedCount = dataSnapshot.banned_ips ? dataSnapshot.banned_ips.length : 0;
       console.log(`🔄 Đồng bộ: ${ordersCount} đơn hàng, ${bannedCount} IP bị ban`);
@@ -136,15 +124,12 @@ class SyncManager {
     this.isSyncing = false;
   }
 
-  // Xử lý tin nhắn từ Broadcast Channel
   handleSyncMessage(data) {
     if (data.timestamp && data.timestamp !== this.lastSyncTime) {
-      // Có dữ liệu mới từ tab khác
       this.syncData();
     }
   }
 
-  // Theo dõi thay đổi dữ liệu
   watchDataChanges() {
     this.dataKeys.forEach(key => {
       let oldValue = localStorage.getItem(key);
@@ -162,7 +147,6 @@ class SyncManager {
   handleDataChange(key, value) {
     if (this.dataKeys.includes(key)) {
       console.log(`📝 Dữ liệu thay đổi: ${key}`);
-      // Kích hoạt đồng bộ sau khi có thay đổi
       clearTimeout(this._changeTimeout);
       this._changeTimeout = setTimeout(() => {
         if (navigator.onLine) {
@@ -172,7 +156,6 @@ class SyncManager {
     }
   }
 
-  // Kích hoạt đồng bộ thủ công
   triggerSync() {
     if (navigator.onLine) {
       this.syncData();
@@ -181,33 +164,33 @@ class SyncManager {
     }
   }
 
-  // Đăng ký listener
   onSync(callback) {
-    this.listeners.push(callback);
+    if (typeof callback === 'function') {
+      this.listeners.push(callback);
+    }
     return () => {
       this.listeners = this.listeners.filter(cb => cb !== callback);
     };
   }
 
-  // Thông báo cho tất cả listener
   notifyListeners(status) {
     this.listeners.forEach(callback => {
       try {
-        callback(status);
+        if (typeof callback === 'function') {
+          callback(status);
+        }
       } catch (e) {
         console.error('Lỗi listener:', e);
       }
     });
   }
 
-  // Lấy trạng thái hiện tại
   getStatus() {
     if (!navigator.onLine) return 'disconnected';
     if (this.isSyncing) return 'syncing';
     return 'connected';
   }
 
-  // Dừng đồng bộ
   stopSync() {
     if (this.syncInterval) {
       clearInterval(this.syncInterval);
@@ -220,7 +203,6 @@ class SyncManager {
     console.log('🔄 Đã dừng đồng bộ');
   }
 
-  // Khôi phục dữ liệu từ backup
   restoreData() {
     try {
       const backup = localStorage.getItem('data_backup');
@@ -237,7 +219,6 @@ class SyncManager {
     }
   }
 
-  // Backup dữ liệu
   backupData() {
     try {
       const data = {};
@@ -263,92 +244,56 @@ class SyncManager {
 // KHỞI TẠO SYNC MANAGER
 // ============================================
 
-// Tạo instance toàn cục
-const syncManager = new SyncManager();
-
-// Export để sử dụng
-window.syncManager = syncManager;
-
-// Hàm tiện ích
-window.getSyncStatus = function() {
-  return syncManager.getStatus();
-};
-
-window.triggerSync = function() {
-  syncManager.triggerSync();
-};
-
-window.backupData = function() {
-  syncManager.backupData();
-};
-
-window.restoreData = function() {
-  syncManager.restoreData();
-};
-
-console.log('✅ Sync Manager đã sẵn sàng, đồng bộ 24/24!');
-
-// ============================================
-// TỰ ĐỘNG BACKUP
-// ============================================
-
-// Backup mỗi 5 phút
-setInterval(() => {
-  if (navigator.onLine) {
-    syncManager.backupData();
-  }
-}, 300000);
-
-// Backup trước khi đóng trang
-window.addEventListener('beforeunload', () => {
-  const timestamp = Date.now().toString();
-  localStorage.setItem('last_sync_before_unload', timestamp);
-  syncManager.backupData();
-  console.log('💾 Đã lưu trạng thái trước khi thoát');
-});
-
-// ============================================
-// KHÔI PHỤC KHI TẢI TRANG
-// ============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-  const lastSync = localStorage.getItem('last_sync_before_unload');
-  if (lastSync) {
-    console.log(`🔄 Khôi phục từ lần đồng bộ cuối: ${new Date(parseInt(lastSync)).toLocaleString('vi-VN')}`);
-    
-    // Kiểm tra và khôi phục nếu cần
-    const currentSync = localStorage.getItem('sync_timestamp');
-    if (!currentSync || parseInt(currentSync) < parseInt(lastSync)) {
-      console.log('🔄 Phát hiện dữ liệu cũ, đang đồng bộ...');
-      setTimeout(() => {
-        syncManager.restoreData();
-        syncManager.triggerSync();
-      }, 2000);
-    }
+// Kiểm tra document đã ready chưa
+function initSyncManager() {
+  if (window.syncManager) {
+    console.log('⚠️ Sync Manager đã tồn tại');
+    return;
   }
   
-  // Đồng bộ sau khi tải trang
-  setTimeout(() => {
+  const syncManager = new SyncManager();
+  window.syncManager = syncManager;
+
+  // Hàm tiện ích
+  window.getSyncStatus = function() {
+    return syncManager.getStatus();
+  };
+
+  window.triggerSync = function() {
     syncManager.triggerSync();
-  }, 3000);
-});
+  };
 
-// ============================================
-// XỬ LÝ LỖI VÀ RECOVERY
-// ============================================
+  window.backupData = function() {
+    syncManager.backupData();
+  };
 
-// Theo dõi lỗi localStorage
-window.addEventListener('error', (e) => {
-  if (e.message && e.message.includes('localStorage')) {
-    console.warn('⚠️ Lỗi localStorage, thử khôi phục...');
-    try {
-      // Thử khởi tạo lại
-      localStorage.setItem('test', 'test');
-      localStorage.removeItem('test');
-    } catch (err) {
-      console.error('❌ Không thể truy cập localStorage:', err);
+  window.restoreData = function() {
+    syncManager.restoreData();
+  };
+
+  console.log('✅ Sync Manager đã sẵn sàng, đồng bộ 24/24!');
+
+  // Backup mỗi 5 phút
+  setInterval(() => {
+    if (navigator.onLine) {
+      syncManager.backupData();
     }
-  }
-});
+  }, 300000);
+
+  // Backup trước khi đóng trang
+  window.addEventListener('beforeunload', () => {
+    const timestamp = Date.now().toString();
+    localStorage.setItem('last_sync_before_unload', timestamp);
+    syncManager.backupData();
+    console.log('💾 Đã lưu trạng thái trước khi thoát');
+  });
+}
+
+// Khởi tạo khi DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSyncManager);
+} else {
+  initSyncManager();
+}
 
 console.log('✅ Hệ thống đồng bộ 24/24 đã sẵn sàng!');
