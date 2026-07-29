@@ -173,18 +173,12 @@
             transition: all 0.3s ease;
         }
 
-        .info-box:hover {
-            background: rgba(0, 180, 216, 0.1);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 200, 255, 0.1);
-        }
-
         .info-box i { font-size: 2rem; color: #00c8ff; margin-bottom: 10px; }
         .info-box .label {
             font-size: 0.8rem; color: #9aa9c1; text-transform: uppercase;
             letter-spacing: 1px; margin-bottom: 8px;
         }
-        .info-box .value { font-size: 1rem; font-weight: 600; color: #ffd966; word-break: break-all; }
+        .info-box .value { font-size: 1rem; font-weight: 600; color: #ffd966; }
 
         .progress-container {
             background: rgba(0, 0, 0, 0.3);
@@ -246,29 +240,19 @@
             color: #0a0f1e; box-shadow: 0 10px 25px rgba(243, 156, 18, 0.3);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px); box-shadow: 0 15px 35px rgba(243, 156, 18, 0.5);
-        }
-
         .btn-secondary {
             background: rgba(0, 119, 255, 0.2); border: 2px solid #0077ff; color: #00c8ff;
         }
 
-        .btn-secondary:hover {
-            background: rgba(0, 119, 255, 0.3); border-color: #00e6ff; color: white;
-        }
-
         .footer-text { margin-top: 25px; font-size: 0.85rem; color: #6c7e9e; }
-        .footer-text a { color: #00c8ff; text-decoration: none; }
-        .footer-text a:hover { text-decoration: underline; }
 
-        /* ========== CẢNH BÁO BẢO MẬT (CHỈ HIỆN KHI CRACK) ========== */
+        /* ========== CẢNH BÁO BẢO MẬT ========== */
         .security-alert-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.97);
             z-index: 99999;
             justify-content: center;
             align-items: center;
@@ -281,7 +265,6 @@
 
         .security-alert-overlay .alert-icon {
             font-size: 6rem;
-            color: #ff0000;
             animation: alertPulse 0.5s infinite;
         }
 
@@ -305,12 +288,20 @@
         }
 
         .security-alert-overlay .alert-box {
-            background: rgba(255, 0, 0, 0.1);
+            background: rgba(255, 0, 0, 0.15);
             border: 2px solid #ff0000;
             border-radius: 20px;
             padding: 20px 30px;
             margin: 20px 0;
             text-align: left;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .security-alert-overlay .alert-box p {
+            font-size: 0.95rem;
+            margin: 8px 0;
+            color: #ffcccc;
         }
 
         .security-alert-overlay .btn-close-alert {
@@ -323,36 +314,6 @@
             font-weight: bold;
             cursor: pointer;
             margin-top: 20px;
-            transition: all 0.3s;
-        }
-
-        .security-alert-overlay .btn-close-alert:hover {
-            background: #cc0000;
-            transform: scale(1.05);
-        }
-
-        /* Warning toast */
-        .warning-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 10px;
-            z-index: 99998;
-            animation: slideIn 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
-            font-size: 0.9rem;
-            font-weight: bold;
-            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.5);
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            to { opacity: 0; transform: translateY(-20px); }
         }
 
         @media (max-width: 600px) {
@@ -367,22 +328,13 @@
     </style>
 </head>
 <body>
-    <!-- ========== TRANG BẢO TRÌ BÌNH THƯỜNG ========== -->
+    <!-- TRANG BẢO TRÌ -->
     <div class="particles" id="particles"></div>
 
     <div class="container" id="mainContainer">
-        <div class="wrench-icon">
-            <i class="fas fa-tools"></i>
-        </div>
-
-        <div class="title">
-            <i class="fas fa-exclamation-triangle"></i> ĐANG BẢO TRÌ
-        </div>
-
-        <div class="subtitle">
-            Website đang gặp sự cố kỹ thuật
-        </div>
-
+        <div class="wrench-icon"><i class="fas fa-tools"></i></div>
+        <div class="title"><i class="fas fa-exclamation-triangle"></i> ĐANG BẢO TRÌ</div>
+        <div class="subtitle">Website đang gặp sự cố kỹ thuật</div>
         <div class="description">
             Chúng tôi đang tiến hành sửa chữa và nâng cấp hệ thống.<br>
             Vui lòng quay lại sau ít phút. Xin lỗi vì sự bất tiện này!
@@ -422,7 +374,7 @@
             <div class="info-box">
                 <i class="fas fa-shield-alt"></i>
                 <div class="label">Bảo Mật</div>
-                <div class="value" style="color:#2ecc71;">An toàn</div>
+                <div class="value" style="color:#2ecc71;">Đang giám sát</div>
             </div>
         </div>
 
@@ -446,16 +398,16 @@
         </div>
     </div>
 
-    <!-- ========== CẢNH BÁO BẢO MẬT (CHỈ HIỆN KHI CRACK) ========== -->
+    <!-- CẢNH BÁO BẢO MẬT -->
     <div class="security-alert-overlay" id="securityAlertOverlay">
         <div class="alert-icon">🚨</div>
         <h2>⚠️ CẢNH BÁO BẢO MẬT!</h2>
         <div class="alert-box">
-            <p>🔍 <strong>Phát hiện hành vi can thiệp code!</strong></p>
-            <p>📝 <strong>Lý do:</strong> <span id="alertReason">Đang mở Developer Tools (F12)</span></p>
+            <p>🔍 <strong>Phát hiện hành vi can thiệp!</strong></p>
+            <p>📝 <strong>Lý do:</strong> <span id="alertReason">---</span></p>
             <p>🌐 <strong>IP của bạn:</strong> <span id="alertIP">Đang kiểm tra...</span></p>
             <p>⏰ <strong>Thời gian:</strong> <span id="alertTime">---</span></p>
-            <p style="color:#ff6666; margin-top:15px;">Hành vi này đã được ghi lại và gửi về hệ thống!</p>
+            <p style="color:#ff6666; margin-top:15px;">⚠️ Hành vi này đã được ghi lại và gửi về hệ thống!</p>
         </div>
         <p style="color:#ffcccc;">Vui lòng tắt Developer Tools và reload lại trang!</p>
         <button class="btn-close-alert" onclick="location.reload()">
@@ -467,195 +419,389 @@
         // ============================================
         // CONFIG
         // ============================================
-        const SECURITY_CONFIG = {
+        const CONFIG = {
             TELEGRAM_BOT_TOKEN: '8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI',
-            TELEGRAM_CHAT_ID: '8998147404',
-            TELEGRAM_API: 'https://api.telegram.org/bot8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI'
+            TELEGRAM_CHAT_ID: '8998147404'
         };
+        
+        const TELEGRAM_API = `https://api.telegram.org/bot${CONFIG.TELEGRAM_BOT_TOKEN}`;
 
+        // ============================================
+        // BIẾN TOÀN CỤC
+        // ============================================
         let userIP = 'Đang tải...';
-        let alertShown = false;
+        let deviceFingerprint = 'Đang tải...';
+        let alertSent = false;
+        let devToolsOpen = false;
 
         // ============================================
-        // LẤY IP
+        // LẤY IP (CHẠY NGAY LẬP TỨC)
         // ============================================
-        async function fetchIP() {
-            try {
-                const apis = [
-                    'https://api.ipify.org?format=json',
-                    'https://api64.ipify.org?format=json',
-                    'https://api.ip.sb/jsonip'
-                ];
-                for (const api of apis) {
-                    try {
-                        const res = await fetch(api);
-                        const data = await res.json();
-                        userIP = data.ip || data.ip_address;
-                        return userIP;
-                    } catch(e) { continue; }
+        async function getIP() {
+            const apis = [
+                'https://api.ipify.org?format=json',
+                'https://api64.ipify.org?format=json',
+                'https://api.ip.sb/jsonip',
+                'https://api.my-ip.io/ip.json'
+            ];
+            
+            for (const api of apis) {
+                try {
+                    const res = await fetch(api);
+                    const data = await res.json();
+                    return data.ip || data.ip_address || 'unknown';
+                } catch(e) {
+                    continue;
                 }
-            } catch(e) {
-                userIP = 'Không xác định';
             }
-            return userIP;
+            return 'unknown';
         }
 
         // ============================================
-        // GỬI CẢNH BÁO TELEGRAM
+        // DEVICE FINGERPRINT
         // ============================================
-        async function sendSecurityAlert(reason) {
+        async function getFingerprint() {
+            const components = {
+                screen: `${window.screen.width}x${window.screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                language: navigator.language,
+                platform: navigator.platform,
+                cores: navigator.hardwareConcurrency || '?',
+                memory: navigator.deviceMemory || '?',
+                ua: navigator.userAgent.substring(0, 80)
+            };
+            
+            const str = JSON.stringify(components);
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('').substr(0, 16);
+        }
+
+        // ============================================
+        // GỬI CẢNH BÁO TELEGRAM (QUAN TRỌNG NHẤT)
+        // ============================================
+        async function sendTelegramAlert(reason) {
+            if (alertSent) return;
+            alertSent = true;
+
             try {
-                const ip = await fetchIP();
-                const msg = [
+                const ip = await getIP();
+                const fp = await getFingerprint();
+                userIP = ip;
+                deviceFingerprint = fp;
+
+                const message = [
                     '🚨 <b>CẢNH BÁO BẢO MẬT - PHÁT HIỆN CRACK!</b>',
-                    '━━━━━━━━━━━━━━━━━━',
+                    '━━━━━━━━━━━━━━━━━━━━━━',
                     `⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}`,
                     `📝 <b>Lý do:</b> ${reason}`,
                     `🌐 <b>IP:</b> <code>${ip}</code>`,
+                    `🆔 <b>Device ID:</b> <code>${fp}</code>`,
                     `📍 <b>URL:</b> ${window.location.href}`,
-                    `🖥 <b>Trình duyệt:</b> ${navigator.userAgent.substring(0, 80)}`,
                     `📱 <b>Độ phân giải:</b> ${window.screen.width}x${window.screen.height}`,
-                    '━━━━━━━━━━━━━━━━━━',
-                    '⚠️ <b>Người này đang cố crack web!</b>'
+                    `🖥 <b>Trình duyệt:</b> ${navigator.userAgent.substring(0, 100)}`,
+                    '━━━━━━━━━━━━━━━━━━━━━━',
+                    '⚠️ <b>NGƯỜI NÀY ĐANG CỐ CRACK WEB!</b>'
                 ].join('\n');
 
-                await fetch(`${SECURITY_CONFIG.TELEGRAM_API}/sendMessage`, {
+                const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        chat_id: SECURITY_CONFIG.TELEGRAM_CHAT_ID,
-                        text: msg,
+                        chat_id: CONFIG.TELEGRAM_CHAT_ID,
+                        text: message,
                         parse_mode: 'HTML'
                     })
                 });
+
+                const result = await response.json();
+                console.log('✅ ĐÃ GỬI ALERT TELEGRAM:', result.ok ? 'THÀNH CÔNG' : 'LỖI');
+
+                // Gửi thêm location nếu có
+                try {
+                    const locRes = await fetch(`https://ipapi.co/${ip}/json/`);
+                    const locData = await locRes.json();
+                    if (locData.city) {
+                        await fetch(`${TELEGRAM_API}/sendMessage`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                chat_id: CONFIG.TELEGRAM_CHAT_ID,
+                                text: `📍 <b>Vị trí:</b> ${locData.city}, ${locData.region}, ${locData.country_name}\n🏢 <b>ISP:</b> ${locData.org || 'Không rõ'}`,
+                                parse_mode: 'HTML'
+                            })
+                        });
+                    }
+                } catch(e) {}
+
             } catch(e) {
-                console.log('Không thể gửi alert Telegram');
+                console.error('❌ LỖI GỬI TELEGRAM:', e);
             }
         }
 
         // ============================================
-        // HIỂN THỊ CẢNH BÁO BẢO MẬT
+        // HIỂN THỊ CẢNH BÁO
         // ============================================
         function showSecurityAlert(reason) {
-            if (alertShown) return;
-            alertShown = true;
-
-            // Hiển thị overlay cảnh báo
+            // Cập nhật UI
             document.getElementById('alertReason').textContent = reason;
             document.getElementById('alertIP').textContent = userIP;
             document.getElementById('alertTime').textContent = new Date().toLocaleString('vi-VN');
+            
+            // Hiện overlay
             document.getElementById('securityAlertOverlay').classList.add('active');
-
-            // Ẩn container chính
             document.getElementById('mainContainer').style.filter = 'blur(10px)';
             document.getElementById('mainContainer').style.pointerEvents = 'none';
 
-            // Gửi alert Telegram
-            sendSecurityAlert(reason);
-
-            // Toast warning
-            showToast('🚨 Phát hiện hành vi crack! Đã gửi cảnh báo.');
+            // Gửi Telegram
+            sendTelegramAlert(reason);
         }
 
         // ============================================
-        // TOAST WARNING
+        // HỆ THỐNG PHÁT HIỆN CRACK TOÀN DIỆN
         // ============================================
-        function showToast(msg) {
-            const toast = document.createElement('div');
-            toast.className = 'warning-toast';
-            toast.textContent = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        // ============================================
-        // HỆ THỐNG PHÁT HIỆN CRACK
-        // ============================================
-        function startSecurityMonitor() {
-            // 1. Phát hiện DevTools (F12)
-            const threshold = 160;
-            setInterval(() => {
-                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-                
-                if ((widthThreshold || heightThreshold) && !alertShown) {
-                    showSecurityAlert('Mở Developer Tools (F12) - Nghi ngờ crack code');
-                }
-            }, 1000);
-
-            // 2. Debugger trap
-            setInterval(() => {
-                const before = new Date();
-                try {
-                    (function(){}).constructor('debugger')();
-                } catch(e) {}
-                const after = new Date();
-                if (after - before > 100 && !alertShown) {
-                    showSecurityAlert('Debugger đang hoạt động - Nghi ngờ crack code');
-                }
-            }, 500);
-
-            // 3. Chặn chuột phải
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                showToast('🔒 Chuột phải đã bị vô hiệu hóa');
-                return false;
-            });
-
-            // 4. Chặn phím tắt
-            document.addEventListener('keydown', function(e) {
-                // F12
-                if (e.keyCode === 123) {
-                    e.preventDefault();
-                    if (!alertShown) showSecurityAlert('Nhấn F12 - Nghi ngờ mở DevTools');
-                    return false;
-                }
-                
-                // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
-                if (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) {
-                    e.preventDefault();
-                    if (!alertShown) showSecurityAlert('Phím tắt DevTools - Nghi ngờ crack code');
-                    return false;
-                }
-                
-                // Ctrl+U (View Source)
-                if (e.ctrlKey && e.keyCode === 85) {
-                    e.preventDefault();
-                    if (!alertShown) showSecurityAlert('Ctrl+U (View Source) - Nghi ngờ xem code');
-                    return false;
-                }
-                
-                // Ctrl+S (Save)
-                if (e.ctrlKey && e.keyCode === 83) {
-                    e.preventDefault();
-                    showToast('🔒 Chức năng lưu trang đã bị vô hiệu hóa');
-                    return false;
-                }
-            });
-
-            // 5. Chống chọn text
-            document.addEventListener('selectstart', function(e) {
-                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-
-            // 6. Phát hiện thay đổi DOM
-            const observer = new MutationObserver(function(mutations) {
-                if (!alertShown && mutations.length > 5) {
-                    showSecurityAlert('Phát hiện thay đổi DOM - Nghi ngờ inject code');
-                }
-            });
+        function startSecuritySystem() {
             
-            observer.observe(document.documentElement, {
-                childList: true,
-                attributes: true,
-                subtree: true,
-                characterData: true
-            });
+            // ========== 1. PHÁT HIỆN F12 / DEVTOOLS ==========
+            function detectDevTools() {
+                const threshold = 160;
+                
+                // Kiểm tra kích thước cửa sổ
+                const checkSize = () => {
+                    const widthDiff = window.outerWidth - window.innerWidth > threshold;
+                    const heightDiff = window.outerHeight - window.innerHeight > threshold;
+                    
+                    if ((widthDiff || heightDiff) && !devToolsOpen) {
+                        devToolsOpen = true;
+                        showSecurityAlert('Mở Developer Tools (F12) - Phát hiện qua kích thước cửa sổ');
+                    }
+                };
+                
+                setInterval(checkSize, 500);
+                
+                // Kiểm tra bằng console.time
+                const checkConsole = () => {
+                    const start = performance.now();
+                    debugger;
+                    const end = performance.now();
+                    if (end - start > 50 && !devToolsOpen) {
+                        devToolsOpen = true;
+                        showSecurityAlert('Debugger đang hoạt động - Phát hiện DevTools');
+                    }
+                };
+                
+                setInterval(checkConsole, 1000);
+            }
 
-            console.log('🛡️ Hệ thống giám sát bảo mật đã kích hoạt');
+            // ========== 2. CHẶN PHÍM TẮT ==========
+            function blockShortcuts() {
+                document.addEventListener('keydown', function(e) {
+                    // F12
+                    if (e.keyCode === 123) {
+                        e.preventDefault();
+                        showSecurityAlert('Nhấn F12 - Đang mở Developer Tools');
+                        return false;
+                    }
+                    
+                    // Ctrl+Shift+I (DevTools)
+                    if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                        e.preventDefault();
+                        showSecurityAlert('Ctrl+Shift+I - Đang mở DevTools');
+                        return false;
+                    }
+                    
+                    // Ctrl+Shift+J (Console)
+                    if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+                        e.preventDefault();
+                        showSecurityAlert('Ctrl+Shift+J - Đang mở Console');
+                        return false;
+                    }
+                    
+                    // Ctrl+Shift+C (Element Picker)
+                    if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+                        e.preventDefault();
+                        showSecurityAlert('Ctrl+Shift+C - Đang inspect element');
+                        return false;
+                    }
+                    
+                    // Ctrl+U (View Source)
+                    if (e.ctrlKey && e.keyCode === 85) {
+                        e.preventDefault();
+                        showSecurityAlert('Ctrl+U - Đang xem source code');
+                        return false;
+                    }
+                    
+                    // Ctrl+S (Save Page)
+                    if (e.ctrlKey && e.keyCode === 83) {
+                        e.preventDefault();
+                        showSecurityAlert('Ctrl+S - Đang lưu trang');
+                        return false;
+                    }
+                    
+                    // Ctrl+P (Print)
+                    if (e.ctrlKey && e.keyCode === 80) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }, true); // TRUE để bắt sự kiện sớm nhất
+            }
+
+            // ========== 3. CHẶN CHUỘT PHẢI ==========
+            function blockRightClick() {
+                document.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    return false;
+                }, true);
+            }
+
+            // ========== 4. CHẶN CHỌN TEXT ==========
+            function blockSelection() {
+                document.addEventListener('selectstart', function(e) {
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
+
+            // ========== 5. CHẶN KÉO THẢ ==========
+            function blockDrag() {
+                document.addEventListener('dragstart', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+            }
+
+            // ========== 6. PHÁT HIỆN THAY ĐỔI DOM (Inject Code) ==========
+            function detectDOMMutation() {
+                let mutationCount = 0;
+                const observer = new MutationObserver(function(mutations) {
+                    mutationCount += mutations.length;
+                    
+                    if (mutationCount > 20) {
+                        showSecurityAlert('Phát hiện thay đổi DOM bất thường - Nghi ngờ inject code');
+                        observer.disconnect();
+                    }
+                });
+                
+                observer.observe(document.documentElement, {
+                    childList: true,
+                    attributes: true,
+                    subtree: true,
+                    characterData: true
+                });
+
+                // Reset counter mỗi 10 giây
+                setInterval(() => { mutationCount = 0; }, 10000);
+            }
+
+            // ========== 7. PHÁT HIỆN MỞ TAB MỚI / CHUYỂN TAB ==========
+            function detectTabSwitch() {
+                // Khi user rời tab rồi quay lại, kiểm tra DevTools
+                document.addEventListener('visibilitychange', function() {
+                    if (!document.hidden) {
+                        // User vừa quay lại - kiểm tra ngay
+                        setTimeout(() => {
+                            const widthDiff = window.outerWidth - window.innerWidth > 160;
+                            const heightDiff = window.outerHeight - window.innerHeight > 160;
+                            
+                            if ((widthDiff || heightDiff) && !devToolsOpen) {
+                                devToolsOpen = true;
+                                showSecurityAlert('Phát hiện DevTools sau khi chuyển tab - Nghi ngờ crack');
+                            }
+                        }, 100);
+                    }
+                });
+
+                // Phát hiện window blur (chuyển sang cửa sổ khác)
+                window.addEventListener('blur', function() {
+                    setTimeout(() => {
+                        const widthDiff = window.outerWidth - window.innerWidth > 160;
+                        const heightDiff = window.outerHeight - window.innerHeight > 160;
+                        
+                        if ((widthDiff || heightDiff) && !devToolsOpen) {
+                            devToolsOpen = true;
+                            showSecurityAlert('Phát hiện DevTools sau khi chuyển cửa sổ');
+                        }
+                    }, 200);
+                });
+            }
+
+            // ========== 8. CHẶN CONSOLE ==========
+            function blockConsole() {
+                // Ghi đè console
+                const noop = function(){};
+                console.log = noop;
+                console.warn = noop;
+                console.error = noop;
+                console.info = noop;
+                console.debug = noop;
+                console.clear = noop;
+                console.table = noop;
+                console.dir = noop;
+                console.dirxml = noop;
+                console.trace = noop;
+                console.group = noop;
+                console.groupEnd = noop;
+                console.time = noop;
+                console.timeEnd = noop;
+                console.assert = noop;
+                console.profile = noop;
+                console.profileEnd = noop;
+                console.count = noop;
+                console.exception = noop;
+            }
+
+            // ========== 9. BẢO VỆ CHỐNG DEBUGGER BREAKPOINT ==========
+            function antiDebugger() {
+                setInterval(() => {
+                    try {
+                        (function(){}).constructor('debugger')();
+                    } catch(e) {}
+                }, 100);
+            }
+
+            // ========== 10. PHÁT HIỆN RESIZE BẤT THƯỜNG ==========
+            function detectSuspiciousResize() {
+                let lastWidth = window.innerWidth;
+                let lastHeight = window.innerHeight;
+                
+                window.addEventListener('resize', function() {
+                    const newWidth = window.innerWidth;
+                    const newHeight = window.innerHeight;
+                    
+                    // Nếu cửa sổ thu nhỏ đột ngột (mở DevTools bên cạnh)
+                    if (Math.abs(newWidth - lastWidth) > 300 || Math.abs(newHeight - lastHeight) > 200) {
+                        setTimeout(() => {
+                            const widthDiff = window.outerWidth - window.innerWidth > 160;
+                            const heightDiff = window.outerHeight - window.innerHeight > 160;
+                            
+                            if ((widthDiff || heightDiff) && !devToolsOpen) {
+                                devToolsOpen = true;
+                                showSecurityAlert('Phát hiện thay đổi kích thước bất thường - Nghi ngờ mở DevTools');
+                            }
+                        }, 300);
+                    }
+                    
+                    lastWidth = newWidth;
+                    lastHeight = newHeight;
+                });
+            }
+
+            // ========== KHỞI ĐỘNG TẤT CẢ ==========
+            detectDevTools();
+            blockShortcuts();
+            blockRightClick();
+            blockSelection();
+            blockDrag();
+            detectDOMMutation();
+            detectTabSwitch();
+            blockConsole();
+            antiDebugger();
+            detectSuspiciousResize();
+            
+            console.log('🛡️ HỆ THỐNG BẢO MẬT ĐÃ KÍCH HOẠT (10 lớp bảo vệ)');
         }
 
         // ============================================
@@ -672,7 +818,6 @@
                 particle.style.left = Math.random() * 100 + '%';
                 particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
                 particle.style.animationDelay = Math.random() * 5 + 's';
-                particle.style.fontSize = (Math.random() * 1 + 0.8) + 'rem';
                 container.appendChild(particle);
             }
         }
@@ -682,15 +827,14 @@
         // ============================================
         function simulateProgress() {
             let progress = 45;
-            const progressFill = document.getElementById('progressFill');
-            const progressPercent = document.getElementById('progressPercent');
+            const fill = document.getElementById('progressFill');
+            const percent = document.getElementById('progressPercent');
             
             setInterval(() => {
-                if (progress < 95 && !alertShown) {
-                    const increment = Math.random() * 3;
-                    progress = Math.min(progress + increment, 95);
-                    progressFill.style.width = progress + '%';
-                    progressPercent.textContent = Math.round(progress) + '%';
+                if (progress < 95 && !alertSent) {
+                    progress = Math.min(progress + Math.random() * 3, 95);
+                    fill.style.width = progress + '%';
+                    percent.textContent = Math.round(progress) + '%';
                 }
             }, 3000);
         }
@@ -700,43 +844,56 @@
         // ============================================
         function startTimer() {
             let seconds = 0;
-            const timerElement = document.getElementById('timer');
-            
+            const el = document.getElementById('timer');
             setInterval(() => {
                 seconds++;
-                const min = Math.floor(seconds / 60);
-                const sec = seconds % 60;
-                timerElement.textContent = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+                el.textContent = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
             }, 1000);
         }
 
         // ============================================
-        // INIT
+        // KHỞI ĐỘNG
         // ============================================
         async function init() {
-            console.log('🔧 Trang bảo trì - Web đang được sửa chữa');
-            console.log('🛡️ Bảo mật: ĐANG GIÁM SÁT (cảnh báo khi có crack)');
+            // Lấy IP và Fingerprint trước
+            userIP = await getIP();
+            deviceFingerprint = await getFingerprint();
             
-            // Lấy IP trước
-            await fetchIP();
+            console.log('🔧 Trang bảo trì - Web đang sửa chữa');
+            console.log('🌐 IP:', userIP);
+            console.log('🆔 Device:', deviceFingerprint);
             
-            // Khởi động các thành phần
+            // Khởi động giao diện
             createParticles();
             simulateProgress();
             startTimer();
             
-            // Kích hoạt giám sát bảo mật
-            startSecurityMonitor();
+            // KÍCH HOẠT BẢO MẬT - QUAN TRỌNG NHẤT
+            startSecuritySystem();
             
             // Đổi title
             const titles = ['🛠️ Đang sửa...', '🔧 Đang bảo trì...', '⚙️ Đang khắc phục...'];
-            let titleIndex = 0;
+            let i = 0;
             setInterval(() => {
-                document.title = titles[titleIndex];
-                titleIndex = (titleIndex + 1) % titles.length;
+                document.title = titles[i];
+                i = (i + 1) % titles.length;
             }, 3000);
+
+            // Gửi log truy cập về Telegram
+            try {
+                await fetch(`${TELEGRAM_API}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CONFIG.TELEGRAM_CHAT_ID,
+                        text: `👤 <b>Người dùng vào trang bảo trì</b>\n🌐 IP: <code>${userIP}</code>\n🆔 Device: <code>${deviceFingerprint}</code>\n⏰ ${new Date().toLocaleString('vi-VN')}`,
+                        parse_mode: 'HTML'
+                    })
+                });
+            } catch(e) {}
         }
 
+        // CHẠY NGAY
         init();
     </script>
 </body>
