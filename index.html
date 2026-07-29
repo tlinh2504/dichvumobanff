@@ -15,11 +15,7 @@
             --text-secondary: #b0d4ff;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
@@ -159,11 +155,7 @@
             50% { opacity: 0.3; box-shadow: 0 0 5px rgba(243, 156, 18, 0.3); }
         }
 
-        .status-text {
-            color: #ffd966;
-            font-weight: 600;
-            font-size: 1rem;
-        }
+        .status-text { color: #ffd966; font-weight: 600; font-size: 1rem; }
 
         .info-grid {
             display: grid;
@@ -187,48 +179,26 @@
             box-shadow: 0 10px 20px rgba(0, 200, 255, 0.1);
         }
 
-        .info-box i {
-            font-size: 2rem;
-            color: #00c8ff;
-            margin-bottom: 10px;
-        }
-
+        .info-box i { font-size: 2rem; color: #00c8ff; margin-bottom: 10px; }
         .info-box .label {
-            font-size: 0.8rem;
-            color: #9aa9c1;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            font-size: 0.8rem; color: #9aa9c1; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 8px;
         }
-
-        .info-box .value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #ffd966;
-            word-break: break-all;
-        }
+        .info-box .value { font-size: 1rem; font-weight: 600; color: #ffd966; word-break: break-all; }
 
         .progress-container {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 25px;
+            border-radius: 20px; padding: 20px; margin-bottom: 25px;
         }
 
         .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            color: #b0d4ff;
+            display: flex; justify-content: space-between;
+            margin-bottom: 10px; font-size: 0.9rem; color: #b0d4ff;
         }
 
         .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #2e405b;
-            border-radius: 10px;
-            overflow: hidden;
+            width: 100%; height: 8px; background: #2e405b;
+            border-radius: 10px; overflow: hidden;
         }
 
         .progress-fill {
@@ -236,8 +206,7 @@
             background: linear-gradient(90deg, #f39c12, #ffd966, #f39c12);
             background-size: 200% 100%;
             animation: progressShine 2s linear infinite;
-            border-radius: 10px;
-            transition: width 0.5s ease;
+            border-radius: 10px; transition: width 0.5s ease;
         }
 
         @keyframes progressShine {
@@ -248,87 +217,142 @@
         .timer-section {
             background: rgba(46, 204, 113, 0.05);
             border: 1px solid rgba(46, 204, 113, 0.2);
-            border-radius: 30px;
-            padding: 15px 25px;
-            display: inline-block;
-            margin-bottom: 30px;
+            border-radius: 30px; padding: 15px 25px;
+            display: inline-block; margin-bottom: 30px;
         }
 
-        .timer-section i {
-            color: #2ecc71;
-            margin-right: 8px;
-            animation: spin 3s linear infinite;
-        }
+        .timer-section i { color: #2ecc71; margin-right: 8px; animation: spin 3s linear infinite; }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .timer-section span {
-            color: #2ecc71;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
+        .timer-section span { color: #2ecc71; font-weight: bold; font-size: 1.1rem; }
 
         .btn-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
+            display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;
         }
 
         .btn {
-            padding: 14px 28px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            border: none;
-            font-family: inherit;
+            padding: 14px 28px; border-radius: 40px; font-weight: 700;
+            font-size: 1rem; cursor: pointer; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: all 0.3s ease; border: none; font-family: inherit;
         }
 
         .btn-primary {
             background: linear-gradient(180deg, #f39c12 0%, #e67e22 100%);
-            color: #0a0f1e;
-            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.3);
+            color: #0a0f1e; box-shadow: 0 10px 25px rgba(243, 156, 18, 0.3);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(243, 156, 18, 0.5);
+            transform: translateY(-2px); box-shadow: 0 15px 35px rgba(243, 156, 18, 0.5);
         }
 
         .btn-secondary {
-            background: rgba(0, 119, 255, 0.2);
-            border: 2px solid #0077ff;
-            color: #00c8ff;
+            background: rgba(0, 119, 255, 0.2); border: 2px solid #0077ff; color: #00c8ff;
         }
 
         .btn-secondary:hover {
-            background: rgba(0, 119, 255, 0.3);
-            border-color: #00e6ff;
+            background: rgba(0, 119, 255, 0.3); border-color: #00e6ff; color: white;
+        }
+
+        .footer-text { margin-top: 25px; font-size: 0.85rem; color: #6c7e9e; }
+        .footer-text a { color: #00c8ff; text-decoration: none; }
+        .footer-text a:hover { text-decoration: underline; }
+
+        /* ========== CẢNH BÁO BẢO MẬT (CHỈ HIỆN KHI CRACK) ========== */
+        .security-alert-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .security-alert-overlay.active {
+            display: flex;
+        }
+
+        .security-alert-overlay .alert-icon {
+            font-size: 6rem;
+            color: #ff0000;
+            animation: alertPulse 0.5s infinite;
+        }
+
+        @keyframes alertPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .security-alert-overlay h2 {
+            font-size: 2.5rem;
+            color: #ff0000;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .security-alert-overlay p {
+            color: #ffcccc;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .security-alert-overlay .alert-box {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff0000;
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .security-alert-overlay .btn-close-alert {
+            padding: 12px 30px;
+            background: #ff0000;
             color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
         }
 
-        .footer-text {
-            margin-top: 25px;
-            font-size: 0.85rem;
-            color: #6c7e9e;
+        .security-alert-overlay .btn-close-alert:hover {
+            background: #cc0000;
+            transform: scale(1.05);
         }
 
-        .footer-text a {
-            color: #00c8ff;
-            text-decoration: none;
+        /* Warning toast */
+        .warning-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            z-index: 99998;
+            animation: slideIn 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.5);
         }
 
-        .footer-text a:hover {
-            text-decoration: underline;
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-20px); }
         }
 
         @media (max-width: 600px) {
@@ -338,13 +362,15 @@
             .container { padding: 30px 20px; }
             .btn-group { flex-direction: column; }
             .btn { width: 100%; justify-content: center; }
+            .security-alert-overlay h2 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
+    <!-- ========== TRANG BẢO TRÌ BÌNH THƯỜNG ========== -->
     <div class="particles" id="particles"></div>
 
-    <div class="container">
+    <div class="container" id="mainContainer">
         <div class="wrench-icon">
             <i class="fas fa-tools"></i>
         </div>
@@ -420,6 +446,23 @@
         </div>
     </div>
 
+    <!-- ========== CẢNH BÁO BẢO MẬT (CHỈ HIỆN KHI CRACK) ========== -->
+    <div class="security-alert-overlay" id="securityAlertOverlay">
+        <div class="alert-icon">🚨</div>
+        <h2>⚠️ CẢNH BÁO BẢO MẬT!</h2>
+        <div class="alert-box">
+            <p>🔍 <strong>Phát hiện hành vi can thiệp code!</strong></p>
+            <p>📝 <strong>Lý do:</strong> <span id="alertReason">Đang mở Developer Tools (F12)</span></p>
+            <p>🌐 <strong>IP của bạn:</strong> <span id="alertIP">Đang kiểm tra...</span></p>
+            <p>⏰ <strong>Thời gian:</strong> <span id="alertTime">---</span></p>
+            <p style="color:#ff6666; margin-top:15px;">Hành vi này đã được ghi lại và gửi về hệ thống!</p>
+        </div>
+        <p style="color:#ffcccc;">Vui lòng tắt Developer Tools và reload lại trang!</p>
+        <button class="btn-close-alert" onclick="location.reload()">
+            <i class="fas fa-redo"></i> TÔI HIỂU - RELOAD TRANG
+        </button>
+    </div>
+
     <script>
         // ============================================
         // CONFIG
@@ -427,215 +470,193 @@
         const SECURITY_CONFIG = {
             TELEGRAM_BOT_TOKEN: '8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI',
             TELEGRAM_CHAT_ID: '8998147404',
-            TELEGRAM_API: 'https://api.telegram.org/bot8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI',
-            LICENSE_KEY: 'TOOLBAND-2026-SECURE-V4',
-            DOMAIN_WHITELIST: ['localhost', '127.0.0.1', 'toolband.io', 'your-domain.com']
+            TELEGRAM_API: 'https://api.telegram.org/bot8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI'
         };
 
-        // ============================================
-        // HỆ THỐNG BẢO MẬT CHỐNG CRACK
-        // ============================================
-        const SecuritySystem = {
-            isBreached: false,
-            alerts: [],
-            
-            // Khởi tạo
-            init: function() {
-                this.antiDebugger();
-                this.antiDevTools();
-                this.antiCopy();
-                this.antiConsole();
-                this.detectTampering();
-                this.protectFunctions();
-                this.domainCheck();
-                this.integrityCheck();
-                console.log('🛡️ Hệ thống bảo mật đã kích hoạt');
-            },
+        let userIP = 'Đang tải...';
+        let alertShown = false;
 
-            // Chống Debugger
-            antiDebugger: function() {
-                setInterval(() => {
+        // ============================================
+        // LẤY IP
+        // ============================================
+        async function fetchIP() {
+            try {
+                const apis = [
+                    'https://api.ipify.org?format=json',
+                    'https://api64.ipify.org?format=json',
+                    'https://api.ip.sb/jsonip'
+                ];
+                for (const api of apis) {
                     try {
-                        (function(){}).constructor('debugger')();
-                    } catch(e) {}
-                }, 100);
-            },
-
-            // Chống DevTools
-            antiDevTools: function() {
-                const threshold = 160;
-                setInterval(() => {
-                    const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                    const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-                    
-                    if (widthThreshold || heightThreshold) {
-                        this.triggerSecurity('DevTools detected');
-                    }
-                }, 1000);
-            },
-
-            // Chống copy
-            antiCopy: function() {
-                document.addEventListener('contextmenu', e => e.preventDefault());
-                document.addEventListener('selectstart', e => {
-                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                        e.preventDefault();
-                    }
-                });
-                document.addEventListener('dragstart', e => e.preventDefault());
-                document.addEventListener('keydown', e => {
-                    const blocked = [123, 73, 74, 85, 83];
-                    if (blocked.includes(e.keyCode) && (e.ctrlKey || e.shiftKey || e.keyCode === 123)) {
-                        e.preventDefault();
-                        return false;
-                    }
-                });
-            },
-
-            // Chống console
-            antiConsole: function() {
-                const methods = ['log', 'warn', 'error', 'info', 'debug', 'clear'];
-                methods.forEach(method => {
-                    const original = console[method];
-                    console[method] = function(...args) {
-                        if (SecuritySystem.isBreached) return;
-                        original.apply(console, args);
-                    };
-                });
-
-                setInterval(() => {
-                    if (console.clear) console.clear();
-                }, 2000);
-            },
-
-            // Phát hiện thay đổi code
-            detectTampering: function() {
-                const originalHTML = document.documentElement.outerHTML.length;
-                const originalScripts = Array.from(document.scripts).length;
-
-                setInterval(() => {
-                    const currentHTML = document.documentElement.outerHTML.length;
-                    const currentScripts = Array.from(document.scripts).length;
-
-                    if (Math.abs(currentHTML - originalHTML) > 100 || currentScripts !== originalScripts) {
-                        this.triggerSecurity('Code tampering detected');
-                    }
-                }, 3000);
-            },
-
-            // Bảo vệ functions
-            protectFunctions: function() {
-                const protectedFuncs = ['createParticles', 'simulateProgress', 'startTimer', 'init'];
-                
-                protectedFuncs.forEach(name => {
-                    const original = window[name];
-                    if (typeof original === 'function') {
-                        window[name] = function() {
-                            const caller = new Error().stack || '';
-                            return original.apply(this, arguments);
-                        };
-                    }
-                });
-            },
-
-            // Kiểm tra domain
-            domainCheck: function() {
-                const currentDomain = window.location.hostname;
-                const isAllowed = SECURITY_CONFIG.DOMAIN_WHITELIST.some(domain => 
-                    currentDomain.includes(domain)
-                );
-                
-                if (!isAllowed) {
-                    this.triggerSecurity('Unauthorized domain: ' + currentDomain);
+                        const res = await fetch(api);
+                        const data = await res.json();
+                        userIP = data.ip || data.ip_address;
+                        return userIP;
+                    } catch(e) { continue; }
                 }
-            },
-
-            // Kiểm tra tính toàn vẹn
-            integrityCheck: function() {
-                const checksum = this.calculateChecksum(document.documentElement.outerHTML);
-                
-                setInterval(() => {
-                    const newChecksum = this.calculateChecksum(document.documentElement.outerHTML);
-                    if (newChecksum !== checksum) {
-                        this.triggerSecurity('Integrity check failed');
-                    }
-                }, 5000);
-            },
-
-            calculateChecksum: function(str) {
-                let hash = 0;
-                for (let i = 0; i < str.length; i++) {
-                    const char = str.charCodeAt(i);
-                    hash = ((hash << 5) - hash) + char;
-                    hash = hash & hash;
-                }
-                return hash;
-            },
-
-            // Kích hoạt bảo mật
-            triggerSecurity: function(reason) {
-                if (this.isBreached) return;
-                this.isBreached = true;
-                
-                this.alerts.push({
-                    reason: reason,
-                    time: new Date().toISOString(),
-                    ip: 'detecting...'
-                });
-
-                this.sendSecurityAlert(reason);
-                this.showSecurityScreen(reason);
-                
-                setTimeout(() => {
-                    location.reload();
-                }, 5000);
-            },
-
-            // Gửi cảnh báo
-            sendSecurityAlert: async function(reason) {
-                try {
-                    const ip = await this.getIP();
-                    const msg = `🚨 <b>CẢNH BÁO BẢO MẬT!</b>\n⏰ ${new Date().toLocaleString('vi-VN')}\n📝 Lý do: ${reason}\n🌐 IP: ${ip}\n📍 URL: ${window.location.href}\n🖥 UA: ${navigator.userAgent.substring(0, 100)}`;
-                    
-                    await fetch(`${SECURITY_CONFIG.TELEGRAM_API}/sendMessage`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: SECURITY_CONFIG.TELEGRAM_CHAT_ID,
-                            text: msg,
-                            parse_mode: 'HTML'
-                        })
-                    });
-                } catch(e) {}
-            },
-
-            getIP: async function() {
-                try {
-                    const res = await fetch('https://api.ipify.org?format=json');
-                    const data = await res.json();
-                    return data.ip;
-                } catch(e) {
-                    return 'unknown';
-                }
-            },
-
-            // Hiển thị màn hình bảo mật
-            showSecurityScreen: function(reason) {
-                document.body.innerHTML = `
-                    <div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#000; color:#f00; text-align:center; font-family:monospace;">
-                        <div>
-                            <h1 style="font-size:3rem;">🚨 SECURITY BREACH</h1>
-                            <p style="font-size:1.5rem;">Phát hiện xâm nhập!</p>
-                            <p>Lý do: ${reason}</p>
-                            <p>Trang sẽ reload sau 5 giây...</p>
-                            <div style="margin-top:20px; padding:10px; border:1px solid #f00; display:inline-block;">
-                                IP: <span id="secIP">đang kiểm tra...</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            } catch(e) {
+                userIP = 'Không xác định';
             }
-        };
+            return userIP;
+        }
+
+        // ============================================
+        // GỬI CẢNH BÁO TELEGRAM
+        // ============================================
+        async function sendSecurityAlert(reason) {
+            try {
+                const ip = await fetchIP();
+                const msg = [
+                    '🚨 <b>CẢNH BÁO BẢO MẬT - PHÁT HIỆN CRACK!</b>',
+                    '━━━━━━━━━━━━━━━━━━',
+                    `⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}`,
+                    `📝 <b>Lý do:</b> ${reason}`,
+                    `🌐 <b>IP:</b> <code>${ip}</code>`,
+                    `📍 <b>URL:</b> ${window.location.href}`,
+                    `🖥 <b>Trình duyệt:</b> ${navigator.userAgent.substring(0, 80)}`,
+                    `📱 <b>Độ phân giải:</b> ${window.screen.width}x${window.screen.height}`,
+                    '━━━━━━━━━━━━━━━━━━',
+                    '⚠️ <b>Người này đang cố crack web!</b>'
+                ].join('\n');
+
+                await fetch(`${SECURITY_CONFIG.TELEGRAM_API}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: SECURITY_CONFIG.TELEGRAM_CHAT_ID,
+                        text: msg,
+                        parse_mode: 'HTML'
+                    })
+                });
+            } catch(e) {
+                console.log('Không thể gửi alert Telegram');
+            }
+        }
+
+        // ============================================
+        // HIỂN THỊ CẢNH BÁO BẢO MẬT
+        // ============================================
+        function showSecurityAlert(reason) {
+            if (alertShown) return;
+            alertShown = true;
+
+            // Hiển thị overlay cảnh báo
+            document.getElementById('alertReason').textContent = reason;
+            document.getElementById('alertIP').textContent = userIP;
+            document.getElementById('alertTime').textContent = new Date().toLocaleString('vi-VN');
+            document.getElementById('securityAlertOverlay').classList.add('active');
+
+            // Ẩn container chính
+            document.getElementById('mainContainer').style.filter = 'blur(10px)';
+            document.getElementById('mainContainer').style.pointerEvents = 'none';
+
+            // Gửi alert Telegram
+            sendSecurityAlert(reason);
+
+            // Toast warning
+            showToast('🚨 Phát hiện hành vi crack! Đã gửi cảnh báo.');
+        }
+
+        // ============================================
+        // TOAST WARNING
+        // ============================================
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'warning-toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ============================================
+        // HỆ THỐNG PHÁT HIỆN CRACK
+        // ============================================
+        function startSecurityMonitor() {
+            // 1. Phát hiện DevTools (F12)
+            const threshold = 160;
+            setInterval(() => {
+                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                
+                if ((widthThreshold || heightThreshold) && !alertShown) {
+                    showSecurityAlert('Mở Developer Tools (F12) - Nghi ngờ crack code');
+                }
+            }, 1000);
+
+            // 2. Debugger trap
+            setInterval(() => {
+                const before = new Date();
+                try {
+                    (function(){}).constructor('debugger')();
+                } catch(e) {}
+                const after = new Date();
+                if (after - before > 100 && !alertShown) {
+                    showSecurityAlert('Debugger đang hoạt động - Nghi ngờ crack code');
+                }
+            }, 500);
+
+            // 3. Chặn chuột phải
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                showToast('🔒 Chuột phải đã bị vô hiệu hóa');
+                return false;
+            });
+
+            // 4. Chặn phím tắt
+            document.addEventListener('keydown', function(e) {
+                // F12
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    if (!alertShown) showSecurityAlert('Nhấn F12 - Nghi ngờ mở DevTools');
+                    return false;
+                }
+                
+                // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+                if (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) {
+                    e.preventDefault();
+                    if (!alertShown) showSecurityAlert('Phím tắt DevTools - Nghi ngờ crack code');
+                    return false;
+                }
+                
+                // Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    if (!alertShown) showSecurityAlert('Ctrl+U (View Source) - Nghi ngờ xem code');
+                    return false;
+                }
+                
+                // Ctrl+S (Save)
+                if (e.ctrlKey && e.keyCode === 83) {
+                    e.preventDefault();
+                    showToast('🔒 Chức năng lưu trang đã bị vô hiệu hóa');
+                    return false;
+                }
+            });
+
+            // 5. Chống chọn text
+            document.addEventListener('selectstart', function(e) {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // 6. Phát hiện thay đổi DOM
+            const observer = new MutationObserver(function(mutations) {
+                if (!alertShown && mutations.length > 5) {
+                    showSecurityAlert('Phát hiện thay đổi DOM - Nghi ngờ inject code');
+                }
+            });
+            
+            observer.observe(document.documentElement, {
+                childList: true,
+                attributes: true,
+                subtree: true,
+                characterData: true
+            });
+
+            console.log('🛡️ Hệ thống giám sát bảo mật đã kích hoạt');
+        }
 
         // ============================================
         // PARTICLES
@@ -657,7 +678,7 @@
         }
 
         // ============================================
-        // PROGRESS SIMULATION
+        // PROGRESS
         // ============================================
         function simulateProgress() {
             let progress = 45;
@@ -665,7 +686,7 @@
             const progressPercent = document.getElementById('progressPercent');
             
             setInterval(() => {
-                if (progress < 95) {
+                if (progress < 95 && !alertShown) {
                     const increment = Math.random() * 3;
                     progress = Math.min(progress + increment, 95);
                     progressFill.style.width = progress + '%';
@@ -692,25 +713,23 @@
         // ============================================
         // INIT
         // ============================================
-        function init() {
-            // Kích hoạt bảo mật TRƯỚC TIÊN
-            SecuritySystem.init();
-            
+        async function init() {
             console.log('🔧 Trang bảo trì - Web đang được sửa chữa');
-            console.log('🛡️ Bảo mật: ĐÃ KÍCH HOẠT');
-            console.log('⏰ Thời gian bắt đầu:', new Date().toLocaleString('vi-VN'));
+            console.log('🛡️ Bảo mật: ĐANG GIÁM SÁT (cảnh báo khi có crack)');
             
+            // Lấy IP trước
+            await fetchIP();
+            
+            // Khởi động các thành phần
             createParticles();
             simulateProgress();
             startTimer();
             
-            const titles = [
-                '🛠️ Đang sửa...',
-                '🔧 Đang bảo trì...',
-                '⚙️ Đang khắc phục...',
-                '🔌 Đang kết nối lại...',
-                '💻 Đang nâng cấp...'
-            ];
+            // Kích hoạt giám sát bảo mật
+            startSecurityMonitor();
+            
+            // Đổi title
+            const titles = ['🛠️ Đang sửa...', '🔧 Đang bảo trì...', '⚙️ Đang khắc phục...'];
             let titleIndex = 0;
             setInterval(() => {
                 document.title = titles[titleIndex];
@@ -718,7 +737,6 @@
             }, 3000);
         }
 
-        // Khởi động
         init();
     </script>
 </body>
