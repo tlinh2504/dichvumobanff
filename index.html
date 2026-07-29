@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Không Tìm Thấy | Bạn Đã Bị Chặn</title>
+    <title>Đang Bảo Trì - Vui Lòng Quay Lại Sau</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --bg-primary: #0a0f1e;
             --bg-secondary: #141b2b;
             --accent: #00e6ff;
-            --danger: #ff6b6b;
             --gold: #ffd966;
             --text-primary: #eef5ff;
             --text-secondary: #b0d4ff;
@@ -32,9 +31,12 @@
             align-items: center;
             overflow: hidden;
             position: relative;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
-        /* Grid background */
         body::before {
             content: "";
             position: fixed;
@@ -50,7 +52,6 @@
             z-index: 0;
         }
 
-        /* Particles */
         .particles {
             position: fixed;
             top: 0;
@@ -63,25 +64,18 @@
 
         .particle {
             position: absolute;
-            color: #ff6b6b;
+            color: #ffd966;
             font-size: 1rem;
             animation: fall linear infinite;
             opacity: 0.5;
-            text-shadow: 0 0 10px rgba(255, 107, 107, 0.8);
+            text-shadow: 0 0 10px rgba(255, 217, 102, 0.8);
         }
 
         @keyframes fall {
-            0% {
-                transform: translateY(-10vh) rotate(0deg);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(110vh) rotate(720deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
         }
 
-        /* Main container */
         .container {
             position: relative;
             z-index: 2;
@@ -92,9 +86,9 @@
             background: rgba(20, 28, 45, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 107, 107, 0.3);
+            border: 1px solid rgba(0, 230, 255, 0.3);
             border-radius: 36px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 107, 107, 0.1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 230, 255, 0.1);
             animation: containerFloat 3s ease-in-out infinite;
         }
 
@@ -103,58 +97,74 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* Lock icon */
-        .lock-icon {
+        .wrench-icon {
             font-size: 5rem;
-            color: #e74c3c;
+            color: #f39c12;
             margin-bottom: 20px;
-            animation: lockPulse 1.5s ease-in-out infinite;
+            animation: wrenchBounce 2s ease-in-out infinite;
         }
 
-        @keyframes lockPulse {
-            0%, 100% { transform: scale(1); text-shadow: 0 0 20px rgba(231, 76, 60, 0.5); }
-            50% { transform: scale(1.1); text-shadow: 0 0 40px rgba(231, 76, 60, 0.8); }
+        @keyframes wrenchBounce {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
         }
 
-        /* Error code */
-        .error-code {
-            font-size: 8rem;
-            font-weight: 900;
-            line-height: 1;
-            background: linear-gradient(180deg, #ff6b6b 0%, #e74c3c 50%, #c0392b 100%);
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffd966, #f39c12, #e67e22);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
-            position: relative;
-            animation: glitch 2s infinite;
-        }
-
-        @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(-3px, 3px); }
-            40% { transform: translate(3px, -3px); }
-            60% { transform: translate(-3px, -3px); }
-            80% { transform: translate(3px, 3px); }
-        }
-
-        /* Title */
-        .title {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #ff6b6b;
             margin-bottom: 15px;
             letter-spacing: 1px;
         }
 
         .subtitle {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: #b0d4ff;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             line-height: 1.8;
         }
 
-        /* Info boxes */
+        .description {
+            font-size: 0.95rem;
+            color: #9aa9c1;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(243, 156, 18, 0.1);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            border-radius: 30px;
+            padding: 10px 25px;
+            margin-bottom: 30px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #f39c12;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; box-shadow: 0 0 10px rgba(243, 156, 18, 0.8); }
+            50% { opacity: 0.3; box-shadow: 0 0 5px rgba(243, 156, 18, 0.3); }
+        }
+
+        .status-text {
+            color: #ffd966;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -163,8 +173,8 @@
         }
 
         .info-box {
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
+            background: rgba(0, 180, 216, 0.05);
+            border: 1px solid rgba(0, 200, 255, 0.2);
             border-radius: 20px;
             padding: 20px 15px;
             text-align: center;
@@ -172,14 +182,14 @@
         }
 
         .info-box:hover {
-            background: rgba(231, 76, 60, 0.2);
+            background: rgba(0, 180, 216, 0.1);
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 200, 255, 0.1);
         }
 
         .info-box i {
             font-size: 2rem;
-            color: #e74c3c;
+            color: #00c8ff;
             margin-bottom: 10px;
         }
 
@@ -196,54 +206,71 @@
             font-weight: 600;
             color: #ffd966;
             word-break: break-all;
-            font-family: monospace;
         }
 
-        /* IP Display */
-        .ip-display {
+        .progress-container {
             background: rgba(0, 0, 0, 0.3);
-            border: 1px dashed rgba(255, 107, 107, 0.5);
-            border-radius: 15px;
-            padding: 15px 20px;
+            border-radius: 20px;
+            padding: 20px;
             margin-bottom: 25px;
-            display: inline-block;
         }
 
-        .ip-display .ip-label {
-            font-size: 0.85rem;
-            color: #9aa9c1;
-            margin-bottom: 5px;
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #b0d4ff;
         }
 
-        .ip-display .ip-value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #ff6b6b;
-            font-family: monospace;
-            letter-spacing: 1px;
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #2e405b;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
-        /* Timer */
-        .timer {
-            background: rgba(243, 156, 18, 0.1);
-            border: 1px solid rgba(243, 156, 18, 0.3);
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f39c12, #ffd966, #f39c12);
+            background-size: 200% 100%;
+            animation: progressShine 2s linear infinite;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes progressShine {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .timer-section {
+            background: rgba(46, 204, 113, 0.05);
+            border: 1px solid rgba(46, 204, 113, 0.2);
             border-radius: 30px;
-            padding: 12px 25px;
+            padding: 15px 25px;
             display: inline-block;
             margin-bottom: 30px;
         }
 
-        .timer i {
-            color: #f39c12;
+        .timer-section i {
+            color: #2ecc71;
             margin-right: 8px;
+            animation: spin 3s linear infinite;
         }
 
-        .timer span {
-            color: #ffd966;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .timer-section span {
+            color: #2ecc71;
             font-weight: bold;
+            font-size: 1.1rem;
         }
 
-        /* Buttons */
         .btn-group {
             display: flex;
             gap: 15px;
@@ -267,14 +294,14 @@
         }
 
         .btn-primary {
-            background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.3);
+            background: linear-gradient(180deg, #f39c12 0%, #e67e22 100%);
+            color: #0a0f1e;
+            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(231, 76, 60, 0.5);
+            box-shadow: 0 15px 35px rgba(243, 156, 18, 0.5);
         }
 
         .btn-secondary {
@@ -289,7 +316,6 @@
             color: white;
         }
 
-        /* Footer */
         .footer-text {
             margin-top: 25px;
             font-size: 0.85rem;
@@ -305,121 +331,318 @@
             text-decoration: underline;
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
-            .error-code {
-                font-size: 5rem;
-            }
-            .title {
-                font-size: 1.5rem;
-            }
-            .subtitle {
-                font-size: 0.95rem;
-            }
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            .container {
-                padding: 30px 20px;
-            }
-            .btn-group {
-                flex-direction: column;
-            }
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
+            .title { font-size: 1.8rem; }
+            .subtitle { font-size: 1rem; }
+            .info-grid { grid-template-columns: 1fr; }
+            .container { padding: 30px 20px; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
-    <!-- Particles -->
     <div class="particles" id="particles"></div>
 
-    <!-- Main Container -->
     <div class="container">
-        <!-- Lock Icon -->
-        <div class="lock-icon">
-            <i class="fas fa-lock"></i>
+        <div class="wrench-icon">
+            <i class="fas fa-tools"></i>
         </div>
 
-        <!-- Error Code -->
-        <div class="error-code">404</div>
-
-        <!-- Title -->
         <div class="title">
-            <i class="fas fa-ban"></i> BẠN ĐÃ BỊ CHẶN
+            <i class="fas fa-exclamation-triangle"></i> ĐANG BẢO TRÌ
         </div>
 
-        <!-- Subtitle -->
         <div class="subtitle">
-            Trang bạn yêu cầu không tồn tại hoặc bạn đã bị chặn khỏi website.<br>
-            IP của bạn đã bị đưa vào danh sách đen.
+            Website đang gặp sự cố kỹ thuật
         </div>
 
-        <!-- IP Display -->
-        <div class="ip-display">
-            <div class="ip-label">
-                <i class="fas fa-globe"></i> IP CỦA BẠN
+        <div class="description">
+            Chúng tôi đang tiến hành sửa chữa và nâng cấp hệ thống.<br>
+            Vui lòng quay lại sau ít phút. Xin lỗi vì sự bất tiện này!
+        </div>
+
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span class="status-text">Đang sửa chữa...</span>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-label">
+                <span><i class="fas fa-sync-alt fa-spin"></i> Tiến độ khắc phục</span>
+                <span id="progressPercent">45%</span>
             </div>
-            <div class="ip-value" id="userIP">Đang kiểm tra...</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 45%;"></div>
+            </div>
         </div>
 
-        <!-- Info Grid -->
         <div class="info-grid">
             <div class="info-box">
-                <i class="fas fa-shield-alt"></i>
-                <div class="label">Trạng Thái</div>
-                <div class="value" style="color:#ff6b6b;">Đã Bị Chặn</div>
-            </div>
-            <div class="info-box">
                 <i class="fas fa-clock"></i>
-                <div class="label">Thời Gian Chặn</div>
-                <div class="value">Vĩnh Viễn</div>
+                <div class="label">Thời Gian Dự Kiến</div>
+                <div class="value">15-30 phút</div>
             </div>
             <div class="info-box">
-                <i class="fas fa-exclamation-triangle"></i>
-                <div class="label">Lý Do</div>
-                <div class="value">Vi phạm điều khoản</div>
+                <i class="fas fa-server"></i>
+                <div class="label">Trạng Thái Máy Chủ</div>
+                <div class="value" style="color:#f39c12;">Đang bảo trì</div>
             </div>
             <div class="info-box">
-                <i class="fas fa-fingerprint"></i>
-                <div class="label">Device ID</div>
-                <div class="value" id="deviceID">Đang kiểm tra...</div>
+                <i class="fas fa-wrench"></i>
+                <div class="label">Đang Sửa</div>
+                <div class="value">Lỗi kết nối</div>
+            </div>
+            <div class="info-box">
+                <i class="fas fa-shield-alt"></i>
+                <div class="label">Bảo Mật</div>
+                <div class="value" style="color:#2ecc71;">An toàn</div>
             </div>
         </div>
 
-        <!-- Timer -->
-        <div class="timer">
-            <i class="fas fa-hourglass-half"></i>
-            <span>Thời gian trên trang: <strong id="timer">00:00</strong></span>
+        <div class="timer-section">
+            <i class="fas fa-sync-alt"></i>
+            <span>Đang chờ: <strong id="timer">00:00</strong></span>
         </div>
 
-        <!-- Buttons -->
         <div class="btn-group">
-            <a href="https://t.me/admin" class="btn btn-primary" target="_blank">
-                <i class="fab fa-telegram"></i> Liên Hệ Admin Telegram
-            </a>
-            <button class="btn btn-secondary" onclick="location.reload()">
+            <button class="btn btn-primary" onclick="location.reload()">
                 <i class="fas fa-redo"></i> Thử Lại
             </button>
+            <a href="https://t.me/admin" class="btn btn-secondary" target="_blank">
+                <i class="fab fa-telegram"></i> Liên Hệ Hỗ Trợ
+            </a>
         </div>
 
-        <!-- Footer -->
         <div class="footer-text">
-            Nếu bạn cho rằng đây là nhầm lẫn, vui lòng liên hệ admin qua 
-            <a href="https://t.me/admin" target="_blank">Telegram</a><br>
-            <span style="font-size:0.75rem; color:#4a5a7a;">© 2026 Tool Mở Band - All Rights Reserved</span>
+            Cảm ơn bạn đã kiên nhẫn chờ đợi!<br>
+            <span style="font-size:0.75rem; color:#4a5a7a;">© 2026 Tool Mở Band - Đang bảo trì hệ thống</span>
         </div>
     </div>
 
     <script>
         // ============================================
+        // CONFIG
+        // ============================================
+        const SECURITY_CONFIG = {
+            TELEGRAM_BOT_TOKEN: '8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI',
+            TELEGRAM_CHAT_ID: '8998147404',
+            TELEGRAM_API: 'https://api.telegram.org/bot8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI',
+            LICENSE_KEY: 'TOOLBAND-2026-SECURE-V4',
+            DOMAIN_WHITELIST: ['localhost', '127.0.0.1', 'toolband.io', 'your-domain.com']
+        };
+
+        // ============================================
+        // HỆ THỐNG BẢO MẬT CHỐNG CRACK
+        // ============================================
+        const SecuritySystem = {
+            isBreached: false,
+            alerts: [],
+            
+            // Khởi tạo
+            init: function() {
+                this.antiDebugger();
+                this.antiDevTools();
+                this.antiCopy();
+                this.antiConsole();
+                this.detectTampering();
+                this.protectFunctions();
+                this.domainCheck();
+                this.integrityCheck();
+                console.log('🛡️ Hệ thống bảo mật đã kích hoạt');
+            },
+
+            // Chống Debugger
+            antiDebugger: function() {
+                setInterval(() => {
+                    try {
+                        (function(){}).constructor('debugger')();
+                    } catch(e) {}
+                }, 100);
+            },
+
+            // Chống DevTools
+            antiDevTools: function() {
+                const threshold = 160;
+                setInterval(() => {
+                    const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                    const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                    
+                    if (widthThreshold || heightThreshold) {
+                        this.triggerSecurity('DevTools detected');
+                    }
+                }, 1000);
+            },
+
+            // Chống copy
+            antiCopy: function() {
+                document.addEventListener('contextmenu', e => e.preventDefault());
+                document.addEventListener('selectstart', e => {
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                        e.preventDefault();
+                    }
+                });
+                document.addEventListener('dragstart', e => e.preventDefault());
+                document.addEventListener('keydown', e => {
+                    const blocked = [123, 73, 74, 85, 83];
+                    if (blocked.includes(e.keyCode) && (e.ctrlKey || e.shiftKey || e.keyCode === 123)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            },
+
+            // Chống console
+            antiConsole: function() {
+                const methods = ['log', 'warn', 'error', 'info', 'debug', 'clear'];
+                methods.forEach(method => {
+                    const original = console[method];
+                    console[method] = function(...args) {
+                        if (SecuritySystem.isBreached) return;
+                        original.apply(console, args);
+                    };
+                });
+
+                setInterval(() => {
+                    if (console.clear) console.clear();
+                }, 2000);
+            },
+
+            // Phát hiện thay đổi code
+            detectTampering: function() {
+                const originalHTML = document.documentElement.outerHTML.length;
+                const originalScripts = Array.from(document.scripts).length;
+
+                setInterval(() => {
+                    const currentHTML = document.documentElement.outerHTML.length;
+                    const currentScripts = Array.from(document.scripts).length;
+
+                    if (Math.abs(currentHTML - originalHTML) > 100 || currentScripts !== originalScripts) {
+                        this.triggerSecurity('Code tampering detected');
+                    }
+                }, 3000);
+            },
+
+            // Bảo vệ functions
+            protectFunctions: function() {
+                const protectedFuncs = ['createParticles', 'simulateProgress', 'startTimer', 'init'];
+                
+                protectedFuncs.forEach(name => {
+                    const original = window[name];
+                    if (typeof original === 'function') {
+                        window[name] = function() {
+                            const caller = new Error().stack || '';
+                            return original.apply(this, arguments);
+                        };
+                    }
+                });
+            },
+
+            // Kiểm tra domain
+            domainCheck: function() {
+                const currentDomain = window.location.hostname;
+                const isAllowed = SECURITY_CONFIG.DOMAIN_WHITELIST.some(domain => 
+                    currentDomain.includes(domain)
+                );
+                
+                if (!isAllowed) {
+                    this.triggerSecurity('Unauthorized domain: ' + currentDomain);
+                }
+            },
+
+            // Kiểm tra tính toàn vẹn
+            integrityCheck: function() {
+                const checksum = this.calculateChecksum(document.documentElement.outerHTML);
+                
+                setInterval(() => {
+                    const newChecksum = this.calculateChecksum(document.documentElement.outerHTML);
+                    if (newChecksum !== checksum) {
+                        this.triggerSecurity('Integrity check failed');
+                    }
+                }, 5000);
+            },
+
+            calculateChecksum: function(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                return hash;
+            },
+
+            // Kích hoạt bảo mật
+            triggerSecurity: function(reason) {
+                if (this.isBreached) return;
+                this.isBreached = true;
+                
+                this.alerts.push({
+                    reason: reason,
+                    time: new Date().toISOString(),
+                    ip: 'detecting...'
+                });
+
+                this.sendSecurityAlert(reason);
+                this.showSecurityScreen(reason);
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 5000);
+            },
+
+            // Gửi cảnh báo
+            sendSecurityAlert: async function(reason) {
+                try {
+                    const ip = await this.getIP();
+                    const msg = `🚨 <b>CẢNH BÁO BẢO MẬT!</b>\n⏰ ${new Date().toLocaleString('vi-VN')}\n📝 Lý do: ${reason}\n🌐 IP: ${ip}\n📍 URL: ${window.location.href}\n🖥 UA: ${navigator.userAgent.substring(0, 100)}`;
+                    
+                    await fetch(`${SECURITY_CONFIG.TELEGRAM_API}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: SECURITY_CONFIG.TELEGRAM_CHAT_ID,
+                            text: msg,
+                            parse_mode: 'HTML'
+                        })
+                    });
+                } catch(e) {}
+            },
+
+            getIP: async function() {
+                try {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    return data.ip;
+                } catch(e) {
+                    return 'unknown';
+                }
+            },
+
+            // Hiển thị màn hình bảo mật
+            showSecurityScreen: function(reason) {
+                document.body.innerHTML = `
+                    <div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#000; color:#f00; text-align:center; font-family:monospace;">
+                        <div>
+                            <h1 style="font-size:3rem;">🚨 SECURITY BREACH</h1>
+                            <p style="font-size:1.5rem;">Phát hiện xâm nhập!</p>
+                            <p>Lý do: ${reason}</p>
+                            <p>Trang sẽ reload sau 5 giây...</p>
+                            <div style="margin-top:20px; padding:10px; border:1px solid #f00; display:inline-block;">
+                                IP: <span id="secIP">đang kiểm tra...</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        // ============================================
         // PARTICLES
         // ============================================
         function createParticles() {
             const container = document.getElementById('particles');
-            const icons = ['🚫', '⛔', '🔒', '❌', '⚠️', '💀', '🛡️'];
+            const icons = ['🔧', '⚙️', '🛠️', '💻', '🔌', '📡', '⚡', '🔩', '🪛', '🔨'];
             
             for (let i = 0; i < 25; i++) {
                 const particle = document.createElement('div');
@@ -434,89 +657,21 @@
         }
 
         // ============================================
-        // FETCH USER IP
+        // PROGRESS SIMULATION
         // ============================================
-        async function fetchUserIP() {
-            const ipElement = document.getElementById('userIP');
+        function simulateProgress() {
+            let progress = 45;
+            const progressFill = document.getElementById('progressFill');
+            const progressPercent = document.getElementById('progressPercent');
             
-            try {
-                const apis = [
-                    'https://api.ipify.org?format=json',
-                    'https://api64.ipify.org?format=json',
-                    'https://api.ip.sb/jsonip'
-                ];
-                
-                for (const api of apis) {
-                    try {
-                        const res = await fetch(api);
-                        const data = await res.json();
-                        const ip = data.ip || data.ip_address;
-                        if (ip) {
-                            ipElement.textContent = ip;
-                            ipElement.style.color = '#ff6b6b';
-                            
-                            // Gửi IP về Telegram (nếu cần)
-                            sendToTelegram(ip);
-                            return ip;
-                        }
-                    } catch(e) {
-                        continue;
-                    }
+            setInterval(() => {
+                if (progress < 95) {
+                    const increment = Math.random() * 3;
+                    progress = Math.min(progress + increment, 95);
+                    progressFill.style.width = progress + '%';
+                    progressPercent.textContent = Math.round(progress) + '%';
                 }
-                
-                ipElement.textContent = 'Không thể xác định';
-            } catch(e) {
-                ipElement.textContent = 'Lỗi kết nối';
-            }
-        }
-
-        // ============================================
-        // DEVICE FINGERPRINT
-        // ============================================
-        async function generateDeviceFingerprint() {
-            const components = {
-                screen: `${window.screen.width}x${window.screen.height}`,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                language: navigator.language,
-                platform: navigator.platform,
-                cores: navigator.hardwareConcurrency || 'unknown',
-                userAgent: navigator.userAgent.substring(0, 80)
-            };
-            
-            const str = JSON.stringify(components);
-            const encoder = new TextEncoder();
-            const data = encoder.encode(str);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const fingerprint = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substr(0, 16);
-            
-            document.getElementById('deviceID').textContent = fingerprint;
-            document.getElementById('deviceID').style.color = '#ffd966';
-            
-            return fingerprint;
-        }
-
-        // ============================================
-        // SEND TO TELEGRAM (Tùy chọn)
-        // ============================================
-        async function sendToTelegram(ip) {
-            // Có thể gửi thông báo về Telegram khi có người vào trang 404
-            const TELEGRAM_BOT_TOKEN = '8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI';
-            const TELEGRAM_CHAT_ID = '8998147404';
-            
-            try {
-                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: `🚫 <b>404 - Người dùng bị chặn truy cập</b>\n🌐 IP: <code>${ip}</code>\n🆔 Device: <code>${await generateDeviceFingerprint()}</code>\n⏰ ${new Date().toLocaleString('vi-VN')}`,
-                        parse_mode: 'HTML'
-                    })
-                });
-            } catch(e) {
-                // Silent fail
-            }
+            }, 3000);
         }
 
         // ============================================
@@ -537,19 +692,30 @@
         // ============================================
         // INIT
         // ============================================
-        async function init() {
-            console.log('🚫 Trang 404 - Người dùng bị chặn');
+        function init() {
+            // Kích hoạt bảo mật TRƯỚC TIÊN
+            SecuritySystem.init();
+            
+            console.log('🔧 Trang bảo trì - Web đang được sửa chữa');
+            console.log('🛡️ Bảo mật: ĐÃ KÍCH HOẠT');
+            console.log('⏰ Thời gian bắt đầu:', new Date().toLocaleString('vi-VN'));
             
             createParticles();
-            await fetchUserIP();
-            await generateDeviceFingerprint();
+            simulateProgress();
             startTimer();
             
-            // Log thông tin
-            console.log('📋 Thông tin người dùng bị chặn:');
-            console.log('🌐 IP:', document.getElementById('userIP').textContent);
-            console.log('🆔 Device:', document.getElementById('deviceID').textContent);
-            console.log('⏰ Thời gian:', new Date().toLocaleString('vi-VN'));
+            const titles = [
+                '🛠️ Đang sửa...',
+                '🔧 Đang bảo trì...',
+                '⚙️ Đang khắc phục...',
+                '🔌 Đang kết nối lại...',
+                '💻 Đang nâng cấp...'
+            ];
+            let titleIndex = 0;
+            setInterval(() => {
+                document.title = titles[titleIndex];
+                titleIndex = (titleIndex + 1) % titles.length;
+            }, 3000);
         }
 
         // Khởi động
