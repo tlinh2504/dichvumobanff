@@ -33,10 +33,7 @@
       min-height: 100vh;
     }
 
-    .admin-container {
-      display: flex;
-      min-height: 100vh;
-    }
+    .admin-container { display: flex; min-height: 100vh; }
 
     .sidebar {
       width: 280px;
@@ -73,13 +70,13 @@
       padding: 12px 16px;
       border-radius: 12px;
       color: var(--text-secondary);
-      text-decoration: none;
-      transition: all 0.3s;
       cursor: pointer;
       border: none;
       background: none;
       width: 100%;
       font-size: 0.95rem;
+      transition: all 0.3s;
+      margin-bottom: 5px;
     }
 
     .nav-link:hover, .nav-link.active {
@@ -94,12 +91,13 @@
       border-radius: 10px;
       font-size: 0.75rem;
       margin-left: auto;
+      color: white;
     }
 
-    .badge.warning { background: var(--warning); color: white; }
-    .badge.info { background: var(--info); color: white; }
-    .badge.success { background: var(--success); color: white; }
-    .badge.danger { background: var(--danger); color: white; }
+    .badge.warning { background: var(--warning); }
+    .badge.info { background: var(--info); }
+    .badge.success { background: var(--success); }
+    .badge.danger { background: var(--danger); }
 
     .main-content {
       flex: 1;
@@ -116,14 +114,7 @@
       gap: 15px;
     }
 
-    .search-box {
-      display: flex;
-      gap: 10px;
-      flex: 1;
-      max-width: 500px;
-    }
-
-    .search-input, .form-control {
+    .search-input {
       padding: 10px 18px;
       border-radius: 25px;
       border: 1px solid rgba(255,255,255,0.2);
@@ -131,20 +122,11 @@
       color: white;
       font-size: 0.9rem;
       outline: none;
+      flex: 1;
+      max-width: 400px;
     }
 
-    .search-input:focus, .form-control:focus {
-      border-color: var(--accent);
-    }
-
-    select.form-control {
-      cursor: pointer;
-    }
-
-    select.form-control option {
-      background: var(--bg-secondary);
-      color: white;
-    }
+    .search-input:focus { border-color: var(--accent); }
 
     .btn {
       padding: 10px 20px;
@@ -180,11 +162,10 @@
       border-radius: 16px;
       padding: 20px;
       text-align: center;
-      backdrop-filter: blur(10px);
     }
 
     .stat-card i { font-size: 2rem; margin-bottom: 10px; }
-    .stat-value { font-size: 2rem; font-weight: 700; margin: 5px 0; }
+    .stat-value { font-size: 2rem; font-weight: 700; }
     .stat-label { color: var(--text-secondary); font-size: 0.85rem; }
 
     .stat-card.pending .stat-value { color: var(--warning); }
@@ -221,14 +202,10 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 16px;
-      overflow: hidden;
       overflow-x: auto;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
 
     th {
       background: rgba(0, 119, 255, 0.1);
@@ -236,7 +213,6 @@
       text-align: left;
       font-size: 0.85rem;
       color: var(--accent);
-      font-weight: 600;
       white-space: nowrap;
     }
 
@@ -253,7 +229,6 @@
       border-radius: 15px;
       font-size: 0.8rem;
       font-weight: 600;
-      display: inline-block;
     }
 
     .status-pending { background: rgba(243, 156, 18, 0.2); color: #f39c12; }
@@ -303,8 +278,16 @@
     }
 
     .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; color: var(--text-secondary); font-weight: 600; }
-    .form-control { width: 100%; }
+    .form-group label { display: block; margin-bottom: 5px; color: var(--text-secondary); }
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      outline: none;
+    }
 
     .detail-grid {
       display: grid;
@@ -326,7 +309,6 @@
       align-items: center;
       gap: 8px;
       font-size: 0.85rem;
-      color: var(--text-secondary);
     }
 
     .sync-dot {
@@ -349,19 +331,6 @@
 
     .empty-state i { font-size: 4rem; margin-bottom: 20px; }
 
-    .live-indicator {
-      display: inline-block;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: #2ecc71;
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
     .notification-toast {
       position: fixed;
       top: 20px;
@@ -371,11 +340,7 @@
     }
 
     @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        position: relative;
-        height: auto;
-      }
+      .sidebar { width: 100%; position: relative; height: auto; }
       .main-content { margin-left: 0; }
       .admin-container { flex-direction: column; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -387,16 +352,11 @@
   <div id="notificationContainer" class="notification-toast"></div>
 
   <div class="admin-container">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <i class="fas fa-shield-haltered" style="font-size:2.5rem; color:#00e6ff;"></i>
         <h2>Admin Panel</h2>
         <p style="color:#9aa9c1; font-size:0.85rem;">Tool Mở Band | 24/7</p>
-        <div class="sync-indicator" style="justify-content:center; margin-top:5px;">
-          <span class="live-indicator"></span>
-          <span>Live</span>
-        </div>
       </div>
 
       <nav style="flex:1;">
@@ -426,71 +386,40 @@
       <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);">
         <div class="sync-indicator">
           <span class="sync-dot" id="syncDot"></span>
-          <span id="syncStatus">Đồng bộ...</span>
+          <span>Đồng bộ: <strong id="syncStatus">OK</strong></span>
         </div>
         <small style="color:#9aa9c1;" id="lastSyncTime"></small>
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
       <div class="top-bar">
         <h1 id="pageTitle">📊 Dashboard</h1>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <div class="search-box">
-            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm..." oninput="handleSearch()">
-          </div>
+          <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm..." oninput="handleSearch()">
           <button class="btn btn-primary btn-sm" onclick="exportData()"><i class="fas fa-download"></i> Xuất</button>
           <button class="btn btn-warning btn-sm" onclick="importData()"><i class="fas fa-upload"></i> Nhập</button>
           <button class="btn btn-danger btn-sm" onclick="clearAllData()"><i class="fas fa-trash"></i></button>
-          <button class="btn btn-primary btn-sm" onclick="window.open('index.html', '_blank')">
-            <i class="fas fa-external-link-alt"></i> Mở Tool
-          </button>
+          <button class="btn btn-primary btn-sm" onclick="window.open('index.html', '_blank')"><i class="fas fa-external-link-alt"></i> Tool</button>
         </div>
       </div>
 
-      <!-- Dashboard Page -->
+      <!-- Dashboard -->
       <div id="page-dashboard" class="page-content">
         <div class="stats-grid">
-          <div class="stat-card pending">
-            <i class="fas fa-clock"></i>
-            <div class="stat-value" id="statPending">0</div>
-            <div class="stat-label">Chờ duyệt</div>
-          </div>
-          <div class="stat-card processing">
-            <i class="fas fa-spinner"></i>
-            <div class="stat-value" id="statProcessing">0</div>
-            <div class="stat-label">Đang xử lý</div>
-          </div>
-          <div class="stat-card completed">
-            <i class="fas fa-check-circle"></i>
-            <div class="stat-value" id="statCompleted">0</div>
-            <div class="stat-label">Hoàn thành</div>
-          </div>
-          <div class="stat-card revenue">
-            <i class="fas fa-dollar-sign"></i>
-            <div class="stat-value" id="statRevenue">0đ</div>
-            <div class="stat-label">Doanh thu</div>
-          </div>
-          <div class="stat-card visitors">
-            <i class="fas fa-user-friends"></i>
-            <div class="stat-value" id="statVisitors">0</div>
-            <div class="stat-label">Khách hôm nay</div>
-          </div>
+          <div class="stat-card pending"><i class="fas fa-clock"></i><div class="stat-value" id="statPending">0</div><div class="stat-label">Chờ duyệt</div></div>
+          <div class="stat-card processing"><i class="fas fa-spinner"></i><div class="stat-value" id="statProcessing">0</div><div class="stat-label">Đang xử lý</div></div>
+          <div class="stat-card completed"><i class="fas fa-check-circle"></i><div class="stat-value" id="statCompleted">0</div><div class="stat-label">Hoàn thành</div></div>
+          <div class="stat-card revenue"><i class="fas fa-dollar-sign"></i><div class="stat-value" id="statRevenue">0đ</div><div class="stat-label">Doanh thu</div></div>
+          <div class="stat-card visitors"><i class="fas fa-user-friends"></i><div class="stat-value" id="statVisitors">0</div><div class="stat-label">Khách hôm nay</div></div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-          <div class="table-container">
-            <h3 style="padding:15px;">📋 Đơn mới nhất</h3>
-            <div id="recentOrders"></div>
-          </div>
-          <div class="table-container">
-            <h3 style="padding:15px;">👥 Khách mới nhất</h3>
-            <div id="recentVisitors"></div>
-          </div>
+          <div class="table-container"><h3 style="padding:15px;">📋 Đơn mới</h3><div id="recentOrders"></div></div>
+          <div class="table-container"><h3 style="padding:15px;">👥 Khách mới</h3><div id="recentVisitors"></div></div>
         </div>
       </div>
 
-      <!-- Orders Page -->
+      <!-- Orders -->
       <div id="page-orders" class="page-content" style="display:none;">
         <div class="tabs">
           <button class="tab active" data-filter="all" onclick="filterOrders('all')">Tất cả</button>
@@ -499,59 +428,36 @@
           <button class="tab" data-filter="completed" onclick="filterOrders('completed')">Hoàn thành</button>
           <button class="tab" data-filter="rejected" onclick="filterOrders('rejected')">Từ chối</button>
         </div>
-        <div class="table-container">
-          <div id="ordersTable"></div>
-        </div>
+        <div class="table-container"><div id="ordersTable"></div></div>
       </div>
 
-      <!-- Visitors Page -->
+      <!-- Visitors -->
       <div id="page-visitors" class="page-content" style="display:none;">
         <h2 style="margin-bottom:20px;">👥 Người truy cập</h2>
-        <div class="table-container">
-          <div id="visitorsTable"></div>
-        </div>
+        <div class="table-container"><div id="visitorsTable"></div></div>
       </div>
 
-      <!-- Banned IPs Page -->
+      <!-- Banned IPs -->
       <div id="page-banned" class="page-content" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
           <h2>🚫 IP Bị Cấm</h2>
-          <button class="btn btn-danger" onclick="showBanModal()">
-            <i class="fas fa-ban"></i> Cấm IP
-          </button>
+          <button class="btn btn-danger" onclick="showBanModal()"><i class="fas fa-ban"></i> Cấm IP</button>
         </div>
-        <div class="table-container">
-          <div id="bannedTable"></div>
-        </div>
+        <div class="table-container"><div id="bannedTable"></div></div>
       </div>
 
-      <!-- Logs Page -->
+      <!-- Logs -->
       <div id="page-logs" class="page-content" style="display:none;">
-        <h2 style="margin-bottom:20px;">📝 Nhật ký hoạt động</h2>
-        <div class="table-container">
-          <div id="logsTable"></div>
-        </div>
+        <h2 style="margin-bottom:20px;">📝 Nhật ký</h2>
+        <div class="table-container"><div id="logsTable"></div></div>
       </div>
 
-      <!-- Settings Page -->
+      <!-- Settings -->
       <div id="page-settings" class="page-content" style="display:none;">
         <h2 style="margin-bottom:20px;">⚙️ Cài đặt</h2>
         <div class="table-container" style="padding:20px;">
-          <div class="form-group">
-            <label>Thời gian xử lý mặc định (phút)</label>
-            <input type="number" class="form-control" id="settingDefaultTime" value="30">
-          </div>
-          <div class="form-group">
-            <label>Thời gian đồng bộ (giây)</label>
-            <input type="number" class="form-control" id="settingSyncInterval" value="5">
-          </div>
-          <div class="form-group">
-            <label>Tự động duyệt đơn</label>
-            <select class="form-control" id="settingAutoApprove">
-              <option value="false">Tắt</option>
-              <option value="true">Bật</option>
-            </select>
-          </div>
+          <div class="form-group"><label>Thời gian xử lý (phút)</label><input type="number" class="form-control" id="settingDefaultTime" value="30"></div>
+          <div class="form-group"><label>Đồng bộ (giây)</label><input type="number" class="form-control" id="settingSyncInterval" value="5"></div>
           <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Lưu</button>
         </div>
       </div>
@@ -561,40 +467,22 @@
   <!-- Detail Modal -->
   <div class="modal" id="detailModal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h2>📋 Chi tiết</h2>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
-      </div>
+      <div class="modal-header"><h2>📋 Chi tiết</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
       <div id="modalContent"></div>
     </div>
   </div>
 
-  <!-- Ban IP Modal -->
+  <!-- Ban Modal -->
   <div class="modal" id="banModal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h2>🚫 Cấm IP</h2>
-        <button class="close-btn" onclick="closeBanModal()">&times;</button>
-      </div>
-      <div class="form-group">
-        <label>Địa chỉ IP</label>
-        <input type="text" class="form-control" id="banIpInput" placeholder="Nhập IP cần cấm...">
-      </div>
-      <div class="form-group">
-        <label>Lý do cấm</label>
-        <input type="text" class="form-control" id="banReasonInput" placeholder="Lý do...">
-      </div>
-      <button class="btn btn-danger" onclick="banIP()" style="width:100%;">
-        <i class="fas fa-ban"></i> Cấm IP
-      </button>
+      <div class="modal-header"><h2>🚫 Cấm IP</h2><button class="close-btn" onclick="closeBanModal()">&times;</button></div>
+      <div class="form-group"><label>IP</label><input type="text" class="form-control" id="banIpInput"></div>
+      <div class="form-group"><label>Lý do</label><input type="text" class="form-control" id="banReasonInput"></div>
+      <button class="btn btn-danger" onclick="banIP()" style="width:100%;">Cấm IP</button>
     </div>
   </div>
 
   <script>
-    // ============================================
-    // ADMIN PANEL
-    // ============================================
-    
     let syncManager = null;
     let currentPage = 'dashboard';
     let currentFilter = 'all';
@@ -605,57 +493,38 @@
     let searchQuery = '';
 
     async function initAdmin() {
-      // Login check
       const isLoggedIn = sessionStorage.getItem('admin_authenticated');
       if (!isLoggedIn) {
         const { value: password } = await Swal.fire({
           title: '🔐 Đăng nhập Admin',
           input: 'password',
-          inputLabel: 'Mật khẩu admin',
-          inputPlaceholder: 'Nhập mật khẩu...',
+          inputPlaceholder: 'Mật khẩu...',
           confirmButtonText: 'Đăng nhập',
           allowOutsideClick: false
         });
-
         if (password === '10082009') {
           sessionStorage.setItem('admin_authenticated', 'true');
-          Swal.fire({ icon: 'success', title: '✅ Đăng nhập thành công!', timer: 1500 });
         } else {
-          Swal.fire({ icon: 'error', title: '❌ Sai mật khẩu!', text: 'Tải lại trang để thử lại.' });
+          Swal.fire('❌', 'Sai mật khẩu!', 'error');
           return;
         }
       }
 
-      // Init sync manager
       syncManager = new SyncManager();
-      
-      // Load data
       await loadAllData();
-      
-      // Listen for real-time updates
-      setupRealtimeListeners();
-      
-      // Auto refresh
-      setInterval(loadAllData, 5000);
-      
-      // Update sync status
+      setInterval(loadAllData, 3000);
       updateSyncStatus();
       setInterval(updateSyncStatus, 10000);
     }
 
     async function loadAllData() {
       if (!syncManager) return;
-      
-      allOrders = await syncManager.getAllOrders();
+      allOrders = syncManager.getFromLocalStorage('orders', []);
       allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      
-      allVisitors = await syncManager.getAllVisitors();
+      allVisitors = syncManager.getFromLocalStorage('visitors', []);
       allVisitors.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      
-      allLogs = await syncManager.getLogs(100);
-      
-      bannedIPs = await syncManager.getAllBannedIPs();
-      
+      allLogs = syncManager.getFromLocalStorage('logs', []);
+      bannedIPs = syncManager.getFromLocalStorage('bannedIps', []);
       updateUI();
     }
 
@@ -668,18 +537,15 @@
     function updateStats() {
       const now = new Date();
       const todayVisitors = allVisitors.filter(v => {
-        const d = new Date(v.timestamp);
-        return d.toDateString() === now.toDateString();
+        try { return new Date(v.timestamp).toDateString() === now.toDateString(); }
+        catch(e) { return false; }
       });
-      
-      const uniqueIPs = new Set(todayVisitors.map(v => v.ip));
-      
+      const uniqueIPs = new Set(todayVisitors.map(v => v.ip).filter(ip => ip && ip !== 'unknown'));
+
       document.getElementById('statPending').textContent = allOrders.filter(o => o.status === 'pending').length;
       document.getElementById('statProcessing').textContent = allOrders.filter(o => o.status === 'processing').length;
       document.getElementById('statCompleted').textContent = allOrders.filter(o => o.status === 'completed').length;
-      document.getElementById('statRevenue').textContent = formatMoney(
-        allOrders.filter(o => o.status === 'completed').reduce((s, o) => s + (o.price || 0), 0)
-      );
+      document.getElementById('statRevenue').textContent = formatMoney(allOrders.filter(o => o.status === 'completed').reduce((s, o) => s + (parseInt(o.price) || 0), 0));
       document.getElementById('statVisitors').textContent = uniqueIPs.size;
     }
 
@@ -690,70 +556,27 @@
     }
 
     function updateSyncStatus() {
-      document.getElementById('lastSyncTime').textContent = 
-        'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
+      document.getElementById('lastSyncTime').textContent = 'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
     }
 
-    function setupRealtimeListeners() {
-      // Lắng nghe order mới
-      const originalAddOrder = syncManager.addOrder.bind(syncManager);
-      syncManager.addOrder = async function(data) {
-        const result = await originalAddOrder(data);
-        await loadAllData();
-        showNotification('🆕 Đơn hàng mới', `#${data.orderId} - ${data.game}`);
-        return result;
-      };
-
-      // Lắng nghe visitor mới
-      const originalAddVisitor = syncManager.addVisitor.bind(syncManager);
-      syncManager.addVisitor = async function(data) {
-        const result = await originalAddVisitor(data);
-        await loadAllData();
-        return result;
-      };
-    }
-
-    function showNotification(title, message) {
+    window.showNotification = function(title, message) {
       const container = document.getElementById('notificationContainer');
       const toast = document.createElement('div');
-      toast.style.cssText = `
-        background: #141b2b; border: 1px solid #00e6ff; border-radius: 12px;
-        padding: 12px 18px; margin-bottom: 10px; animation: fadeIn 0.3s;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-      `;
+      toast.style.cssText = 'background:#141b2b; border:1px solid #00e6ff; border-radius:12px; padding:12px 18px; margin-bottom:10px;';
       toast.innerHTML = `<strong>${title}</strong><br><small>${message}</small>`;
       container.appendChild(toast);
-      
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s';
-        setTimeout(() => toast.remove(), 300);
-      }, 4000);
-    }
-
-    // Make showNotification available globally
-    window.showNotification = showNotification;
+      setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 4000);
+    };
 
     function switchPage(page) {
       currentPage = page;
-      
       document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
       document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
-      
-      const titles = {
-        dashboard: '📊 Dashboard',
-        orders: '📋 Quản lý đơn hàng',
-        visitors: '👥 Người truy cập',
-        banned: '🚫 IP Bị Cấm',
-        logs: '📝 Nhật ký',
-        settings: '⚙️ Cài đặt'
-      };
+      const titles = { dashboard: '📊 Dashboard', orders: '📋 Đơn hàng', visitors: '👥 Người truy cập', banned: '🚫 IP Bị Cấm', logs: '📝 Nhật ký', settings: '⚙️ Cài đặt' };
       document.getElementById('pageTitle').textContent = titles[page] || '';
-      
       document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
-      const pageEl = document.getElementById(`page-${page}`);
-      if (pageEl) pageEl.style.display = 'block';
-      
+      const el = document.getElementById(`page-${page}`);
+      if (el) el.style.display = 'block';
       renderCurrentPage();
     }
 
@@ -768,41 +591,16 @@
     }
 
     function renderDashboard() {
-      // Recent orders
-      const recentOrders = allOrders.slice(0, 5);
-      document.getElementById('recentOrders').innerHTML = recentOrders.length ? `
-        <table>
-          <thead><tr><th>ID</th><th>UID</th><th>Game</th><th>Status</th><th>Time</th></tr></thead>
-          <tbody>
-            ${recentOrders.map(o => `
-              <tr>
-                <td><strong>#${o.orderId}</strong></td>
-                <td>${o.uid || 'N/A'}</td>
-                <td>${o.game || 'N/A'}</td>
-                <td><span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></td>
-                <td><small>${formatTime(o.createdAt)}</small></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      ` : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Chưa có đơn hàng</p></div>';
+      const recent = allOrders.slice(0, 5);
+      document.getElementById('recentOrders').innerHTML = recent.length ? `
+        <table><thead><tr><th>ID</th><th>UID</th><th>Game</th><th>Status</th></tr></thead>
+        <tbody>${recent.map(o => `<tr><td>#${o.orderId}</td><td>${o.uid||'N/A'}</td><td>${o.game||'N/A'}</td><td><span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></td></tr>`).join('')}</tbody></table>
+      ` : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Chưa có đơn</p></div>';
 
-      // Recent visitors
-      const recentVisitors = allVisitors.slice(0, 5);
-      document.getElementById('recentVisitors').innerHTML = recentVisitors.length ? `
-        <table>
-          <thead><tr><th>IP</th><th>Vị trí</th><th>ISP</th><th>Time</th></tr></thead>
-          <tbody>
-            ${recentVisitors.map(v => `
-              <tr>
-                <td><strong>${v.ip}</strong></td>
-                <td>${v.location?.city || 'N/A'}, ${v.location?.country || 'N/A'}</td>
-                <td>${v.location?.isp || 'N/A'}</td>
-                <td><small>${formatTime(v.timestamp)}</small></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+      const recentV = allVisitors.slice(0, 5);
+      document.getElementById('recentVisitors').innerHTML = recentV.length ? `
+        <table><thead><tr><th>IP</th><th>Vị trí</th><th>ISP</th></tr></thead>
+        <tbody>${recentV.map(v => `<tr><td><strong>${v.ip}</strong></td><td>${v.location?.city||'N/A'}, ${v.location?.country||'N/A'}</td><td>${v.location?.isp||'N/A'}</td></tr>`).join('')}</tbody></table>
       ` : '<div class="empty-state"><i class="fas fa-users"></i><p>Chưa có khách</p></div>';
     }
 
@@ -820,529 +618,214 @@
 
     function getFilteredOrders() {
       let orders = [...allOrders];
-      
-      if (currentFilter !== 'all') {
-        orders = orders.filter(o => o.status === currentFilter);
-      }
-      
+      if (currentFilter !== 'all') orders = orders.filter(o => o.status === currentFilter);
       if (searchQuery) {
         orders = orders.filter(o => 
-          (o.orderId && o.orderId.toLowerCase().includes(searchQuery)) ||
-          (o.uid && o.uid.toLowerCase().includes(searchQuery)) ||
-          (o.platformAccount && o.platformAccount.toLowerCase().includes(searchQuery)) ||
-          (o.ip && o.ip.includes(searchQuery)) ||
-          (o.game && o.game.toLowerCase().includes(searchQuery))
+          (o.orderId&&o.orderId.toLowerCase().includes(searchQuery)) ||
+          (o.uid&&o.uid.toLowerCase().includes(searchQuery)) ||
+          (o.ip&&o.ip.includes(searchQuery)) ||
+          (o.game&&o.game.toLowerCase().includes(searchQuery))
         );
       }
-      
       return orders;
     }
 
     function renderOrdersTable() {
       const orders = getFilteredOrders();
-      
-      if (orders.length === 0) {
-        document.getElementById('ordersTable').innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Không tìm thấy đơn hàng</p></div>';
+      if (!orders.length) {
+        document.getElementById('ordersTable').innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Không có đơn</p></div>';
         return;
       }
-
       document.getElementById('ordersTable').innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>UID</th>
-              <th>Game</th>
-              <th>Gói</th>
-              <th>Giá</th>
-              <th>IP</th>
-              <th>Trạng thái</th>
-              <th>Thời gian</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${orders.map(o => `
-              <tr>
-                <td><strong>#${o.orderId}</strong></td>
-                <td>${o.uid || 'N/A'}</td>
-                <td>${o.game || 'N/A'}</td>
-                <td>${o.plan || 'N/A'}</td>
-                <td style="color:#ffd966;">${formatMoney(o.price)}</td>
-                <td><small>${o.ip || 'N/A'}</small></td>
-                <td><span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></td>
-                <td><small>${formatTime(o.createdAt)}</small></td>
-                <td>
-                  <div class="action-btns">
-                    <button class="btn btn-primary btn-sm" onclick="viewOrderDetail('${o.orderId}')"><i class="fas fa-eye"></i></button>
-                    ${o.status === 'pending' ? `
-                      <button class="btn btn-success btn-sm" onclick="approveOrder('${o.orderId}')"><i class="fas fa-check"></i></button>
-                      <button class="btn btn-danger btn-sm" onclick="rejectOrder('${o.orderId}')"><i class="fas fa-times"></i></button>
-                    ` : ''}
-                    ${o.status === 'processing' ? `
-                      <button class="btn btn-success btn-sm" onclick="completeOrder('${o.orderId}')"><i class="fas fa-check-double"></i></button>
-                    ` : ''}
-                    <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.orderId}')"><i class="fas fa-trash"></i></button>
-                    ${o.ip ? `<button class="btn btn-warning btn-sm" onclick="quickBanIP('${o.ip}')"><i class="fas fa-ban"></i></button>` : ''}
-                  </div>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+        <table><thead><tr><th>ID</th><th>UID</th><th>Game</th><th>Gói</th><th>Giá</th><th>IP</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
+        <tbody>${orders.map(o => `
+          <tr>
+            <td><strong>#${o.orderId}</strong></td><td>${o.uid||'N/A'}</td><td>${o.game||'N/A'}</td><td>${o.plan||'N/A'}</td>
+            <td style="color:#ffd966;">${formatMoney(o.price)}</td><td><small>${o.ip||'N/A'}</small></td>
+            <td><span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></td>
+            <td><small>${formatTime(o.createdAt)}</small></td>
+            <td><div class="action-btns">
+              <button class="btn btn-primary btn-sm" onclick="viewDetail('${o.orderId}')"><i class="fas fa-eye"></i></button>
+              ${o.status==='pending'?`<button class="btn btn-success btn-sm" onclick="approveOrder('${o.orderId}')"><i class="fas fa-check"></i></button><button class="btn btn-danger btn-sm" onclick="rejectOrder('${o.orderId}')"><i class="fas fa-times"></i></button>`:''}
+              ${o.status==='processing'?`<button class="btn btn-success btn-sm" onclick="completeOrder('${o.orderId}')"><i class="fas fa-check-double"></i></button>`:''}
+              <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.orderId}')"><i class="fas fa-trash"></i></button>
+              ${o.ip?`<button class="btn btn-warning btn-sm" onclick="quickBanIP('${o.ip}')"><i class="fas fa-ban"></i></button>`:''}
+            </div></td>
+          </tr>
+        `).join('')}</tbody></table>
       `;
     }
 
     function renderVisitorsTable() {
       let visitors = [...allVisitors];
-      
-      if (searchQuery) {
-        visitors = visitors.filter(v => 
-          v.ip.includes(searchQuery) || 
-          (v.location?.city && v.location.city.toLowerCase().includes(searchQuery))
-        );
-      }
-      
-      if (visitors.length === 0) {
+      if (searchQuery) visitors = visitors.filter(v => v.ip.includes(searchQuery) || (v.location?.city&&v.location.city.toLowerCase().includes(searchQuery)));
+      if (!visitors.length) {
         document.getElementById('visitorsTable').innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Không có dữ liệu</p></div>';
         return;
       }
-
       document.getElementById('visitorsTable').innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>IP</th>
-              <th>Thành phố</th>
-              <th>Quốc gia</th>
-              <th>ISP</th>
-              <th>Fingerprint</th>
-              <th>Thời gian</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${visitors.map(v => `
-              <tr>
-                <td><strong>${v.ip}</strong></td>
-                <td>${v.location?.city || 'N/A'}</td>
-                <td>${v.location?.country || 'N/A'}</td>
-                <td><small>${v.location?.isp || 'N/A'}</small></td>
-                <td><small>${v.fingerprint || 'N/A'}</small></td>
-                <td><small>${formatTime(v.timestamp)}</small></td>
-                <td>
-                  <button class="btn btn-warning btn-sm" onclick="quickBanIP('${v.ip}')"><i class="fas fa-ban"></i> Cấm</button>
-                  <button class="btn btn-primary btn-sm" onclick="viewVisitorDetail('${v.ip}')"><i class="fas fa-eye"></i></button>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+        <table><thead><tr><th>IP</th><th>City</th><th>Country</th><th>ISP</th><th>Time</th><th>Action</th></tr></thead>
+        <tbody>${visitors.map(v => `
+          <tr>
+            <td><strong>${v.ip}</strong></td><td>${v.location?.city||'N/A'}</td><td>${v.location?.country||'N/A'}</td><td>${v.location?.isp||'N/A'}</td>
+            <td><small>${formatTime(v.timestamp)}</small></td>
+            <td><button class="btn btn-warning btn-sm" onclick="quickBanIP('${v.ip}')"><i class="fas fa-ban"></i> Cấm</button></td>
+          </tr>
+        `).join('')}</tbody></table>
       `;
     }
 
     function renderBannedTable() {
-      if (bannedIPs.length === 0) {
-        document.getElementById('bannedTable').innerHTML = '<div class="empty-state"><i class="fas fa-shield-alt"></i><p>Chưa có IP nào bị cấm</p></div>';
+      if (!bannedIPs.length) {
+        document.getElementById('bannedTable').innerHTML = '<div class="empty-state"><i class="fas fa-shield-alt"></i><p>Chưa có IP bị cấm</p></div>';
         return;
       }
-
       document.getElementById('bannedTable').innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>IP</th>
-              <th>Lý do</th>
-              <th>Thời gian cấm</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${bannedIPs.map(b => `
-              <tr>
-                <td><strong style="color:#ff6b6b;">${b.ip}</strong></td>
-                <td>${b.reason || 'Không có lý do'}</td>
-                <td><small>${formatTime(b.bannedAt)}</small></td>
-                <td>
-                  <button class="btn btn-success btn-sm" onclick="unbanIP('${b.ip}')"><i class="fas fa-check"></i> Bỏ cấm</button>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+        <table><thead><tr><th>IP</th><th>Lý do</th><th>Thời gian</th><th>Action</th></tr></thead>
+        <tbody>${bannedIPs.map(b => `
+          <tr><td><strong style="color:#ff6b6b;">${b.ip}</strong></td><td>${b.reason||'N/A'}</td><td>${formatTime(b.bannedAt)}</td>
+          <td><button class="btn btn-success btn-sm" onclick="unbanIP('${b.ip}')">Bỏ cấm</button></td></tr>
+        `).join('')}</tbody></table>
       `;
     }
 
     function renderLogsTable() {
       let logs = [...allLogs];
-      
-      if (searchQuery) {
-        logs = logs.filter(l => 
-          l.message.toLowerCase().includes(searchQuery) || 
-          l.type.toLowerCase().includes(searchQuery)
-        );
-      }
-      
-      if (logs.length === 0) {
+      if (searchQuery) logs = logs.filter(l => l.message.toLowerCase().includes(searchQuery) || l.type.toLowerCase().includes(searchQuery));
+      if (!logs.length) {
         document.getElementById('logsTable').innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><p>Chưa có nhật ký</p></div>';
         return;
       }
-
       document.getElementById('logsTable').innerHTML = `
-        <table>
-          <thead>
-            <tr><th>Thời gian</th><th>Loại</th><th>Nội dung</th></tr>
-          </thead>
-          <tbody>
-            ${logs.map(l => `
-              <tr>
-                <td><small>${formatTime(l.timestamp)}</small></td>
-                <td><span class="status-badge status-${l.type.includes('BANNED') ? 'rejected' : 'processing'}">${l.type}</span></td>
-                <td>${l.message}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+        <table><thead><tr><th>Time</th><th>Type</th><th>Message</th></tr></thead>
+        <tbody>${logs.map(l => `<tr><td><small>${formatTime(l.timestamp)}</small></td><td><span class="status-badge status-${l.type.includes('BANNED')?'rejected':'processing'}">${l.type}</span></td><td>${l.message}</td></tr>`).join('')}</tbody></table>
       `;
     }
 
-    // ============================================
-    // ORDER ACTIONS
-    // ============================================
     async function approveOrder(orderId) {
-      const result = await Swal.fire({
-        title: '✅ Duyệt đơn?',
-        text: `Duyệt đơn #${orderId}?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Duyệt'
-      });
-      if (result.isConfirmed) {
-        await syncManager.updateOrder(orderId, { 
-          status: 'processing',
-          approvedAt: new Date().toISOString()
-        });
-        await syncManager.addLog('ORDER_APPROVED', `Admin duyệt đơn #${orderId}`);
+      if (await Swal.fire({title:'Duyệt?',icon:'question',showCancelButton:true,confirmButtonText:'Duyệt'}).then(r=>r.isConfirmed)) {
+        await syncManager.updateOrder(orderId, {status:'processing',approvedAt:new Date().toISOString()});
         await loadAllData();
-        Swal.fire('✅', 'Đã duyệt!', 'success');
+        Swal.fire('✅','Đã duyệt!','success');
       }
     }
 
     async function rejectOrder(orderId) {
-      const { value: reason } = await Swal.fire({
-        title: '❌ Từ chối',
-        input: 'text',
-        inputLabel: 'Lý do',
-        inputPlaceholder: 'Nhập lý do...',
-        showCancelButton: true
-      });
+      const {value:reason} = await Swal.fire({title:'Từ chối',input:'text',inputLabel:'Lý do',showCancelButton:true});
       if (reason) {
-        await syncManager.updateOrder(orderId, { 
-          status: 'rejected',
-          rejectReason: reason,
-          rejectedAt: new Date().toISOString()
-        });
-        await syncManager.addLog('ORDER_REJECTED', `Admin từ chối #${orderId}: ${reason}`);
+        await syncManager.updateOrder(orderId, {status:'rejected',rejectReason:reason});
         await loadAllData();
-        Swal.fire('❌', 'Đã từ chối!', 'info');
+        Swal.fire('❌','Đã từ chối!','info');
       }
     }
 
     async function completeOrder(orderId) {
-      const result = await Swal.fire({
-        title: '✅ Hoàn thành?',
-        text: `Đánh dấu #${orderId} hoàn thành?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Hoàn thành'
-      });
-      if (result.isConfirmed) {
-        await syncManager.updateOrder(orderId, { 
-          status: 'completed',
-          completedAt: new Date().toISOString()
-        });
-        await syncManager.addLog('ORDER_COMPLETED', `Admin hoàn thành #${orderId}`);
+      if (await Swal.fire({title:'Hoàn thành?',icon:'question',showCancelButton:true,confirmButtonText:'Hoàn thành'}).then(r=>r.isConfirmed)) {
+        await syncManager.updateOrder(orderId, {status:'completed',completedAt:new Date().toISOString()});
         await loadAllData();
-        Swal.fire('🎉', 'Hoàn thành!', 'success');
+        Swal.fire('🎉','Hoàn thành!','success');
       }
     }
 
     async function deleteOrder(orderId) {
-      const result = await Swal.fire({
-        title: '⚠️ Xóa?',
-        text: `Xóa đơn #${orderId}? Không thể hoàn tác!`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#e74c3c',
-        confirmButtonText: 'Xóa'
-      });
-      if (result.isConfirmed) {
+      if (await Swal.fire({title:'⚠️ Xóa?',text:'Không thể hoàn tác!',icon:'warning',showCancelButton:true,confirmButtonColor:'#e74c3c',confirmButtonText:'Xóa'}).then(r=>r.isConfirmed)) {
         await syncManager.deleteOrder(orderId);
-        await syncManager.addLog('ORDER_DELETED', `Admin xóa #${orderId}`);
         await loadAllData();
-        Swal.fire('🗑️', 'Đã xóa!', 'success');
+        Swal.fire('🗑️','Đã xóa!','success');
       }
     }
 
-    async function viewOrderDetail(orderId) {
-      const order = allOrders.find(o => o.orderId === orderId);
-      if (!order) return;
-
+    function viewDetail(orderId) {
+      const o = allOrders.find(x=>x.orderId===orderId);
+      if (!o) return;
       document.getElementById('modalContent').innerHTML = `
         <div class="detail-grid">
-          <div class="detail-item">
-            <div class="detail-label">Order ID</div>
-            <div class="detail-value">#${order.orderId}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Trạng thái</div>
-            <div class="detail-value"><span class="status-badge status-${order.status}">${getStatusText(order.status)}</span></div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Game</div>
-            <div class="detail-value">${order.game || 'N/A'}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Server</div>
-            <div class="detail-value">${order.server || 'N/A'}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">UID</div>
-            <div class="detail-value">${order.uid || 'N/A'}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Tài khoản</div>
-            <div class="detail-value">${order.platformAccount || 'N/A'}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Mật khẩu</div>
-            <div class="detail-value">${order.password || 'N/A'}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Gói</div>
-            <div class="detail-value">${order.plan || 'N/A'}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Giá</div>
-            <div class="detail-value" style="color:#ffd966;">${formatMoney(order.price)}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">IP</div>
-            <div class="detail-value">${order.ip || 'N/A'}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Vị trí</div>
-            <div class="detail-value">${order.location?.city || 'N/A'}, ${order.location?.country || 'N/A'}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">ISP</div>
-            <div class="detail-value">${order.location?.isp || 'N/A'}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Fingerprint</div>
-            <div class="detail-value"><small>${order.fingerprint || 'N/A'}</small></div>
-          </div>
+          <div class="detail-item"><div class="detail-label">Order ID</div><div class="detail-value">#${o.orderId}</div></div>
+          <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value"><span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></div></div>
+          <div class="detail-item"><div class="detail-label">Game</div><div class="detail-value">${o.game||'N/A'}</div></div>
+          <div class="detail-item"><div class="detail-label">UID</div><div class="detail-value">${o.uid||'N/A'}</div></div>
+          <div class="detail-item"><div class="detail-label">Tài khoản</div><div class="detail-value">${o.platformAccount||'N/A'}</div></div>
+          <div class="detail-item"><div class="detail-label">Mật khẩu</div><div class="detail-value">${o.password||'N/A'}</div></div>
+          <div class="detail-item"><div class="detail-label">IP</div><div class="detail-value">${o.ip||'N/A'}</div></div>
+          <div class="detail-item"><div class="detail-label">Vị trí</div><div class="detail-value">${o.location?.city||'N/A'}, ${o.location?.country||'N/A'}</div></div>
+          <div class="detail-item"><div class="detail-label">ISP</div><div class="detail-value">${o.location?.isp||'N/A'}</div></div>
+          <div class="detail-item"><div class="detail-label">Giá</div><div class="detail-value" style="color:#ffd966;">${formatMoney(o.price)}</div></div>
         </div>
-        <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
-          ${order.status === 'pending' ? `
-            <button class="btn btn-success" onclick="approveOrder('${order.orderId}'); closeModal();">Duyệt</button>
-            <button class="btn btn-danger" onclick="rejectOrder('${order.orderId}'); closeModal();">Từ chối</button>
-          ` : ''}
-          ${order.status === 'processing' ? `
-            <button class="btn btn-success" onclick="completeOrder('${order.orderId}'); closeModal();">Hoàn thành</button>
-          ` : ''}
-          ${order.ip ? `<button class="btn btn-warning" onclick="quickBanIP('${order.ip}'); closeModal();">Cấm IP này</button>` : ''}
+        <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
+          ${o.ip?`<button class="btn btn-warning" onclick="quickBanIP('${o.ip}');closeModal();">Cấm IP</button>`:''}
           <button class="btn btn-primary" onclick="closeModal()">Đóng</button>
         </div>
       `;
       document.getElementById('detailModal').classList.add('show');
     }
 
-    async function viewVisitorDetail(ip) {
-      const visitors = allVisitors.filter(v => v.ip === ip);
-      const orders = allOrders.filter(o => o.ip === ip);
-      
-      document.getElementById('modalContent').innerHTML = `
-        <h3>👤 IP: ${ip}</h3>
-        <p><strong>Số lần truy cập:</strong> ${visitors.length}</p>
-        <p><strong>Số đơn hàng:</strong> ${orders.length}</p>
-        ${visitors[0] ? `
-          <p><strong>Vị trí:</strong> ${visitors[0].location?.city || 'N/A'}, ${visitors[0].location?.country || 'N/A'}</p>
-          <p><strong>ISP:</strong> ${visitors[0].location?.isp || 'N/A'}</p>
-          <p><strong>Fingerprint:</strong> ${visitors[0].fingerprint || 'N/A'}</p>
-        ` : ''}
-        ${orders.length > 0 ? `
-          <h4 style="margin-top:15px;">Đơn hàng:</h4>
-          ${orders.map(o => `<p>#${o.orderId} - ${o.game} - <span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></p>`).join('')}
-        ` : ''}
-        <div style="margin-top:15px; display:flex; gap:10px;">
-          <button class="btn btn-warning" onclick="quickBanIP('${ip}'); closeModal();">Cấm IP này</button>
-          <button class="btn btn-primary" onclick="closeModal()">Đóng</button>
-        </div>
-      `;
-      document.getElementById('detailModal').classList.add('show');
-    }
+    function closeModal() { document.getElementById('detailModal').classList.remove('show'); }
 
-    function closeModal() {
-      document.getElementById('detailModal').classList.remove('show');
-    }
-
-    // ============================================
-    // BAN IP FUNCTIONS
-    // ============================================
     function showBanModal() {
       document.getElementById('banIpInput').value = '';
       document.getElementById('banReasonInput').value = '';
       document.getElementById('banModal').classList.add('show');
     }
-
-    function closeBanModal() {
-      document.getElementById('banModal').classList.remove('show');
-    }
+    function closeBanModal() { document.getElementById('banModal').classList.remove('show'); }
 
     async function banIP() {
       const ip = document.getElementById('banIpInput').value.trim();
       const reason = document.getElementById('banReasonInput').value.trim();
-      
-      if (!ip) {
-        Swal.fire('❌', 'Vui lòng nhập IP!', 'error');
-        return;
-      }
-
+      if (!ip) { Swal.fire('❌','Nhập IP!','error'); return; }
       await syncManager.banIP(ip, reason);
-      await syncManager.addLog('IP_BANNED', `Admin cấm IP ${ip}: ${reason}`);
       await loadAllData();
       closeBanModal();
-      Swal.fire('✅', `Đã cấm IP ${ip}!`, 'success');
+      Swal.fire('✅',`Đã cấm IP ${ip}!`,'success');
     }
 
     async function quickBanIP(ip) {
-      const result = await Swal.fire({
-        title: '🚫 Cấm IP?',
-        text: `Cấm IP ${ip}?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Cấm'
-      });
-      
-      if (result.isConfirmed) {
-        await syncManager.banIP(ip, 'Cấm nhanh từ admin');
-        await syncManager.addLog('IP_BANNED', `Admin cấm IP ${ip}`);
+      if (await Swal.fire({title:'🚫 Cấm IP?',text:`Cấm ${ip}?`,icon:'warning',showCancelButton:true,confirmButtonText:'Cấm'}).then(r=>r.isConfirmed)) {
+        await syncManager.banIP(ip, 'Cấm nhanh');
         await loadAllData();
-        Swal.fire('✅', `Đã cấm IP ${ip}!`, 'success');
+        Swal.fire('✅',`Đã cấm IP ${ip}!`,'success');
       }
     }
 
     async function unbanIP(ip) {
-      const result = await Swal.fire({
-        title: '✅ Bỏ cấm?',
-        text: `Bỏ cấm IP ${ip}?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Bỏ cấm'
-      });
-      
-      if (result.isConfirmed) {
+      if (await Swal.fire({title:'✅ Bỏ cấm?',text:`Bỏ cấm ${ip}?`,icon:'question',showCancelButton:true,confirmButtonText:'Bỏ cấm'}).then(r=>r.isConfirmed)) {
         await syncManager.unbanIP(ip);
-        await syncManager.addLog('IP_UNBANNED', `Admin bỏ cấm IP ${ip}`);
         await loadAllData();
-        Swal.fire('✅', `Đã bỏ cấm IP ${ip}!`, 'success');
+        Swal.fire('✅',`Đã bỏ cấm IP ${ip}!`,'success');
       }
     }
 
-    // ============================================
-    // SETTINGS
-    // ============================================
     async function saveSettings() {
-      const defaultTime = parseInt(document.getElementById('settingDefaultTime').value);
-      const syncInterval = parseInt(document.getElementById('settingSyncInterval').value);
-      const autoApprove = document.getElementById('settingAutoApprove').value === 'true';
-
-      await syncManager.saveSetting('defaultProcessingTime', defaultTime);
-      await syncManager.saveSetting('syncInterval', syncInterval);
-      await syncManager.saveSetting('autoApprove', autoApprove);
-      
-      await syncManager.addLog('SETTINGS_UPDATED', 'Admin cập nhật cài đặt');
-      Swal.fire('✅', 'Đã lưu cài đặt!', 'success');
+      await syncManager.saveSetting('defaultProcessingTime', parseInt(document.getElementById('settingDefaultTime').value));
+      await syncManager.saveSetting('syncInterval', parseInt(document.getElementById('settingSyncInterval').value));
+      Swal.fire('✅','Đã lưu!','success');
     }
 
-    // ============================================
-    // DATA MANAGEMENT
-    // ============================================
-    async function exportData() {
-      await syncManager.exportData();
-      Swal.fire('✅', 'Đã xuất dữ liệu!', 'success');
-    }
-
+    async function exportData() { await syncManager.exportData(); Swal.fire('✅','Đã xuất!','success'); }
+    
     async function importData() {
-      const { value: file } = await Swal.fire({
-        title: '📂 Chọn file backup',
-        input: 'file',
-        inputAttributes: { accept: '.json' }
-      });
+      const {value:file} = await Swal.fire({title:'📂 Chọn file',input:'file',inputAttributes:{accept:'.json'}});
       if (file) {
-        try {
-          await syncManager.importData(file);
-          await loadAllData();
-          Swal.fire('✅', 'Đã nhập dữ liệu!', 'success');
-        } catch (e) {
-          Swal.fire('❌', 'Lỗi nhập dữ liệu!', 'error');
-        }
+        await syncManager.importData(file);
+        await loadAllData();
+        Swal.fire('✅','Đã nhập!','success');
       }
     }
 
     async function clearAllData() {
-      const result = await Swal.fire({
-        title: '⚠️ CẢNH BÁO!',
-        text: 'Xóa TẤT CẢ dữ liệu? Không thể hoàn tác!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#e74c3c',
-        confirmButtonText: 'XÓA TẤT CẢ'
-      });
-      if (result.isConfirmed) {
+      if (await Swal.fire({title:'⚠️ CẢNH BÁO!',text:'Xóa TẤT CẢ?',icon:'warning',showCancelButton:true,confirmButtonColor:'#e74c3c',confirmButtonText:'XÓA'}).then(r=>r.isConfirmed)) {
         await syncManager.clearAllData();
         await loadAllData();
-        Swal.fire('🗑️', 'Đã xóa tất cả!', 'success');
+        Swal.fire('🗑️','Đã xóa!','success');
       }
     }
 
-    // ============================================
-    // UTILITIES
-    // ============================================
-    function formatMoney(amount) {
-      if (!amount) return '0đ';
-      return amount.toLocaleString('vi-VN') + 'đ';
-    }
+    function formatMoney(amount) { return amount ? amount.toLocaleString('vi-VN') + 'đ' : '0đ'; }
+    function formatTime(ts) { return ts ? new Date(ts).toLocaleString('vi-VN', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : 'N/A'; }
+    function getStatusText(s) { return {pending:'⏳ Chờ duyệt',processing:'⚙️ Đang xử lý',completed:'✅ Hoàn thành',rejected:'❌ Từ chối'}[s]||s; }
 
-    function formatTime(timestamp) {
-      if (!timestamp) return 'N/A';
-      return new Date(timestamp).toLocaleString('vi-VN', {
-        month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
-      });
-    }
-
-    function getStatusText(status) {
-      const map = {
-        pending: '⏳ Chờ duyệt',
-        processing: '⚙️ Đang xử lý',
-        completed: '✅ Hoàn thành',
-        rejected: '❌ Từ chối'
-      };
-      return map[status] || status;
-    }
-
-    // ============================================
-    // INIT
-    // ============================================
-    window.onclick = function(event) {
-      if (event.target.classList.contains('modal')) {
-        event.target.classList.remove('show');
-      }
-    };
+    window.onclick = function(event) { if (event.target.classList.contains('modal')) event.target.classList.remove('show'); };
 
     initAdmin();
-
     console.log('✅ Admin Panel 24/7 đã sẵn sàng!');
   </script>
 </body>
