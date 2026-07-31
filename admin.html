@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Tool Mở Band | Quản Lý 24/7</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Admin Panel - Tool Mở Band | 24/7</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="sync.js"></script>
@@ -36,10 +36,10 @@
     .admin-container { display: flex; min-height: 100vh; }
 
     .sidebar {
-      width: 280px;
+      width: 260px;
       background: rgba(10, 15, 30, 0.98);
       border-right: 1px solid var(--border);
-      padding: 20px;
+      padding: 15px;
       display: flex;
       flex-direction: column;
       position: fixed;
@@ -50,9 +50,9 @@
 
     .sidebar-header {
       text-align: center;
-      padding-bottom: 20px;
+      padding-bottom: 15px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .sidebar-header h2 {
@@ -60,40 +60,38 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
     }
 
     .nav-link {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border-radius: 12px;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
       color: var(--text-secondary);
       cursor: pointer;
       border: none;
       background: none;
       width: 100%;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       transition: all 0.3s;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
 
     .nav-link:hover, .nav-link.active {
       background: rgba(0, 119, 255, 0.15);
       color: white;
     }
-
     .nav-link.active { border-left: 3px solid var(--accent); }
 
     .badge {
-      padding: 2px 10px;
+      padding: 2px 8px;
       border-radius: 10px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       margin-left: auto;
       color: white;
     }
-
     .badge.warning { background: var(--warning); }
     .badge.info { background: var(--info); }
     .badge.success { background: var(--success); }
@@ -101,21 +99,21 @@
 
     .main-content {
       flex: 1;
-      margin-left: 280px;
-      padding: 25px;
+      margin-left: 260px;
+      padding: 20px;
     }
 
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 10px;
     }
 
     .search-input {
-      padding: 10px 18px;
+      padding: 10px 15px;
       border-radius: 25px;
       border: 1px solid rgba(255,255,255,0.2);
       background: rgba(255,255,255,0.05);
@@ -123,50 +121,47 @@
       font-size: 0.9rem;
       outline: none;
       flex: 1;
-      max-width: 400px;
+      max-width: 350px;
     }
-
     .search-input:focus { border-color: var(--accent); }
 
     .btn {
-      padding: 10px 20px;
+      padding: 8px 16px;
       border-radius: 25px;
       border: none;
       cursor: pointer;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: all 0.3s;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       white-space: nowrap;
     }
-
     .btn-primary { background: linear-gradient(135deg, #0077ff, #00c6ff); color: white; }
     .btn-success { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
     .btn-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
     .btn-warning { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
-    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-      margin-bottom: 25px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .stat-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 14px;
+      padding: 15px;
       text-align: center;
     }
-
-    .stat-card i { font-size: 2rem; margin-bottom: 10px; }
-    .stat-value { font-size: 2rem; font-weight: 700; }
-    .stat-label { color: var(--text-secondary); font-size: 0.85rem; }
+    .stat-card i { font-size: 1.5rem; margin-bottom: 8px; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; }
+    .stat-label { color: var(--text-secondary); font-size: 0.8rem; }
 
     .stat-card.pending .stat-value { color: var(--warning); }
     .stat-card.processing .stat-value { color: var(--info); }
@@ -177,21 +172,20 @@
     .tabs {
       display: flex;
       gap: 5px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       flex-wrap: wrap;
     }
 
     .tab {
-      padding: 10px 20px;
-      border-radius: 25px;
+      padding: 8px 16px;
+      border-radius: 20px;
       cursor: pointer;
       border: 1px solid rgba(255,255,255,0.2);
       background: transparent;
       color: var(--text-secondary);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: all 0.3s;
     }
-
     .tab:hover, .tab.active {
       background: rgba(0, 119, 255, 0.2);
       border-color: var(--accent);
@@ -201,42 +195,38 @@
     .table-container {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 14px;
       overflow-x: auto;
     }
 
     table { width: 100%; border-collapse: collapse; }
-
     th {
       background: rgba(0, 119, 255, 0.1);
-      padding: 14px 16px;
+      padding: 12px 14px;
       text-align: left;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--accent);
       white-space: nowrap;
     }
-
     td {
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-top: 1px solid rgba(255,255,255,0.05);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
-
     tr:hover { background: rgba(0, 119, 255, 0.05); }
 
     .status-badge {
-      padding: 4px 12px;
-      border-radius: 15px;
-      font-size: 0.8rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
       font-weight: 600;
     }
-
     .status-pending { background: rgba(243, 156, 18, 0.2); color: #f39c12; }
     .status-processing { background: rgba(52, 152, 219, 0.2); color: #3498db; }
     .status-completed { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
     .status-rejected { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
 
-    .action-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+    .action-btns { display: flex; gap: 4px; flex-wrap: wrap; }
 
     .modal {
       display: none;
@@ -248,15 +238,14 @@
       justify-content: center;
       align-items: center;
     }
-
     .modal.show { display: flex; }
 
     .modal-content {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 700px;
+      border-radius: 16px;
+      padding: 25px;
+      max-width: 600px;
       width: 90%;
       max-height: 80vh;
       overflow-y: auto;
@@ -266,77 +255,63 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
+    .close-btn { background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; }
 
-    .close-btn {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; color: var(--text-secondary); }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; margin-bottom: 4px; color: var(--text-secondary); font-size: 0.85rem; }
     .form-control {
       width: 100%;
-      padding: 10px 15px;
+      padding: 10px 14px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.2);
       background: rgba(255,255,255,0.05);
       color: white;
       outline: none;
+      font-size: 0.9rem;
     }
+    .form-control:focus { border-color: var(--accent); }
 
     .detail-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
-
     .detail-item {
-      padding: 10px;
+      padding: 8px;
       background: rgba(255,255,255,0.03);
-      border-radius: 8px;
+      border-radius: 6px;
     }
-
-    .detail-label { font-size: 0.75rem; color: var(--text-secondary); }
-    .detail-value { font-weight: 600; margin-top: 3px; word-break: break-all; }
+    .detail-label { font-size: 0.7rem; color: var(--text-secondary); }
+    .detail-value { font-weight: 600; margin-top: 2px; font-size: 0.9rem; word-break: break-all; }
 
     .sync-indicator {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
+      gap: 6px;
+      font-size: 0.8rem;
     }
-
     .sync-dot {
-      width: 8px; height: 8px;
+      width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--success);
       animation: pulse 2s infinite;
     }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     .empty-state {
       text-align: center;
-      padding: 50px;
+      padding: 40px;
       color: var(--text-secondary);
     }
-
-    .empty-state i { font-size: 4rem; margin-bottom: 20px; }
+    .empty-state i { font-size: 3rem; margin-bottom: 15px; }
 
     .notification-toast {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: 15px;
+      right: 15px;
       z-index: 9999;
-      min-width: 300px;
     }
 
     @media (max-width: 768px) {
@@ -345,6 +320,8 @@
       .admin-container { flex-direction: column; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .detail-grid { grid-template-columns: 1fr; }
+      .top-bar { flex-direction: column; align-items: stretch; }
+      .search-input { max-width: 100%; }
     }
   </style>
 </head>
@@ -354,9 +331,9 @@
   <div class="admin-container">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <i class="fas fa-shield-haltered" style="font-size:2.5rem; color:#00e6ff;"></i>
+        <i class="fas fa-shield-haltered" style="font-size:2rem; color:#00e6ff;"></i>
         <h2>Admin Panel</h2>
-        <p style="color:#9aa9c1; font-size:0.85rem;">Tool Mở Band | 24/7</p>
+        <p style="color:#9aa9c1; font-size:0.8rem;">Tool Mở Band | 24/7</p>
       </div>
 
       <nav style="flex:1;">
@@ -383,10 +360,10 @@
         </button>
       </nav>
 
-      <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);">
+      <div style="margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.1);">
         <div class="sync-indicator">
-          <span class="sync-dot" id="syncDot"></span>
-          <span>Đồng bộ: <strong id="syncStatus">OK</strong></span>
+          <span class="sync-dot"></span>
+          <span id="syncStatus">Live</span>
         </div>
         <small style="color:#9aa9c1;" id="lastSyncTime"></small>
       </div>
@@ -394,11 +371,11 @@
 
     <main class="main-content">
       <div class="top-bar">
-        <h1 id="pageTitle">📊 Dashboard</h1>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <h1 id="pageTitle" style="font-size:1.5rem;">📊 Dashboard</h1>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm..." oninput="handleSearch()">
-          <button class="btn btn-primary btn-sm" onclick="exportData()"><i class="fas fa-download"></i> Xuất</button>
-          <button class="btn btn-warning btn-sm" onclick="importData()"><i class="fas fa-upload"></i> Nhập</button>
+          <button class="btn btn-primary btn-sm" onclick="exportData()"><i class="fas fa-download"></i></button>
+          <button class="btn btn-warning btn-sm" onclick="importData()"><i class="fas fa-upload"></i></button>
           <button class="btn btn-danger btn-sm" onclick="clearAllData()"><i class="fas fa-trash"></i></button>
           <button class="btn btn-primary btn-sm" onclick="window.open('index.html', '_blank')"><i class="fas fa-external-link-alt"></i> Tool</button>
         </div>
@@ -411,11 +388,11 @@
           <div class="stat-card processing"><i class="fas fa-spinner"></i><div class="stat-value" id="statProcessing">0</div><div class="stat-label">Đang xử lý</div></div>
           <div class="stat-card completed"><i class="fas fa-check-circle"></i><div class="stat-value" id="statCompleted">0</div><div class="stat-label">Hoàn thành</div></div>
           <div class="stat-card revenue"><i class="fas fa-dollar-sign"></i><div class="stat-value" id="statRevenue">0đ</div><div class="stat-label">Doanh thu</div></div>
-          <div class="stat-card visitors"><i class="fas fa-user-friends"></i><div class="stat-value" id="statVisitors">0</div><div class="stat-label">Khách hôm nay</div></div>
+          <div class="stat-card visitors"><i class="fas fa-user-friends"></i><div class="stat-value" id="statVisitors">0</div><div class="stat-label">Khách HN</div></div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-          <div class="table-container"><h3 style="padding:15px;">📋 Đơn mới</h3><div id="recentOrders"></div></div>
-          <div class="table-container"><h3 style="padding:15px;">👥 Khách mới</h3><div id="recentVisitors"></div></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+          <div class="table-container"><h3 style="padding:12px;">📋 Đơn mới</h3><div id="recentOrders"></div></div>
+          <div class="table-container"><h3 style="padding:12px;">👥 Khách mới</h3><div id="recentVisitors"></div></div>
         </div>
       </div>
 
@@ -424,7 +401,7 @@
         <div class="tabs">
           <button class="tab active" data-filter="all" onclick="filterOrders('all')">Tất cả</button>
           <button class="tab" data-filter="pending" onclick="filterOrders('pending')">Chờ duyệt</button>
-          <button class="tab" data-filter="processing" onclick="filterOrders('processing')">Đang xử lý</button>
+          <button class="tab" data-filter="processing" onclick="filterOrders('processing')">Đang XL</button>
           <button class="tab" data-filter="completed" onclick="filterOrders('completed')">Hoàn thành</button>
           <button class="tab" data-filter="rejected" onclick="filterOrders('rejected')">Từ chối</button>
         </div>
@@ -433,13 +410,13 @@
 
       <!-- Visitors -->
       <div id="page-visitors" class="page-content" style="display:none;">
-        <h2 style="margin-bottom:20px;">👥 Người truy cập</h2>
+        <h2 style="margin-bottom:15px;">👥 Người truy cập</h2>
         <div class="table-container"><div id="visitorsTable"></div></div>
       </div>
 
-      <!-- Banned IPs -->
+      <!-- Banned -->
       <div id="page-banned" class="page-content" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
           <h2>🚫 IP Bị Cấm</h2>
           <button class="btn btn-danger" onclick="showBanModal()"><i class="fas fa-ban"></i> Cấm IP</button>
         </div>
@@ -448,15 +425,15 @@
 
       <!-- Logs -->
       <div id="page-logs" class="page-content" style="display:none;">
-        <h2 style="margin-bottom:20px;">📝 Nhật ký</h2>
+        <h2 style="margin-bottom:15px;">📝 Nhật ký</h2>
         <div class="table-container"><div id="logsTable"></div></div>
       </div>
 
       <!-- Settings -->
       <div id="page-settings" class="page-content" style="display:none;">
-        <h2 style="margin-bottom:20px;">⚙️ Cài đặt</h2>
+        <h2 style="margin-bottom:15px;">⚙️ Cài đặt</h2>
         <div class="table-container" style="padding:20px;">
-          <div class="form-group"><label>Thời gian xử lý (phút)</label><input type="number" class="form-control" id="settingDefaultTime" value="30"></div>
+          <div class="form-group"><label>Thời gian XL mặc định (phút)</label><input type="number" class="form-control" id="settingDefaultTime" value="30"></div>
           <div class="form-group"><label>Đồng bộ (giây)</label><input type="number" class="form-control" id="settingSyncInterval" value="5"></div>
           <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Lưu</button>
         </div>
@@ -464,7 +441,7 @@
     </main>
   </div>
 
-  <!-- Detail Modal -->
+  <!-- Modals -->
   <div class="modal" id="detailModal">
     <div class="modal-content">
       <div class="modal-header"><h2>📋 Chi tiết</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
@@ -472,13 +449,12 @@
     </div>
   </div>
 
-  <!-- Ban Modal -->
   <div class="modal" id="banModal">
     <div class="modal-content">
       <div class="modal-header"><h2>🚫 Cấm IP</h2><button class="close-btn" onclick="closeBanModal()">&times;</button></div>
-      <div class="form-group"><label>IP</label><input type="text" class="form-control" id="banIpInput"></div>
-      <div class="form-group"><label>Lý do</label><input type="text" class="form-control" id="banReasonInput"></div>
-      <button class="btn btn-danger" onclick="banIP()" style="width:100%;">Cấm IP</button>
+      <div class="form-group"><label>Địa chỉ IP</label><input type="text" class="form-control" id="banIpInput" placeholder="VD: 123.45.67.89"></div>
+      <div class="form-group"><label>Lý do</label><input type="text" class="form-control" id="banReasonInput" placeholder="Lý do cấm..."></div>
+      <button class="btn btn-danger" onclick="banIP()" style="width:100%;"><i class="fas fa-ban"></i> Cấm IP này</button>
     </div>
   </div>
 
@@ -488,24 +464,24 @@
     let currentFilter = 'all';
     let allOrders = [];
     let allVisitors = [];
-    let allLogs = [];
     let bannedIPs = [];
     let searchQuery = '';
 
     async function initAdmin() {
-      const isLoggedIn = sessionStorage.getItem('admin_authenticated');
+      const isLoggedIn = sessionStorage.getItem('admin_auth');
       if (!isLoggedIn) {
-        const { value: password } = await Swal.fire({
-          title: '🔐 Đăng nhập Admin',
+        const { value: pw } = await Swal.fire({
+          title: '🔐 Đăng nhập',
           input: 'password',
-          inputPlaceholder: 'Mật khẩu...',
+          inputPlaceholder: 'Mật khẩu admin...',
           confirmButtonText: 'Đăng nhập',
           allowOutsideClick: false
         });
-        if (password === '10082009') {
-          sessionStorage.setItem('admin_authenticated', 'true');
+        if (pw === '10082009') {
+          sessionStorage.setItem('admin_auth', 'true');
+          Swal.fire({ icon: 'success', title: '✅ OK!', timer: 1000, showConfirmButton: false });
         } else {
-          Swal.fire('❌', 'Sai mật khẩu!', 'error');
+          Swal.fire({ icon: 'error', title: '❌ Sai mật khẩu!', text: 'Tải lại trang để thử lại.' });
           return;
         }
       }
@@ -513,8 +489,9 @@
       syncManager = new SyncManager();
       await loadAllData();
       setInterval(loadAllData, 3000);
-      updateSyncStatus();
-      setInterval(updateSyncStatus, 10000);
+      setInterval(() => {
+        document.getElementById('lastSyncTime').textContent = new Date().toLocaleTimeString('vi-VN');
+      }, 10000);
     }
 
     async function loadAllData() {
@@ -523,7 +500,6 @@
       allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       allVisitors = syncManager.getFromLocalStorage('visitors', []);
       allVisitors.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      allLogs = syncManager.getFromLocalStorage('logs', []);
       bannedIPs = syncManager.getFromLocalStorage('bannedIps', []);
       updateUI();
     }
@@ -536,11 +512,10 @@
 
     function updateStats() {
       const now = new Date();
-      const todayVisitors = allVisitors.filter(v => {
-        try { return new Date(v.timestamp).toDateString() === now.toDateString(); }
-        catch(e) { return false; }
+      const todayV = allVisitors.filter(v => {
+        try { return new Date(v.timestamp).toDateString() === now.toDateString(); } catch(e) { return false; }
       });
-      const uniqueIPs = new Set(todayVisitors.map(v => v.ip).filter(ip => ip && ip !== 'unknown'));
+      const uniqueIPs = new Set(todayV.map(v => v.ip).filter(ip => ip && !ip.startsWith('visitor_')));
 
       document.getElementById('statPending').textContent = allOrders.filter(o => o.status === 'pending').length;
       document.getElementById('statProcessing').textContent = allOrders.filter(o => o.status === 'processing').length;
@@ -555,25 +530,22 @@
       document.getElementById('bannedBadge').textContent = bannedIPs.length;
     }
 
-    function updateSyncStatus() {
-      document.getElementById('lastSyncTime').textContent = 'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
-    }
-
-    window.showNotification = function(title, message) {
+    window.showNotification = function(title, msg) {
       const container = document.getElementById('notificationContainer');
-      const toast = document.createElement('div');
-      toast.style.cssText = 'background:#141b2b; border:1px solid #00e6ff; border-radius:12px; padding:12px 18px; margin-bottom:10px;';
-      toast.innerHTML = `<strong>${title}</strong><br><small>${message}</small>`;
-      container.appendChild(toast);
-      setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 4000);
+      const el = document.createElement('div');
+      el.style.cssText = 'background:#141b2b;border:1px solid #00e6ff;border-radius:10px;padding:10px 14px;margin-bottom:8px;animation:fadeIn 0.3s;';
+      el.innerHTML = `<strong>${title}</strong><br><small>${msg}</small>`;
+      container.appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 4000);
     };
 
     function switchPage(page) {
       currentPage = page;
       document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
       document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
-      const titles = { dashboard: '📊 Dashboard', orders: '📋 Đơn hàng', visitors: '👥 Người truy cập', banned: '🚫 IP Bị Cấm', logs: '📝 Nhật ký', settings: '⚙️ Cài đặt' };
-      document.getElementById('pageTitle').textContent = titles[page] || '';
+      document.getElementById('pageTitle').textContent = {
+        dashboard:'📊 Dashboard', orders:'📋 Đơn hàng', visitors:'👥 Người truy cập', banned:'🚫 IP Bị Cấm', logs:'📝 Nhật ký', settings:'⚙️ Cài đặt'
+      }[page] || '';
       document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
       const el = document.getElementById(`page-${page}`);
       if (el) el.style.display = 'block';
@@ -594,13 +566,13 @@
       const recent = allOrders.slice(0, 5);
       document.getElementById('recentOrders').innerHTML = recent.length ? `
         <table><thead><tr><th>ID</th><th>UID</th><th>Game</th><th>Status</th></tr></thead>
-        <tbody>${recent.map(o => `<tr><td>#${o.orderId}</td><td>${o.uid||'N/A'}</td><td>${o.game||'N/A'}</td><td><span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></td></tr>`).join('')}</tbody></table>
+        <tbody>${recent.map(o => `<tr><td>#${o.orderId}</td><td>${o.uid||'?'}</td><td>${o.game||'?'}</td><td><span class="status-badge status-${o.status}">${getStatus(o.status)}</span></td></tr>`).join('')}</tbody></table>
       ` : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Chưa có đơn</p></div>';
 
       const recentV = allVisitors.slice(0, 5);
       document.getElementById('recentVisitors').innerHTML = recentV.length ? `
-        <table><thead><tr><th>IP</th><th>Vị trí</th><th>ISP</th></tr></thead>
-        <tbody>${recentV.map(v => `<tr><td><strong>${v.ip}</strong></td><td>${v.location?.city||'N/A'}, ${v.location?.country||'N/A'}</td><td>${v.location?.isp||'N/A'}</td></tr>`).join('')}</tbody></table>
+        <table><thead><tr><th>IP</th><th>Vị trí</th></tr></thead>
+        <tbody>${recentV.map(v => `<tr><td><strong>${v.ip}</strong></td><td>${v.location?.city||'?'}, ${v.location?.country||'?'}</td></tr>`).join('')}</tbody></table>
       ` : '<div class="empty-state"><i class="fas fa-users"></i><p>Chưa có khách</p></div>';
     }
 
@@ -637,19 +609,18 @@
         return;
       }
       document.getElementById('ordersTable').innerHTML = `
-        <table><thead><tr><th>ID</th><th>UID</th><th>Game</th><th>Gói</th><th>Giá</th><th>IP</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
+        <table><thead><tr><th>ID</th><th>UID</th><th>Game</th><th>Gói</th><th>Giá</th><th>IP</th><th>Status</th><th>Action</th></tr></thead>
         <tbody>${orders.map(o => `
           <tr>
-            <td><strong>#${o.orderId}</strong></td><td>${o.uid||'N/A'}</td><td>${o.game||'N/A'}</td><td>${o.plan||'N/A'}</td>
-            <td style="color:#ffd966;">${formatMoney(o.price)}</td><td><small>${o.ip||'N/A'}</small></td>
-            <td><span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></td>
-            <td><small>${formatTime(o.createdAt)}</small></td>
+            <td><strong>#${o.orderId}</strong></td><td>${o.uid||'?'}</td><td>${o.game||'?'}</td><td>${o.plan||'?'}</td>
+            <td style="color:#ffd966;">${formatMoney(o.price)}</td><td><small>${o.ip||'?'}</small></td>
+            <td><span class="status-badge status-${o.status}">${getStatus(o.status)}</span></td>
             <td><div class="action-btns">
               <button class="btn btn-primary btn-sm" onclick="viewDetail('${o.orderId}')"><i class="fas fa-eye"></i></button>
               ${o.status==='pending'?`<button class="btn btn-success btn-sm" onclick="approveOrder('${o.orderId}')"><i class="fas fa-check"></i></button><button class="btn btn-danger btn-sm" onclick="rejectOrder('${o.orderId}')"><i class="fas fa-times"></i></button>`:''}
               ${o.status==='processing'?`<button class="btn btn-success btn-sm" onclick="completeOrder('${o.orderId}')"><i class="fas fa-check-double"></i></button>`:''}
               <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.orderId}')"><i class="fas fa-trash"></i></button>
-              ${o.ip?`<button class="btn btn-warning btn-sm" onclick="quickBanIP('${o.ip}')"><i class="fas fa-ban"></i></button>`:''}
+              ${o.ip&&!o.ip.startsWith('visitor_')?`<button class="btn btn-warning btn-sm" onclick="quickBanIP('${o.ip}')"><i class="fas fa-ban"></i></button>`:''}
             </div></td>
           </tr>
         `).join('')}</tbody></table>
@@ -667,9 +638,9 @@
         <table><thead><tr><th>IP</th><th>City</th><th>Country</th><th>ISP</th><th>Time</th><th>Action</th></tr></thead>
         <tbody>${visitors.map(v => `
           <tr>
-            <td><strong>${v.ip}</strong></td><td>${v.location?.city||'N/A'}</td><td>${v.location?.country||'N/A'}</td><td>${v.location?.isp||'N/A'}</td>
+            <td><strong>${v.ip}</strong></td><td>${v.location?.city||'?'}</td><td>${v.location?.country||'?'}</td><td>${v.location?.isp||'?'}</td>
             <td><small>${formatTime(v.timestamp)}</small></td>
-            <td><button class="btn btn-warning btn-sm" onclick="quickBanIP('${v.ip}')"><i class="fas fa-ban"></i> Cấm</button></td>
+            <td>${v.ip&&!v.ip.startsWith('visitor_')?`<button class="btn btn-warning btn-sm" onclick="quickBanIP('${v.ip}')"><i class="fas fa-ban"></i></button>`:'<small>Ẩn danh</small>'}</td>
           </tr>
         `).join('')}</tbody></table>
       `;
@@ -683,56 +654,53 @@
       document.getElementById('bannedTable').innerHTML = `
         <table><thead><tr><th>IP</th><th>Lý do</th><th>Thời gian</th><th>Action</th></tr></thead>
         <tbody>${bannedIPs.map(b => `
-          <tr><td><strong style="color:#ff6b6b;">${b.ip}</strong></td><td>${b.reason||'N/A'}</td><td>${formatTime(b.bannedAt)}</td>
+          <tr><td><strong style="color:#ff6b6b;">${b.ip}</strong></td><td>${b.reason||'?'}</td><td>${formatTime(b.bannedAt)}</td>
           <td><button class="btn btn-success btn-sm" onclick="unbanIP('${b.ip}')">Bỏ cấm</button></td></tr>
         `).join('')}</tbody></table>
       `;
     }
 
     function renderLogsTable() {
-      let logs = [...allLogs];
-      if (searchQuery) logs = logs.filter(l => l.message.toLowerCase().includes(searchQuery) || l.type.toLowerCase().includes(searchQuery));
-      if (!logs.length) {
+      const logs = syncManager ? syncManager.getFromLocalStorage('logs', []) : [];
+      let filtered = [...logs];
+      if (searchQuery) filtered = filtered.filter(l => l.message.toLowerCase().includes(searchQuery) || l.type.toLowerCase().includes(searchQuery));
+      if (!filtered.length) {
         document.getElementById('logsTable').innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><p>Chưa có nhật ký</p></div>';
         return;
       }
       document.getElementById('logsTable').innerHTML = `
         <table><thead><tr><th>Time</th><th>Type</th><th>Message</th></tr></thead>
-        <tbody>${logs.map(l => `<tr><td><small>${formatTime(l.timestamp)}</small></td><td><span class="status-badge status-${l.type.includes('BANNED')?'rejected':'processing'}">${l.type}</span></td><td>${l.message}</td></tr>`).join('')}</tbody></table>
+        <tbody>${filtered.map(l => `<tr><td><small>${formatTime(l.timestamp)}</small></td><td><span class="status-badge status-${l.type.includes('BANNED')?'rejected':'processing'}">${l.type}</span></td><td>${l.message}</td></tr>`).join('')}</tbody></table>
       `;
     }
 
     async function approveOrder(orderId) {
-      if (await Swal.fire({title:'Duyệt?',icon:'question',showCancelButton:true,confirmButtonText:'Duyệt'}).then(r=>r.isConfirmed)) {
-        await syncManager.updateOrder(orderId, {status:'processing',approvedAt:new Date().toISOString()});
-        await loadAllData();
-        Swal.fire('✅','Đã duyệt!','success');
-      }
+      if (!(await Swal.fire({title:'Duyệt?',icon:'question',showCancelButton:true,confirmButtonText:'Duyệt'})).isConfirmed) return;
+      await syncManager.updateOrder(orderId, {status:'processing',approvedAt:new Date().toISOString()});
+      await loadAllData();
+      Swal.fire('✅','Đã duyệt!','success');
     }
 
     async function rejectOrder(orderId) {
       const {value:reason} = await Swal.fire({title:'Từ chối',input:'text',inputLabel:'Lý do',showCancelButton:true});
-      if (reason) {
-        await syncManager.updateOrder(orderId, {status:'rejected',rejectReason:reason});
-        await loadAllData();
-        Swal.fire('❌','Đã từ chối!','info');
-      }
+      if (!reason) return;
+      await syncManager.updateOrder(orderId, {status:'rejected',rejectReason:reason});
+      await loadAllData();
+      Swal.fire('❌','Đã từ chối!','info');
     }
 
     async function completeOrder(orderId) {
-      if (await Swal.fire({title:'Hoàn thành?',icon:'question',showCancelButton:true,confirmButtonText:'Hoàn thành'}).then(r=>r.isConfirmed)) {
-        await syncManager.updateOrder(orderId, {status:'completed',completedAt:new Date().toISOString()});
-        await loadAllData();
-        Swal.fire('🎉','Hoàn thành!','success');
-      }
+      if (!(await Swal.fire({title:'Hoàn thành?',icon:'question',showCancelButton:true,confirmButtonText:'OK'})).isConfirmed) return;
+      await syncManager.updateOrder(orderId, {status:'completed',completedAt:new Date().toISOString()});
+      await loadAllData();
+      Swal.fire('🎉','Hoàn thành!','success');
     }
 
     async function deleteOrder(orderId) {
-      if (await Swal.fire({title:'⚠️ Xóa?',text:'Không thể hoàn tác!',icon:'warning',showCancelButton:true,confirmButtonColor:'#e74c3c',confirmButtonText:'Xóa'}).then(r=>r.isConfirmed)) {
-        await syncManager.deleteOrder(orderId);
-        await loadAllData();
-        Swal.fire('🗑️','Đã xóa!','success');
-      }
+      if (!(await Swal.fire({title:'⚠️ Xóa?',text:'Không thể hoàn tác!',icon:'warning',showCancelButton:true,confirmButtonColor:'#e74c3c',confirmButtonText:'Xóa'})).isConfirmed) return;
+      await syncManager.deleteOrder(orderId);
+      await loadAllData();
+      Swal.fire('🗑️','Đã xóa!','success');
     }
 
     function viewDetail(orderId) {
@@ -741,19 +709,19 @@
       document.getElementById('modalContent').innerHTML = `
         <div class="detail-grid">
           <div class="detail-item"><div class="detail-label">Order ID</div><div class="detail-value">#${o.orderId}</div></div>
-          <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value"><span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></div></div>
-          <div class="detail-item"><div class="detail-label">Game</div><div class="detail-value">${o.game||'N/A'}</div></div>
-          <div class="detail-item"><div class="detail-label">UID</div><div class="detail-value">${o.uid||'N/A'}</div></div>
-          <div class="detail-item"><div class="detail-label">Tài khoản</div><div class="detail-value">${o.platformAccount||'N/A'}</div></div>
-          <div class="detail-item"><div class="detail-label">Mật khẩu</div><div class="detail-value">${o.password||'N/A'}</div></div>
-          <div class="detail-item"><div class="detail-label">IP</div><div class="detail-value">${o.ip||'N/A'}</div></div>
-          <div class="detail-item"><div class="detail-label">Vị trí</div><div class="detail-value">${o.location?.city||'N/A'}, ${o.location?.country||'N/A'}</div></div>
-          <div class="detail-item"><div class="detail-label">ISP</div><div class="detail-value">${o.location?.isp||'N/A'}</div></div>
+          <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value"><span class="status-badge status-${o.status}">${getStatus(o.status)}</span></div></div>
+          <div class="detail-item"><div class="detail-label">Game</div><div class="detail-value">${o.game||'?'}</div></div>
+          <div class="detail-item"><div class="detail-label">UID</div><div class="detail-value">${o.uid||'?'}</div></div>
+          <div class="detail-item"><div class="detail-label">Tài khoản</div><div class="detail-value">${o.platformAccount||'?'}</div></div>
+          <div class="detail-item"><div class="detail-label">Mật khẩu</div><div class="detail-value">${o.password||'?'}</div></div>
+          <div class="detail-item"><div class="detail-label">IP</div><div class="detail-value">${o.ip||'?'}</div></div>
+          <div class="detail-item"><div class="detail-label">Vị trí</div><div class="detail-value">${o.location?.city||'?'}, ${o.location?.country||'?'}</div></div>
+          <div class="detail-item"><div class="detail-label">ISP</div><div class="detail-value">${o.location?.isp||'?'}</div></div>
           <div class="detail-item"><div class="detail-label">Giá</div><div class="detail-value" style="color:#ffd966;">${formatMoney(o.price)}</div></div>
         </div>
-        <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
-          ${o.ip?`<button class="btn btn-warning" onclick="quickBanIP('${o.ip}');closeModal();">Cấm IP</button>`:''}
-          <button class="btn btn-primary" onclick="closeModal()">Đóng</button>
+        <div style="margin-top:15px;display:flex;gap:8px;justify-content:flex-end;">
+          ${o.ip&&!o.ip.startsWith('visitor_')?`<button class="btn btn-warning btn-sm" onclick="quickBanIP('${o.ip}');closeModal();">Cấm IP</button>`:''}
+          <button class="btn btn-primary btn-sm" onclick="closeModal()">Đóng</button>
         </div>
       `;
       document.getElementById('detailModal').classList.add('show');
@@ -770,8 +738,8 @@
 
     async function banIP() {
       const ip = document.getElementById('banIpInput').value.trim();
-      const reason = document.getElementById('banReasonInput').value.trim();
       if (!ip) { Swal.fire('❌','Nhập IP!','error'); return; }
+      const reason = document.getElementById('banReasonInput').value.trim();
       await syncManager.banIP(ip, reason);
       await loadAllData();
       closeBanModal();
@@ -779,19 +747,21 @@
     }
 
     async function quickBanIP(ip) {
-      if (await Swal.fire({title:'🚫 Cấm IP?',text:`Cấm ${ip}?`,icon:'warning',showCancelButton:true,confirmButtonText:'Cấm'}).then(r=>r.isConfirmed)) {
-        await syncManager.banIP(ip, 'Cấm nhanh');
-        await loadAllData();
-        Swal.fire('✅',`Đã cấm IP ${ip}!`,'success');
+      if (!ip || ip.startsWith('visitor_') || ip.startsWith('unknown')) {
+        Swal.fire('❌','Không thể cấm IP ẩn danh!','error');
+        return;
       }
+      if (!(await Swal.fire({title:'🚫 Cấm IP?',text:`Cấm ${ip}?`,icon:'warning',showCancelButton:true,confirmButtonText:'Cấm'})).isConfirmed) return;
+      await syncManager.banIP(ip, 'Cấm nhanh từ admin');
+      await loadAllData();
+      Swal.fire('✅',`Đã cấm IP ${ip}!`,'success');
     }
 
     async function unbanIP(ip) {
-      if (await Swal.fire({title:'✅ Bỏ cấm?',text:`Bỏ cấm ${ip}?`,icon:'question',showCancelButton:true,confirmButtonText:'Bỏ cấm'}).then(r=>r.isConfirmed)) {
-        await syncManager.unbanIP(ip);
-        await loadAllData();
-        Swal.fire('✅',`Đã bỏ cấm IP ${ip}!`,'success');
-      }
+      if (!(await Swal.fire({title:'✅ Bỏ cấm?',text:`Bỏ cấm ${ip}?`,icon:'question',showCancelButton:true,confirmButtonText:'Bỏ cấm'})).isConfirmed) return;
+      await syncManager.unbanIP(ip);
+      await loadAllData();
+      Swal.fire('✅',`Đã bỏ cấm IP ${ip}!`,'success');
     }
 
     async function saveSettings() {
@@ -803,30 +773,31 @@
     async function exportData() { await syncManager.exportData(); Swal.fire('✅','Đã xuất!','success'); }
     
     async function importData() {
-      const {value:file} = await Swal.fire({title:'📂 Chọn file',input:'file',inputAttributes:{accept:'.json'}});
+      const {value:file} = await Swal.fire({title:'📂 Chọn file backup',input:'file',inputAttributes:{accept:'.json'}});
       if (file) {
-        await syncManager.importData(file);
-        await loadAllData();
-        Swal.fire('✅','Đã nhập!','success');
+        try {
+          await syncManager.importData(file);
+          await loadAllData();
+          Swal.fire('✅','Đã nhập!','success');
+        } catch(e) { Swal.fire('❌','Lỗi!','error'); }
       }
     }
 
     async function clearAllData() {
-      if (await Swal.fire({title:'⚠️ CẢNH BÁO!',text:'Xóa TẤT CẢ?',icon:'warning',showCancelButton:true,confirmButtonColor:'#e74c3c',confirmButtonText:'XÓA'}).then(r=>r.isConfirmed)) {
-        await syncManager.clearAllData();
-        await loadAllData();
-        Swal.fire('🗑️','Đã xóa!','success');
-      }
+      if (!(await Swal.fire({title:'⚠️ CẢNH BÁO!',text:'Xóa TẤT CẢ dữ liệu?',icon:'warning',showCancelButton:true,confirmButtonColor:'#e74c3c',confirmButtonText:'XÓA TẤT CẢ'})).isConfirmed) return;
+      await syncManager.clearAllData();
+      await loadAllData();
+      Swal.fire('🗑️','Đã xóa!','success');
     }
 
     function formatMoney(amount) { return amount ? amount.toLocaleString('vi-VN') + 'đ' : '0đ'; }
-    function formatTime(ts) { return ts ? new Date(ts).toLocaleString('vi-VN', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : 'N/A'; }
-    function getStatusText(s) { return {pending:'⏳ Chờ duyệt',processing:'⚙️ Đang xử lý',completed:'✅ Hoàn thành',rejected:'❌ Từ chối'}[s]||s; }
+    function formatTime(ts) { return ts ? new Date(ts).toLocaleString('vi-VN', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '?'; }
+    function getStatus(s) { return {pending:'⏳ Chờ',processing:'⚙️ Đang XL',completed:'✅ Xong',rejected:'❌ Từ chối'}[s]||s; }
 
     window.onclick = function(event) { if (event.target.classList.contains('modal')) event.target.classList.remove('show'); };
 
     initAdmin();
-    console.log('✅ Admin Panel 24/7 đã sẵn sàng!');
+    console.log('✅ Admin Panel ready!');
   </script>
 </body>
 </html>
