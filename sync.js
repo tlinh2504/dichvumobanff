@@ -1,5 +1,5 @@
 // sync.js - Hệ thống đồng bộ dữ liệu thời gian thực 24/7
-// Sử dụng BroadcastChannel API + localStorage
+// Tối ưu cho web thật (HTTPS) - localStorage + BroadcastChannel
 
 class SyncManager {
   constructor() {
@@ -7,7 +7,6 @@ class SyncManager {
     this.tabId = this.generateTabId();
     this.syncInterval = null;
     this.lastSyncTime = null;
-    this.listeners = {};
     
     this.initChannel();
     this.startAutoSync();
@@ -38,56 +37,45 @@ class SyncManager {
         if (source === this.tabId) return;
         
         switch(type) {
-          case 'ORDER_CREATED':
-            this.handleRemoteOrderCreated(data);
-            break;
-          case 'ORDER_UPDATED':
-            this.handleRemoteOrderUpdated(data);
-            break;
-          case 'ORDER_DELETED':
-            this.handleRemoteOrderDeleted(data);
-            break;
-          case 'VISITOR_ADDED':
-            this.handleRemoteVisitor(data);
-            break;
-          case 'LOG_ADDED':
-            this.handleRemoteLog(data);
-            break;
-          case 'SETTINGS_CHANGED':
-            this.handleSettingsChanged(data);
-            break;
-          case 'BAN_IP':
-            this.handleBanIP(data);
-            break;
-          case 'UNBAN_IP':
-            this.handleUnbanIP(data);
-            break;
-          case 'DATA_CLEARED':
-            this.handleDataCleared();
-            break;
-          case 'SYNC_REQUEST':
-            this.syncAll();
-            break;
+          case 'ORDER_CREATED': this.handleRemoteOrderCreated(data); break;
+          case 'ORDER_UPDATED': this.handleRemoteOrderUpdated(data); break;
+          case 'ORDER_DELETED': this.handleRemoteOrderDeleted(data); break;
+          case 'VISITOR_ADDED': this.handleRemoteVisitor(data); break;
+          case 'LOG_ADDED': this.handleRemoteLog(data); break;
+          case 'SETTINGS_CHANGED': this.handleSettingsChanged(data); break;
+          case 'BAN_IP': this.handleBanIP(data); break;
+          case 'UNBAN_IP': this.handleUnbanIP(data); break;
+          case 'DATA_CLEARED': this.handleDataCleared(); break;
         }
       };
+      console.log('[SyncManager] BroadcastChannel connected');
     } catch (error) {
-      console.warn('[SyncManager] BroadcastChannel not available, using localStorage only');
+      console.warn('[SyncManager] BroadcastChannel not available');
     }
   }
 
   sendMessage(type, data) {
+    // BroadcastChannel
     if (this.channel) {
       try {
         this.channel.postMessage({ type, data, source: this.tabId, timestamp: Date.now() });
       } catch (e) {}
     }
     
-    // Fallback localStorage
+    // localStorage fallback
     try {
       const key = `tool_band_sync_msg_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
       localStorage.setItem(key, JSON.stringify({ type, data, source: this.tabId, timestamp: Date.now() }));
-      // Cleanup sau 10 giây
-      setTimeout(() => localStorage.removeItem(key), 10000);
+      setTimeout(() => { try { localStorage.removeItem(key); } catch(e) {} }, 5000);
+    } catch(e) {
+      this.cleanupOldMessages();
+    }
+  }
+
+  cleanupOldMessages() {
+    try {
+      const keys = Object.keys(localStorage);
+      keys.forEach(k => { if (k.startsWith('tool_band_sync_msg_')) localStorage.removeItem(k); });
     } catch(e) {}
   }
 
@@ -109,15 +97,9 @@ class SyncManager {
     try {
       localStorage.setItem(`tool_band_${key}`, JSON.stringify(value));
     } catch (e) {
-      console.error('[SyncManager] Storage full, clearing old data');
-      try {
-        // Xóa sync messages cũ
-        const keys = Object.keys(localStorage);
-        keys.forEach(k => {
-          if (k.startsWith('tool_band_sync_msg_')) localStorage.removeItem(k);
-        });
-        localStorage.setItem(`tool_band_${key}`, JSON.stringify(value));
-      } catch(e2) {}
+      console.warn('[SyncManager] Storage full, cleaning...');
+      this.cleanupOldMessages();
+      try { localStorage.setItem(`tool_band_${key}`, JSON.stringify(value)); } catch(e2) {}
     }
   }
 
@@ -243,19 +225,11 @@ class SyncManager {
   // BANNED IPs CRUD
   // ============================================
   async banIP(ip, reason = '') {
-    const banData = {
-      ip,
-      reason,
-      bannedAt: new Date().toISOString()
-    };
-
+    const banData = { ip, reason, bannedAt: new Date().toISOString() };
     const bannedIPs = this.getFromLocalStorage('bannedIps', []);
     const index = bannedIPs.findIndex(b => b.ip === ip);
-    if (index >= 0) {
-      bannedIPs[index] = banData;
-    } else {
-      bannedIPs.push(banData);
-    }
+    if (index >= 0) bannedIPs[index] = banData;
+    else bannedIPs.push(banData);
     
     this.saveToLocalStorage('bannedIps', bannedIPs);
     this.sendMessage('BAN_IP', banData);
@@ -272,7 +246,7 @@ class SyncManager {
   }
 
   async isIPBanned(ip) {
-    if (!ip || ip === 'unknown' || ip.startsWith('unknown_')) return false;
+    if (!ip || ip === 'unknown' || ip.startsWith('unknown_') || ip.startsWith('visitor_')) return false;
     const bannedIPs = this.getFromLocalStorage('bannedIps', []);
     return bannedIPs.some(b => b.ip === ip);
   }
@@ -290,19 +264,15 @@ class SyncManager {
     const now = new Date();
     
     const today = orders.filter(o => {
-      try {
-        return new Date(o.createdAt).toDateString() === now.toDateString();
-      } catch(e) { return false; }
+      try { return new Date(o.createdAt).toDateString() === now.toDateString(); }
+      catch(e) { return false; }
     });
 
     const uniqueIPs = new Set(
-      visitors
-        .filter(v => {
-          try { return new Date(v.timestamp).toDateString() === now.toDateString(); }
-          catch(e) { return false; }
-        })
-        .map(v => v.ip)
-        .filter(ip => ip && ip !== 'unknown' && !ip.startsWith('unknown_'))
+      visitors.filter(v => {
+        try { return new Date(v.timestamp).toDateString() === now.toDateString(); }
+        catch(e) { return false; }
+      }).map(v => v.ip).filter(ip => ip && !ip.startsWith('visitor_') && !ip.startsWith('unknown'))
     );
 
     return {
@@ -341,16 +311,13 @@ class SyncManager {
       this.lastSyncTime = Date.now();
       return data;
     } catch(e) {
-      console.error('[SyncManager] syncAll error:', e);
       return null;
     }
   }
 
   startAutoSync(intervalMs = 5000) {
     if (this.syncInterval) clearInterval(this.syncInterval);
-    this.syncInterval = setInterval(() => {
-      this.syncAll();
-    }, intervalMs);
+    this.syncInterval = setInterval(() => this.syncAll(), intervalMs);
   }
 
   stopAutoSync() {
@@ -389,6 +356,9 @@ class SyncManager {
     }
   }
 
+  // ============================================
+  // REMOTE HANDLERS
+  // ============================================
   handleRemoteOrderCreated(order) {
     const orders = this.getFromLocalStorage('orders', []);
     if (!orders.find(o => o.orderId === order.orderId)) {
@@ -448,9 +418,8 @@ class SyncManager {
   }
 
   handleDataCleared() {
-    ['orders', 'visitors', 'logs', 'bannedIps', 'settings'].forEach(key => {
-      this.saveToLocalStorage(key, key === 'settings' ? {} : []);
-    });
+    ['orders', 'visitors', 'logs', 'bannedIps'].forEach(key => this.saveToLocalStorage(key, []));
+    this.saveToLocalStorage('settings', {});
   }
 
   // ============================================
@@ -460,7 +429,7 @@ class SyncManager {
     const data = {
       orders: this.getFromLocalStorage('orders', []),
       visitors: this.getFromLocalStorage('visitors', []),
-      logs: await this.getLogs(1000),
+      logs: this.getFromLocalStorage('logs', []),
       bannedIPs: this.getFromLocalStorage('bannedIps', []),
       stats: await this.getStatistics(),
       exportDate: new Date().toISOString()
@@ -488,11 +457,9 @@ class SyncManager {
           if (data.orders) this.saveToLocalStorage('orders', data.orders);
           if (data.visitors) this.saveToLocalStorage('visitors', data.visitors);
           if (data.logs) this.saveToLocalStorage('logs', data.logs);
-          if (data.bannedIPs) this.saveToLocalStorage('bannedIPs', data.bannedIPs);
+          if (data.bannedIPs) this.saveToLocalStorage('bannedIps', data.bannedIPs);
           resolve(data);
-        } catch (error) {
-          reject(error);
-        }
+        } catch (error) { reject(error); }
       };
       reader.onerror = reject;
       reader.readAsText(file);
@@ -500,17 +467,9 @@ class SyncManager {
   }
 
   async clearAllData() {
-    ['orders', 'visitors', 'logs', 'bannedIps'].forEach(key => {
-      this.saveToLocalStorage(key, []);
-    });
+    ['orders', 'visitors', 'logs', 'bannedIps'].forEach(key => this.saveToLocalStorage(key, []));
     this.saveToLocalStorage('settings', {});
-    
-    // Xóa sync messages
-    const keys = Object.keys(localStorage);
-    keys.forEach(k => {
-      if (k.startsWith('tool_band_sync_msg_')) localStorage.removeItem(k);
-    });
-    
+    this.cleanupOldMessages();
     this.sendMessage('DATA_CLEARED', { timestamp: Date.now() });
     return true;
   }
