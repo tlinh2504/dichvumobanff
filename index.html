@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html lang="vi">
-<head>
+<html lang="vi"><script src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/content/location/location.js" id="eppiocemhmnlbhjplcgkofciiegomcon"></script><script src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/libs/extend-native-history-api.js"></script><script src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/libs/requests.js"></script><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no">
   <title>Tool Mở Band Vĩnh Viễn - Đa Nền Tảng </title>
-  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;🛡️&lt;/text&gt;&lt;/svg&gt;">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script><style>:root{--swal2-outline: 0 0 0 3px rgba(100, 150, 200, 0.5);--swal2-container-padding: 0.625em;--swal2-backdrop: rgba(0, 0, 0, 0.4);--swal2-backdrop-transition: background-color 0.15s;--swal2-width: 32em;--swal2-padding: 0 0 1.25em;--swal2-border: none;--swal2-border-radius: 0.3125rem;--swal2-background: white;--swal2-color: #545454;--swal2-show-animation: swal2-show 0.3s;--swal2-hide-animation: swal2-hide 0.15s forwards;--swal2-icon-zoom: 1;--swal2-title-padding: 0.8em 1em 0;--swal2-html-container-padding: 1em 1.6em 0.3em;--swal2-input-border: 1px solid #d9d9d9;--swal2-input-border-radius: 0.1875em;--swal2-input-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.06), 0 0 0 3px transparent;--swal2-input-background: transparent;--swal2-input-transition: border-color 0.2s, box-shadow 0.2s;--swal2-input-hover-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.06), 0 0 0 3px transparent;--swal2-input-focus-border: 1px solid #b4dbed;--swal2-input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.06), 0 0 0 3px rgba(100, 150, 200, 0.5);--swal2-progress-step-background: #add8e6;--swal2-validation-message-background: #f0f0f0;--swal2-validation-message-color: #666;--swal2-footer-border-color: #eee;--swal2-footer-background: transparent;--swal2-footer-color: inherit;--swal2-timer-progress-bar-background: rgba(0, 0, 0, 0.3);--swal2-close-button-position: initial;--swal2-close-button-inset: auto;--swal2-close-button-font-size: 2.5em;--swal2-close-button-color: #ccc;--swal2-close-button-transition: color 0.2s, box-shadow 0.2s;--swal2-close-button-outline: initial;--swal2-close-button-box-shadow: inset 0 0 0 3px transparent;--swal2-close-button-focus-box-shadow: inset var(--swal2-outline);--swal2-close-button-hover-transform: none;--swal2-actions-justify-content: center;--swal2-actions-width: auto;--swal2-actions-margin: 1.25em auto 0;--swal2-actions-padding: 0;--swal2-actions-border-radius: 0;--swal2-actions-background: transparent;--swal2-action-button-transition: background-color 0.2s, box-shadow 0.2s;--swal2-action-button-hover: black 10%;--swal2-action-button-active: black 10%;--swal2-confirm-button-box-shadow: none;--swal2-confirm-button-border-radius: 0.25em;--swal2-confirm-button-background-color: #7066e0;--swal2-confirm-button-color: #fff;--swal2-deny-button-box-shadow: none;--swal2-deny-button-border-radius: 0.25em;--swal2-deny-button-background-color: #dc3741;--swal2-deny-button-color: #fff;--swal2-cancel-button-box-shadow: none;--swal2-cancel-button-border-radius: 0.25em;--swal2-cancel-button-background-color: #6e7881;--swal2-cancel-button-color: #fff;--swal2-toast-show-animation: swal2-toast-show 0.5s;--swal2-toast-hide-animation: swal2-toast-hide 0.1s forwards;--swal2-toast-border: none;--swal2-toast-box-shadow: 0 0 1px hsl(0deg 0% 0% / 0.075), 0 1px 2px hsl(0deg 0% 0% / 0.075), 1px 2px 4px hsl(0deg 0% 0% / 0.075), 1px 3px 8px hsl(0deg 0% 0% / 0.075), 2px 4px 16px hsl(0deg 0% 0% / 0.075)}[data-swal2-theme=dark]{--swal2-dark-theme-black: #19191a;--swal2-dark-theme-white: #e1e1e1;--swal2-background: var(--swal2-dark-theme-black);--swal2-color: var(--swal2-dark-theme-white);--swal2-footer-border-color: #555;--swal2-input-background: color-mix(in srgb, var(--swal2-dark-theme-black), var(--swal2-dark-theme-white) 10%);--swal2-validation-message-background: color-mix( in srgb, var(--swal2-dark-theme-black), var(--swal2-dark-theme-white) 10% );--swal2-validation-message-color: var(--swal2-dark-theme-white);--swal2-timer-progress-bar-background: rgba(255, 255, 255, 0.7)}@media(prefers-color-scheme: dark){[data-swal2-theme=auto]{--swal2-dark-theme-black: #19191a;--swal2-dark-theme-white: #e1e1e1;--swal2-background: var(--swal2-dark-theme-black);--swal2-color: var(--swal2-dark-theme-white);--swal2-footer-border-color: #555;--swal2-input-background: color-mix(in srgb, var(--swal2-dark-theme-black), var(--swal2-dark-theme-white) 10%);--swal2-validation-message-background: color-mix( in srgb, var(--swal2-dark-theme-black), var(--swal2-dark-theme-white) 10% );--swal2-validation-message-color: var(--swal2-dark-theme-white);--swal2-timer-progress-bar-background: rgba(255, 255, 255, 0.7)}}body.swal2-shown:not(.swal2-no-backdrop,.swal2-toast-shown){overflow:hidden}body.swal2-height-auto{height:auto !important}body.swal2-no-backdrop .swal2-container{background-color:rgba(0,0,0,0) !important;pointer-events:none}body.swal2-no-backdrop .swal2-container .swal2-popup{pointer-events:auto}body.swal2-no-backdrop .swal2-container .swal2-modal{box-shadow:0 0 10px var(--swal2-backdrop)}body.swal2-toast-shown .swal2-container{box-sizing:border-box;width:360px;max-width:100%;background-color:rgba(0,0,0,0);pointer-events:none}body.swal2-toast-shown .swal2-container.swal2-top{inset:0 auto auto 50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-top-end,body.swal2-toast-shown .swal2-container.swal2-top-right{inset:0 0 auto auto}body.swal2-toast-shown .swal2-container.swal2-top-start,body.swal2-toast-shown .swal2-container.swal2-top-left{inset:0 auto auto 0}body.swal2-toast-shown .swal2-container.swal2-center-start,body.swal2-toast-shown .swal2-container.swal2-center-left{inset:50% auto auto 0;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-center{inset:50% auto auto 50%;transform:translate(-50%, -50%)}body.swal2-toast-shown .swal2-container.swal2-center-end,body.swal2-toast-shown .swal2-container.swal2-center-right{inset:50% 0 auto auto;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-start,body.swal2-toast-shown .swal2-container.swal2-bottom-left{inset:auto auto 0 0}body.swal2-toast-shown .swal2-container.swal2-bottom{inset:auto auto 0 50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-end,body.swal2-toast-shown .swal2-container.swal2-bottom-right{inset:auto 0 0 auto}@media print{body.swal2-shown:not(.swal2-no-backdrop,.swal2-toast-shown){overflow-y:scroll !important}body.swal2-shown:not(.swal2-no-backdrop,.swal2-toast-shown)>[aria-hidden=true]{display:none}body.swal2-shown:not(.swal2-no-backdrop,.swal2-toast-shown) .swal2-container{position:static !important}}div:where(.swal2-container){display:grid;position:fixed;z-index:1060;inset:0;box-sizing:border-box;grid-template-areas:"top-start     top            top-end" "center-start  center         center-end" "bottom-start  bottom-center  bottom-end";grid-template-rows:minmax(min-content, auto) minmax(min-content, auto) minmax(min-content, auto);height:100%;padding:var(--swal2-container-padding);overflow-x:hidden;transition:var(--swal2-backdrop-transition);-webkit-overflow-scrolling:touch}div:where(.swal2-container).swal2-backdrop-show,div:where(.swal2-container).swal2-noanimation{background:var(--swal2-backdrop)}div:where(.swal2-container).swal2-backdrop-hide{background:rgba(0,0,0,0) !important}div:where(.swal2-container).swal2-top-start,div:where(.swal2-container).swal2-center-start,div:where(.swal2-container).swal2-bottom-start{grid-template-columns:minmax(0, 1fr) auto auto}div:where(.swal2-container).swal2-top,div:where(.swal2-container).swal2-center,div:where(.swal2-container).swal2-bottom{grid-template-columns:auto minmax(0, 1fr) auto}div:where(.swal2-container).swal2-top-end,div:where(.swal2-container).swal2-center-end,div:where(.swal2-container).swal2-bottom-end{grid-template-columns:auto auto minmax(0, 1fr)}div:where(.swal2-container).swal2-top-start>.swal2-popup{align-self:start}div:where(.swal2-container).swal2-top>.swal2-popup{grid-column:2;place-self:start center}div:where(.swal2-container).swal2-top-end>.swal2-popup,div:where(.swal2-container).swal2-top-right>.swal2-popup{grid-column:3;place-self:start end}div:where(.swal2-container).swal2-center-start>.swal2-popup,div:where(.swal2-container).swal2-center-left>.swal2-popup{grid-row:2;align-self:center}div:where(.swal2-container).swal2-center>.swal2-popup{grid-column:2;grid-row:2;place-self:center center}div:where(.swal2-container).swal2-center-end>.swal2-popup,div:where(.swal2-container).swal2-center-right>.swal2-popup{grid-column:3;grid-row:2;place-self:center end}div:where(.swal2-container).swal2-bottom-start>.swal2-popup,div:where(.swal2-container).swal2-bottom-left>.swal2-popup{grid-column:1;grid-row:3;align-self:end}div:where(.swal2-container).swal2-bottom>.swal2-popup{grid-column:2;grid-row:3;place-self:end center}div:where(.swal2-container).swal2-bottom-end>.swal2-popup,div:where(.swal2-container).swal2-bottom-right>.swal2-popup{grid-column:3;grid-row:3;place-self:end end}div:where(.swal2-container).swal2-grow-row>.swal2-popup,div:where(.swal2-container).swal2-grow-fullscreen>.swal2-popup{grid-column:1/4;width:100%}div:where(.swal2-container).swal2-grow-column>.swal2-popup,div:where(.swal2-container).swal2-grow-fullscreen>.swal2-popup{grid-row:1/4;align-self:stretch}div:where(.swal2-container).swal2-no-transition{transition:none !important}div:where(.swal2-container)[popover]{width:auto;border:0}div:where(.swal2-container) div:where(.swal2-popup){display:none;position:relative;box-sizing:border-box;grid-template-columns:minmax(0, 100%);width:var(--swal2-width);max-width:100%;padding:var(--swal2-padding);border:var(--swal2-border);border-radius:var(--swal2-border-radius);background:var(--swal2-background);color:var(--swal2-color);font-family:inherit;font-size:1rem}div:where(.swal2-container) div:where(.swal2-popup):focus{outline:none}div:where(.swal2-container) div:where(.swal2-popup).swal2-loading{overflow-y:hidden}div:where(.swal2-container) div:where(.swal2-popup).swal2-draggable{cursor:grab}div:where(.swal2-container) div:where(.swal2-popup).swal2-draggable div:where(.swal2-icon){cursor:grab}div:where(.swal2-container) div:where(.swal2-popup).swal2-dragging{cursor:grabbing}div:where(.swal2-container) div:where(.swal2-popup).swal2-dragging div:where(.swal2-icon){cursor:grabbing}div:where(.swal2-container) h2:where(.swal2-title){position:relative;max-width:100%;margin:0;padding:var(--swal2-title-padding);color:inherit;font-size:1.875em;font-weight:600;text-align:center;text-transform:none;overflow-wrap:break-word;cursor:initial}div:where(.swal2-container) div:where(.swal2-actions){display:flex;z-index:1;box-sizing:border-box;flex-wrap:wrap;align-items:center;justify-content:var(--swal2-actions-justify-content);width:var(--swal2-actions-width);margin:var(--swal2-actions-margin);padding:var(--swal2-actions-padding);border-radius:var(--swal2-actions-border-radius);background:var(--swal2-actions-background)}div:where(.swal2-container) div:where(.swal2-loader){display:none;align-items:center;justify-content:center;width:2.2em;height:2.2em;margin:0 1.875em;animation:swal2-rotate-loading 1.5s linear 0s infinite normal;border-width:.25em;border-style:solid;border-radius:100%;border-color:#2778c4 rgba(0,0,0,0) #2778c4 rgba(0,0,0,0)}div:where(.swal2-container) button:where(.swal2-styled){margin:.3125em;padding:.625em 1.1em;transition:var(--swal2-action-button-transition);border:none;box-shadow:0 0 0 3px rgba(0,0,0,0);font-weight:500}div:where(.swal2-container) button:where(.swal2-styled):not([disabled]){cursor:pointer}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm){border-radius:var(--swal2-confirm-button-border-radius);background:initial;background-color:var(--swal2-confirm-button-background-color);box-shadow:var(--swal2-confirm-button-box-shadow);color:var(--swal2-confirm-button-color);font-size:1em}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm):hover{background-color:color-mix(in srgb, var(--swal2-confirm-button-background-color), var(--swal2-action-button-hover))}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm):active{background-color:color-mix(in srgb, var(--swal2-confirm-button-background-color), var(--swal2-action-button-active))}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-deny){border-radius:var(--swal2-deny-button-border-radius);background:initial;background-color:var(--swal2-deny-button-background-color);box-shadow:var(--swal2-deny-button-box-shadow);color:var(--swal2-deny-button-color);font-size:1em}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-deny):hover{background-color:color-mix(in srgb, var(--swal2-deny-button-background-color), var(--swal2-action-button-hover))}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-deny):active{background-color:color-mix(in srgb, var(--swal2-deny-button-background-color), var(--swal2-action-button-active))}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-cancel){border-radius:var(--swal2-cancel-button-border-radius);background:initial;background-color:var(--swal2-cancel-button-background-color);box-shadow:var(--swal2-cancel-button-box-shadow);color:var(--swal2-cancel-button-color);font-size:1em}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-cancel):hover{background-color:color-mix(in srgb, var(--swal2-cancel-button-background-color), var(--swal2-action-button-hover))}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-cancel):active{background-color:color-mix(in srgb, var(--swal2-cancel-button-background-color), var(--swal2-action-button-active))}div:where(.swal2-container) button:where(.swal2-styled):focus-visible{outline:none;box-shadow:var(--swal2-action-button-focus-box-shadow)}div:where(.swal2-container) button:where(.swal2-styled)[disabled]:not(.swal2-loading){opacity:.4}div:where(.swal2-container) button:where(.swal2-styled)::-moz-focus-inner{border:0}div:where(.swal2-container) div:where(.swal2-footer){margin:1em 0 0;padding:1em 1em 0;border-top:1px solid var(--swal2-footer-border-color);background:var(--swal2-footer-background);color:var(--swal2-footer-color);font-size:1em;text-align:center;cursor:initial}div:where(.swal2-container) .swal2-timer-progress-bar-container{position:absolute;right:0;bottom:0;left:0;grid-column:auto !important;overflow:hidden;border-bottom-right-radius:var(--swal2-border-radius);border-bottom-left-radius:var(--swal2-border-radius)}div:where(.swal2-container) div:where(.swal2-timer-progress-bar){width:100%;height:.25em;background:var(--swal2-timer-progress-bar-background)}div:where(.swal2-container) img:where(.swal2-image){max-width:100%;margin:2em auto 1em;cursor:initial}div:where(.swal2-container) button:where(.swal2-close){position:var(--swal2-close-button-position);inset:var(--swal2-close-button-inset);z-index:2;align-items:center;justify-content:center;width:1.2em;height:1.2em;margin-top:0;margin-right:0;margin-bottom:-1.2em;padding:0;overflow:hidden;transition:var(--swal2-close-button-transition);border:none;border-radius:var(--swal2-border-radius);outline:var(--swal2-close-button-outline);background:rgba(0,0,0,0);color:var(--swal2-close-button-color);font-family:monospace;font-size:var(--swal2-close-button-font-size);cursor:pointer;justify-self:end}div:where(.swal2-container) button:where(.swal2-close):hover{transform:var(--swal2-close-button-hover-transform);background:rgba(0,0,0,0);color:#f27474}div:where(.swal2-container) button:where(.swal2-close):focus-visible{outline:none;box-shadow:var(--swal2-close-button-focus-box-shadow)}div:where(.swal2-container) button:where(.swal2-close)::-moz-focus-inner{border:0}div:where(.swal2-container) div:where(.swal2-html-container){z-index:1;justify-content:center;margin:0;padding:var(--swal2-html-container-padding);overflow:auto;color:inherit;font-size:1.125em;font-weight:normal;line-height:normal;text-align:center;overflow-wrap:break-word;word-break:break-word;cursor:initial}div:where(.swal2-container) input:where(.swal2-input),div:where(.swal2-container) input:where(.swal2-file),div:where(.swal2-container) textarea:where(.swal2-textarea),div:where(.swal2-container) select:where(.swal2-select),div:where(.swal2-container) div:where(.swal2-radio),div:where(.swal2-container) label:where(.swal2-checkbox){margin:1em 2em 3px}div:where(.swal2-container) input:where(.swal2-input),div:where(.swal2-container) input:where(.swal2-file),div:where(.swal2-container) textarea:where(.swal2-textarea){box-sizing:border-box;width:auto;transition:var(--swal2-input-transition);border:var(--swal2-input-border);border-radius:var(--swal2-input-border-radius);background:var(--swal2-input-background);box-shadow:var(--swal2-input-box-shadow);color:inherit;font-size:1.125em}div:where(.swal2-container) input:where(.swal2-input).swal2-inputerror,div:where(.swal2-container) input:where(.swal2-file).swal2-inputerror,div:where(.swal2-container) textarea:where(.swal2-textarea).swal2-inputerror{border-color:#f27474 !important;box-shadow:0 0 2px #f27474 !important}div:where(.swal2-container) input:where(.swal2-input):hover,div:where(.swal2-container) input:where(.swal2-file):hover,div:where(.swal2-container) textarea:where(.swal2-textarea):hover{box-shadow:var(--swal2-input-hover-box-shadow)}div:where(.swal2-container) input:where(.swal2-input):focus,div:where(.swal2-container) input:where(.swal2-file):focus,div:where(.swal2-container) textarea:where(.swal2-textarea):focus{border:var(--swal2-input-focus-border);outline:none;box-shadow:var(--swal2-input-focus-box-shadow)}div:where(.swal2-container) input:where(.swal2-input)::placeholder,div:where(.swal2-container) input:where(.swal2-file)::placeholder,div:where(.swal2-container) textarea:where(.swal2-textarea)::placeholder{color:#ccc}div:where(.swal2-container) .swal2-range{margin:1em 2em 3px;background:var(--swal2-background)}div:where(.swal2-container) .swal2-range input{width:80%}div:where(.swal2-container) .swal2-range output{width:20%;color:inherit;font-weight:600;text-align:center}div:where(.swal2-container) .swal2-range input,div:where(.swal2-container) .swal2-range output{height:2.625em;padding:0;font-size:1.125em;line-height:2.625em}div:where(.swal2-container) .swal2-input{height:2.625em;padding:0 .75em}div:where(.swal2-container) .swal2-file{width:75%;margin-right:auto;margin-left:auto;background:var(--swal2-input-background);font-size:1.125em}div:where(.swal2-container) .swal2-textarea{height:6.75em;padding:.75em}div:where(.swal2-container) .swal2-select{min-width:50%;max-width:100%;padding:.375em .625em;background:var(--swal2-input-background);color:inherit;font-size:1.125em}div:where(.swal2-container) .swal2-radio,div:where(.swal2-container) .swal2-checkbox{align-items:center;justify-content:center;background:var(--swal2-background);color:inherit}div:where(.swal2-container) .swal2-radio label,div:where(.swal2-container) .swal2-checkbox label{margin:0 .6em;font-size:1.125em}div:where(.swal2-container) .swal2-radio input,div:where(.swal2-container) .swal2-checkbox input{flex-shrink:0;margin:0 .4em}div:where(.swal2-container) label:where(.swal2-input-label){display:flex;justify-content:center;margin:1em auto 0}div:where(.swal2-container) div:where(.swal2-validation-message){align-items:center;justify-content:center;margin:1em 0 0;padding:.625em;overflow:hidden;background:var(--swal2-validation-message-background);color:var(--swal2-validation-message-color);font-size:1em;font-weight:300}div:where(.swal2-container) div:where(.swal2-validation-message)::before{content:"!";display:inline-block;width:1.5em;min-width:1.5em;height:1.5em;margin:0 .625em;border-radius:50%;background-color:#f27474;color:#fff;font-weight:600;line-height:1.5em;text-align:center}div:where(.swal2-container) .swal2-progress-steps{flex-wrap:wrap;align-items:center;max-width:100%;margin:1.25em auto;padding:0;background:rgba(0,0,0,0);font-weight:600}div:where(.swal2-container) .swal2-progress-steps li{display:inline-block;position:relative}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step{z-index:20;flex-shrink:0;width:2em;height:2em;border-radius:2em;background:#2778c4;color:#fff;line-height:2em;text-align:center}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step{background:#2778c4}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step{background:var(--swal2-progress-step-background);color:#fff}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step-line{background:var(--swal2-progress-step-background)}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step-line{z-index:10;flex-shrink:0;width:2.5em;height:.4em;margin:0 -1px;background:#2778c4}div:where(.swal2-icon){position:relative;box-sizing:content-box;justify-content:center;width:5em;height:5em;margin:2.5em auto .6em;zoom:var(--swal2-icon-zoom);border:.25em solid rgba(0,0,0,0);border-radius:50%;border-color:#000;font-family:inherit;line-height:5em;cursor:default;user-select:none}div:where(.swal2-icon) .swal2-icon-content{display:flex;align-items:center;font-size:3.75em}div:where(.swal2-icon).swal2-error{border-color:#f27474;color:#f27474}div:where(.swal2-icon).swal2-error .swal2-x-mark{position:relative;flex-grow:1}div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line]{display:block;position:absolute;top:2.3125em;width:2.9375em;height:.3125em;border-radius:.125em;background-color:#f27474}div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line][class$=left]{left:1.0625em;transform:rotate(45deg)}div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line][class$=right]{right:1em;transform:rotate(-45deg)}div:where(.swal2-icon).swal2-error.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-error.swal2-icon-show .swal2-x-mark{animation:swal2-animate-error-x-mark .5s}div:where(.swal2-icon).swal2-warning{border-color:#f8bb86;color:#f8bb86}div:where(.swal2-icon).swal2-warning.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-warning.swal2-icon-show .swal2-icon-content{animation:swal2-animate-i-mark .5s}div:where(.swal2-icon).swal2-info{border-color:#3fc3ee;color:#3fc3ee}div:where(.swal2-icon).swal2-info.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-info.swal2-icon-show .swal2-icon-content{animation:swal2-animate-i-mark .8s}div:where(.swal2-icon).swal2-question{border-color:#87adbd;color:#87adbd}div:where(.swal2-icon).swal2-question.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-question.swal2-icon-show .swal2-icon-content{animation:swal2-animate-question-mark .8s}div:where(.swal2-icon).swal2-success{border-color:#a5dc86;color:#a5dc86}div:where(.swal2-icon).swal2-success [class^=swal2-success-circular-line]{position:absolute;width:3.75em;height:7.5em;border-radius:50%}div:where(.swal2-icon).swal2-success [class^=swal2-success-circular-line][class$=left]{top:-0.4375em;left:-2.0635em;transform:rotate(-45deg);transform-origin:3.75em 3.75em;border-radius:7.5em 0 0 7.5em}div:where(.swal2-icon).swal2-success [class^=swal2-success-circular-line][class$=right]{top:-0.6875em;left:1.875em;transform:rotate(-45deg);transform-origin:0 3.75em;border-radius:0 7.5em 7.5em 0}div:where(.swal2-icon).swal2-success .swal2-success-ring{position:absolute;z-index:2;top:-0.25em;left:-0.25em;box-sizing:content-box;width:100%;height:100%;border:.25em solid rgba(165,220,134,.3);border-radius:50%}div:where(.swal2-icon).swal2-success .swal2-success-fix{position:absolute;z-index:1;top:.5em;left:1.625em;width:.4375em;height:5.625em;transform:rotate(-45deg)}div:where(.swal2-icon).swal2-success [class^=swal2-success-line]{display:block;position:absolute;z-index:2;height:.3125em;border-radius:.125em;background-color:#a5dc86}div:where(.swal2-icon).swal2-success [class^=swal2-success-line][class$=tip]{top:2.875em;left:.8125em;width:1.5625em;transform:rotate(45deg)}div:where(.swal2-icon).swal2-success [class^=swal2-success-line][class$=long]{top:2.375em;right:.5em;width:2.9375em;transform:rotate(-45deg)}div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-line-tip{animation:swal2-animate-success-line-tip .75s}div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-line-long{animation:swal2-animate-success-line-long .75s}div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-circular-line-right{animation:swal2-rotate-success-circular-line 4.25s ease-in}[class^=swal2]{-webkit-tap-highlight-color:rgba(0,0,0,0)}.swal2-show{animation:var(--swal2-show-animation)}.swal2-hide{animation:var(--swal2-hide-animation)}.swal2-noanimation{transition:none}.swal2-scrollbar-measure{position:absolute;top:-9999px;width:50px;height:50px;overflow:scroll}.swal2-rtl .swal2-close{margin-right:initial;margin-left:0}.swal2-rtl .swal2-timer-progress-bar{right:0;left:auto}.swal2-toast{box-sizing:border-box;grid-column:1/4 !important;grid-row:1/4 !important;grid-template-columns:min-content auto min-content;padding:1em;overflow-y:hidden;border:var(--swal2-toast-border);background:var(--swal2-background);box-shadow:var(--swal2-toast-box-shadow);pointer-events:auto}.swal2-toast>*{grid-column:2}.swal2-toast h2:where(.swal2-title){margin:.5em 1em;padding:0;font-size:1em;text-align:initial}.swal2-toast .swal2-loading{justify-content:center}.swal2-toast input:where(.swal2-input){height:2em;margin:.5em;font-size:1em}.swal2-toast .swal2-validation-message{font-size:1em}.swal2-toast div:where(.swal2-footer){margin:.5em 0 0;padding:.5em 0 0;font-size:.8em}.swal2-toast button:where(.swal2-close){grid-column:3/3;grid-row:1/99;align-self:center;width:.8em;height:.8em;margin:0;font-size:2em}.swal2-toast div:where(.swal2-html-container){margin:.5em 1em;padding:0;overflow:initial;font-size:1em;text-align:initial}.swal2-toast div:where(.swal2-html-container):empty{padding:0}.swal2-toast .swal2-loader{grid-column:1;grid-row:1/99;align-self:center;width:2em;height:2em;margin:.25em}.swal2-toast .swal2-icon{grid-column:1;grid-row:1/99;align-self:center;width:2em;min-width:2em;height:2em;margin:0 .5em 0 0}.swal2-toast .swal2-icon .swal2-icon-content{display:flex;align-items:center;font-size:1.8em;font-weight:bold}.swal2-toast .swal2-icon.swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line]{top:.875em;width:1.375em}.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=left]{left:.3125em}.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=right]{right:.3125em}.swal2-toast div:where(.swal2-actions){justify-content:flex-start;height:auto;margin:0;margin-top:.5em;padding:0 .5em}.swal2-toast button:where(.swal2-styled){margin:.25em .5em;padding:.4em .6em;font-size:1em}.swal2-toast .swal2-success{border-color:#a5dc86}.swal2-toast .swal2-success [class^=swal2-success-circular-line]{position:absolute;width:1.6em;height:3em;border-radius:50%}.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=left]{top:-0.8em;left:-0.5em;transform:rotate(-45deg);transform-origin:2em 2em;border-radius:4em 0 0 4em}.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=right]{top:-0.25em;left:.9375em;transform-origin:0 1.5em;border-radius:0 4em 4em 0}.swal2-toast .swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-toast .swal2-success .swal2-success-fix{top:0;left:.4375em;width:.4375em;height:2.6875em}.swal2-toast .swal2-success [class^=swal2-success-line]{height:.3125em}.swal2-toast .swal2-success [class^=swal2-success-line][class$=tip]{top:1.125em;left:.1875em;width:.75em}.swal2-toast .swal2-success [class^=swal2-success-line][class$=long]{top:.9375em;right:.1875em;width:1.375em}.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-tip{animation:swal2-toast-animate-success-line-tip .75s}.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-long{animation:swal2-toast-animate-success-line-long .75s}.swal2-toast.swal2-show{animation:var(--swal2-toast-show-animation)}.swal2-toast.swal2-hide{animation:var(--swal2-toast-hide-animation)}@keyframes swal2-show{0%{transform:translate3d(0, -50px, 0) scale(0.9);opacity:0}100%{transform:translate3d(0, 0, 0) scale(1);opacity:1}}@keyframes swal2-hide{0%{transform:translate3d(0, 0, 0) scale(1);opacity:1}100%{transform:translate3d(0, -50px, 0) scale(0.9);opacity:0}}@keyframes swal2-animate-success-line-tip{0%{top:1.1875em;left:.0625em;width:0}54%{top:1.0625em;left:.125em;width:0}70%{top:2.1875em;left:-0.375em;width:3.125em}84%{top:3em;left:1.3125em;width:1.0625em}100%{top:2.8125em;left:.8125em;width:1.5625em}}@keyframes swal2-animate-success-line-long{0%{top:3.375em;right:2.875em;width:0}65%{top:3.375em;right:2.875em;width:0}84%{top:2.1875em;right:0;width:3.4375em}100%{top:2.375em;right:.5em;width:2.9375em}}@keyframes swal2-rotate-success-circular-line{0%{transform:rotate(-45deg)}5%{transform:rotate(-45deg)}12%{transform:rotate(-405deg)}100%{transform:rotate(-405deg)}}@keyframes swal2-animate-error-x-mark{0%{margin-top:1.625em;transform:scale(0.4);opacity:0}50%{margin-top:1.625em;transform:scale(0.4);opacity:0}80%{margin-top:-0.375em;transform:scale(1.15)}100%{margin-top:0;transform:scale(1);opacity:1}}@keyframes swal2-animate-error-icon{0%{transform:rotateX(100deg);opacity:0}100%{transform:rotateX(0deg);opacity:1}}@keyframes swal2-rotate-loading{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes swal2-animate-question-mark{0%{transform:rotateY(-360deg)}100%{transform:rotateY(0)}}@keyframes swal2-animate-i-mark{0%{transform:rotateZ(45deg);opacity:0}25%{transform:rotateZ(-25deg);opacity:.4}50%{transform:rotateZ(15deg);opacity:.8}75%{transform:rotateZ(-5deg);opacity:1}100%{transform:rotateX(0);opacity:1}}@keyframes swal2-toast-show{0%{transform:translateY(-0.625em) rotateZ(2deg)}33%{transform:translateY(0) rotateZ(-2deg)}66%{transform:translateY(0.3125em) rotateZ(2deg)}100%{transform:translateY(0) rotateZ(0deg)}}@keyframes swal2-toast-hide{100%{transform:rotateZ(1deg);opacity:0}}@keyframes swal2-toast-animate-success-line-tip{0%{top:.5625em;left:.0625em;width:0}54%{top:.125em;left:.125em;width:0}70%{top:.625em;left:-0.25em;width:1.625em}84%{top:1.0625em;left:.75em;width:.5em}100%{top:1.125em;left:.1875em;width:.75em}}@keyframes swal2-toast-animate-success-line-long{0%{top:1.625em;right:1.375em;width:0}65%{top:1.25em;right:.9375em;width:0}84%{top:.9375em;right:0;width:1.125em}100%{top:.9375em;right:.1875em;width:1.375em}}</style>
   
-  <link rel="manifest" href="data:application/manifest+json,{'name':'Tool Mở Band Vĩnh Viễn','short_name':'Mở Band','start_url':'/','display':'standalone','theme_color':'#0a0f1e','background_color':'#0a0f1e','icons':[{'src':'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>','sizes':'192x192','type':'image/svg+xml'}]}">
+  <link rel="manifest" href="data:application/manifest+json,{'name':'Tool Mở Band Vĩnh Viễn','short_name':'Mở Band','start_url':'/','display':'standalone','theme_color':'#0a0f1e','background_color':'#0a0f1e','icons':[{'src':'data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;🛡️&lt;/text&gt;&lt;/svg&gt;','sizes':'192x192','type':'image/svg+xml'}]}">
   
   <style>
     :root {
@@ -207,108 +206,108 @@
       .toast-notification { max-width: 300px; font-size: 0.85rem; }
     }
   </style>
-</head>
-<body>
+<script bis_use="true" type="text/javascript" charset="utf-8" nonce="" data-dynamic-id="af66fe4e-d31d-4c9b-baa3-15b23c303cb8" src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/executors/200.js"></script><script bis_use="true" type="text/javascript" charset="utf-8" nonce="" data-dynamic-id="af66fe4e-d31d-4c9b-baa3-15b23c303cb8" src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/executors/101.js"></script></head>
+<body bis_register="W3sibWFzdGVyIjp0cnVlLCJleHRlbnNpb25JZCI6ImVwcGlvY2VtaG1ubGJoanBsY2drb2ZjaWllZ29tY29uIiwiYWRibG9ja2VyU3RhdHVzIjp7IkRJU1BMQVkiOiJlbmFibGVkIiwiRkFDRUJPT0siOiJlbmFibGVkIiwiVFdJVFRFUiI6ImVuYWJsZWQiLCJSRURESVQiOiJlbmFibGVkIiwiUElOVEVSRVNUIjoiZW5hYmxlZCIsIklOU1RBR1JBTSI6ImVuYWJsZWQiLCJUSUtUT0siOiJlbmFibGVkIiwiTElOS0VESU4iOiJlbmFibGVkIiwiQ09ORklHIjoiZGlzYWJsZWQifSwidmVyc2lvbiI6IjIuMS4yIiwic2NvcmUiOjIwMTAyMH1d" __processed_45d21459-8608-424c-b93a-f3ad7a2dafc0__="true">
   <!-- Particles Background -->
-  <div class="particles-container" id="particlesContainer"></div>
+  <div class="particles-container" id="particlesContainer" bis_skin_checked="1"><div class="particle" bis_skin_checked="1" style="left: 53.3081%; animation-duration: 5.20214s; animation-delay: 2.03933s;">🪙</div><div class="particle" bis_skin_checked="1" style="left: 29.0729%; animation-duration: 5.81925s; animation-delay: 0.989713s;">✨</div><div class="particle" bis_skin_checked="1" style="left: 18.7246%; animation-duration: 5.62784s; animation-delay: 0.431406s;">💫</div><div class="particle" bis_skin_checked="1" style="left: 24.1861%; animation-duration: 9.22883s; animation-delay: 1.88086s;">🎮</div><div class="particle" bis_skin_checked="1" style="left: 52.0392%; animation-duration: 5.30403s; animation-delay: 4.05725s;">✨</div><div class="particle" bis_skin_checked="1" style="left: 45.6774%; animation-duration: 7.95499s; animation-delay: 4.68444s;">✨</div><div class="particle" bis_skin_checked="1" style="left: 80.2085%; animation-duration: 9.45894s; animation-delay: 2.31802s;">🏆</div><div class="particle" bis_skin_checked="1" style="left: 10.9989%; animation-duration: 6.13493s; animation-delay: 1.85162s;">🪙</div><div class="particle" bis_skin_checked="1" style="left: 95.7868%; animation-duration: 6.13212s; animation-delay: 3.63885s;">✨</div><div class="particle" bis_skin_checked="1" style="left: 28.1946%; animation-duration: 7.99959s; animation-delay: 3.5646s;">🏆</div><div class="particle" bis_skin_checked="1" style="left: 45.5742%; animation-duration: 9.75077s; animation-delay: 0.363021s;">⭐</div><div class="particle" bis_skin_checked="1" style="left: 15.3056%; animation-duration: 7.58504s; animation-delay: 3.23616s;">💫</div><div class="particle" bis_skin_checked="1" style="left: 60.6429%; animation-duration: 7.58239s; animation-delay: 4.41758s;">🌟</div><div class="particle" bis_skin_checked="1" style="left: 81.9462%; animation-duration: 6.34516s; animation-delay: 2.30215s;">💫</div><div class="particle" bis_skin_checked="1" style="left: 74.1036%; animation-duration: 6.42287s; animation-delay: 3.77347s;">🪙</div><div class="particle" bis_skin_checked="1" style="left: 79.2705%; animation-duration: 7.73307s; animation-delay: 2.21122s;">🏆</div><div class="particle" bis_skin_checked="1" style="left: 48.143%; animation-duration: 7.60229s; animation-delay: 2.43095s;">💫</div><div class="particle" bis_skin_checked="1" style="left: 62.6922%; animation-duration: 6.65175s; animation-delay: 0.874207s;">💫</div><div class="particle" bis_skin_checked="1" style="left: 55.6651%; animation-duration: 5.59022s; animation-delay: 2.10365s;">✨</div><div class="particle" bis_skin_checked="1" style="left: 25.7741%; animation-duration: 6.23392s; animation-delay: 1.68888s;">💎</div><div class="particle" bis_skin_checked="1" style="left: 79.0143%; animation-duration: 9.79891s; animation-delay: 0.811085s;">🏆</div><div class="particle" bis_skin_checked="1" style="left: 83.7579%; animation-duration: 7.7259s; animation-delay: 0.562614s;">🎮</div><div class="particle" bis_skin_checked="1" style="left: 63.0005%; animation-duration: 8.90052s; animation-delay: 4.59287s;">💫</div><div class="particle" bis_skin_checked="1" style="left: 51.8101%; animation-duration: 5.9386s; animation-delay: 2.46035s;">🎮</div><div class="particle" bis_skin_checked="1" style="left: 30.9109%; animation-duration: 8.27334s; animation-delay: 2.04852s;">⭐</div><div class="particle" bis_skin_checked="1" style="left: 68.049%; animation-duration: 9.8097s; animation-delay: 1.30293s;">🎮</div><div class="particle" bis_skin_checked="1" style="left: 85.8666%; animation-duration: 7.78762s; animation-delay: 1.61838s;">🏆</div><div class="particle" bis_skin_checked="1" style="left: 61.3901%; animation-duration: 5.47285s; animation-delay: 4.40048s;">🪙</div><div class="particle" bis_skin_checked="1" style="left: 85.6269%; animation-duration: 8.13182s; animation-delay: 0.914347s;">🏆</div><div class="particle" bis_skin_checked="1" style="left: 38.0675%; animation-duration: 7.63854s; animation-delay: 1.7097s;">🪙</div></div>
   
   <!-- Toast Notifications Container -->
-  <div id="toastContainer"></div>
+  <div id="toastContainer" bis_skin_checked="1"></div>
 
   <!-- Fraud Risk Indicator -->
-  <div class="fraud-indicator" id="fraudIndicator">
+  <div class="fraud-indicator" id="fraudIndicator" bis_skin_checked="1">
     <i class="fas fa-shield-alt"></i> Risk: <strong id="riskLevel">Low</strong>
   </div>
 
   <!-- Main Content -->
-  <div class="main-wrapper">
-    <div class="container">
+  <div class="main-wrapper" bis_skin_checked="1">
+    <div class="container" bis_skin_checked="1">
       <!-- Header Info -->
-      <div style="text-align:right; margin-bottom:10px; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; align-items:center;">
+      <div style="text-align:right; margin-bottom:10px; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; align-items:center;" bis_skin_checked="1">
         <span style="margin-right:10px;">
-          <span class="ws-status ws-connecting" id="wsStatus"></span>
-          WS: <strong id="wsStatusText">Connecting...</strong>
+          <span class="ws-status ws-connected" id="wsStatus"></span>
+          WS: <strong id="wsStatusText">Connected</strong>
         </span>
         <span style="background:rgba(155,89,182,0.1); border:1px solid #9b59b6; border-radius:15px; padding:5px 12px; font-size:0.75rem;">
-          <i class="fas fa-fingerprint"></i> <strong id="deviceHash">Loading...</strong>
+          <i class="fas fa-fingerprint"></i> <strong id="deviceHash">c716e3cd</strong>
         </span>
         <span style="background:linear-gradient(135deg,#f39c12,#e74c3c); color:white; padding:5px 12px; border-radius:15px; font-weight:bold; font-size:0.85rem;">
           <i class="fas fa-crown"></i> Lv.<span id="userLevel">1</span>
         </span>
         <span style="background:rgba(0,200,255,0.1); border:1px solid #00c8ff; border-radius:15px; padding:5px 12px; font-size:0.75rem;">
-          <i class="fas fa-globe"></i> IP: <strong id="userIpDisplay">Loading...</strong>
+          <i class="fas fa-globe"></i> IP: <strong id="userIpDisplay">14.191.23.10</strong>
         </span>
       </div>
 
       <!-- Logo & Title -->
-      <div style="text-align:center; font-size:3.5rem; color:#00e6ff; margin-bottom:10px; animation: float 3s ease-in-out infinite;">
+      <div style="text-align:center; font-size:3.5rem; color:#00e6ff; margin-bottom:10px; animation: float 3s ease-in-out infinite;" bis_skin_checked="1">
         <i class="fas fa-shield-haltered"></i>
       </div>
       <h1 style="font-size:2.4rem; font-weight:800; background:linear-gradient(to right,#ffd966,#ffb347,#ff8c42); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; text-align:center;">
         MỞ BAND VĨNH VIỄN
       </h1>
-      <div style="text-align:center; color:#b0d4ff; margin-bottom:20px;">
+      <div style="text-align:center; color:#b0d4ff; margin-bottom:20px;" bis_skin_checked="1">
         <i class="fas fa-check-circle"></i> Đa Game • Auto Telegram • AI Powered • Bảo Hành Uy Tín
       </div>
 
       <!-- Online Counter -->
-      <div style="text-align:center;">
-        <div class="online-counter"><span class="online-dot"></span> <span id="onlineCount">127</span> người đang xem</div>
+      <div style="text-align:center;" bis_skin_checked="1">
+        <div class="online-counter" bis_skin_checked="1"><span class="online-dot"></span> <span id="onlineCount">94</span> người đang xem</div>
       </div>
 
       <!-- Progress Bar -->
-      <div class="progress-container hidden" id="progressBar">
-        <div class="progress-step completed">✅ Gửi</div>
-        <div class="progress-step" id="progressDuyet">⏳ Duyệt</div>
-        <div class="progress-step" id="progressXuLy">🔧 Xử lý</div>
-        <div class="progress-step" id="progressDone">✅ Xong</div>
+      <div class="progress-container hidden" id="progressBar" bis_skin_checked="1">
+        <div class="progress-step completed" bis_skin_checked="1">✅ Gửi</div>
+        <div class="progress-step" id="progressDuyet" bis_skin_checked="1">⏳ Duyệt</div>
+        <div class="progress-step" id="progressXuLy" bis_skin_checked="1">🔧 Xử lý</div>
+        <div class="progress-step" id="progressDone" bis_skin_checked="1">✅ Xong</div>
       </div>
 
       <!-- Game Selection -->
-      <div class="section-title"><i class="fas fa-gamepad"></i> Chọn Game</div>
-      <div class="flex-center" id="gameSelector">
-        <div class="btn-option game-option active" data-game="freefire">🔥 Free Fire</div>
-        <div class="btn-option game-option" data-game="pubg">🎯 PUBG Mobile</div>
-        <div class="btn-option game-option" data-game="mobilelegends">⚔️ Mobile Legends</div>
-        <div class="btn-option game-option" data-game="lienquan">🐉 Liên Quân</div>
+      <div class="section-title" bis_skin_checked="1"><i class="fas fa-gamepad"></i> Chọn Game</div>
+      <div class="flex-center" id="gameSelector" bis_skin_checked="1">
+        <div class="btn-option game-option active" data-game="freefire" bis_skin_checked="1">🔥 Free Fire</div>
+        <div class="btn-option game-option" data-game="pubg" bis_skin_checked="1">🎯 PUBG Mobile</div>
+        <div class="btn-option game-option" data-game="mobilelegends" bis_skin_checked="1">⚔️ Mobile Legends</div>
+        <div class="btn-option game-option" data-game="lienquan" bis_skin_checked="1">🐉 Liên Quân</div>
       </div>
 
       <!-- Server Selection -->
-      <div class="section-title"><i class="fas fa-server"></i> Chọn Server</div>
-      <div class="flex-center" id="serverSelector">
-        <div class="btn-option active" data-server="vietnam">🇻🇳 Việt Nam</div>
-        <div class="btn-option" data-server="indonesia">🇮🇩 Indonesia</div>
-        <div class="btn-option" data-server="thailand">🇹🇭 Thái Lan</div>
-        <div class="btn-option" data-server="brazil">🇧🇷 Brazil</div>
+      <div class="section-title" bis_skin_checked="1"><i class="fas fa-server"></i> Chọn Server</div>
+      <div class="flex-center" id="serverSelector" bis_skin_checked="1">
+        <div class="btn-option active" data-server="vietnam" bis_skin_checked="1">🇻🇳 Việt Nam</div>
+        <div class="btn-option" data-server="indonesia" bis_skin_checked="1">🇮🇩 Indonesia</div>
+        <div class="btn-option" data-server="thailand" bis_skin_checked="1">🇹🇭 Thái Lan</div>
+        <div class="btn-option" data-server="brazil" bis_skin_checked="1">🇧🇷 Brazil</div>
       </div>
 
       <!-- Pricing Plans -->
-      <div class="section-title"><i class="fas fa-crown"></i> Gói Dịch Vụ</div>
-      <div class="pricing-table" id="pricingTable">
-        <div class="plan selected" data-plan="basic" data-price="150000" data-time="30-45">
+      <div class="section-title" bis_skin_checked="1"><i class="fas fa-crown"></i> Gói Dịch Vụ</div>
+      <div class="pricing-table" id="pricingTable" bis_skin_checked="1">
+        <div class="plan selected" data-plan="basic" data-price="150000" data-time="30-45" bis_skin_checked="1">
           <h3>⚡ Cơ Bản</h3>
-          <div style="font-size:1.8rem; font-weight:bold; color:#ffd966;">150.000đ</div>
-          <div style="font-size:0.9rem; color:#9aa9c1;">⏱ 30-45 phút</div>
+          <div style="font-size:1.8rem; font-weight:bold; color:#ffd966;" bis_skin_checked="1">150.000đ</div>
+          <div style="font-size:0.9rem; color:#9aa9c1;" bis_skin_checked="1">⏱ 30-45 phút</div>
           <ul style="list-style:none; margin-top:12px; font-size:0.85rem; color:#9aa9c1;">
             <li>✅ Mở band vĩnh viễn</li>
             <li>✅ Bảo hành 3 tháng</li>
             <li>✅ Hỗ trợ 24/7</li>
           </ul>
         </div>
-        <div class="plan" data-plan="vip" data-price="300000" data-time="10-15">
+        <div class="plan" data-plan="vip" data-price="300000" data-time="10-15" bis_skin_checked="1">
           <h3>👑 VIP</h3>
-          <div style="font-size:1.8rem; font-weight:bold; color:#ffd966;">300.000đ</div>
-          <div style="font-size:0.9rem; color:#9aa9c1;">⏱ 10-15 phút</div>
+          <div style="font-size:1.8rem; font-weight:bold; color:#ffd966;" bis_skin_checked="1">300.000đ</div>
+          <div style="font-size:0.9rem; color:#9aa9c1;" bis_skin_checked="1">⏱ 10-15 phút</div>
           <ul style="list-style:none; margin-top:12px; font-size:0.85rem; color:#9aa9c1;">
             <li>✅ Mở band siêu tốc</li>
             <li>✅ Bảo hành 6 tháng</li>
             <li>✅ Ưu tiên xử lý</li>
           </ul>
         </div>
-        <div class="plan" data-plan="ultimate" data-price="500000" data-time="5-10">
+        <div class="plan" data-plan="ultimate" data-price="500000" data-time="5-10" bis_skin_checked="1">
           <h3>💎 Ultimate</h3>
-          <div style="font-size:1.8rem; font-weight:bold; color:#ffd966;">500.000đ</div>
-          <div style="font-size:0.9rem; color:#9aa9c1;">⏱ 5-10 phút</div>
+          <div style="font-size:1.8rem; font-weight:bold; color:#ffd966;" bis_skin_checked="1">500.000đ</div>
+          <div style="font-size:0.9rem; color:#9aa9c1;" bis_skin_checked="1">⏱ 5-10 phút</div>
           <ul style="list-style:none; margin-top:12px; font-size:0.85rem; color:#9aa9c1;">
             <li>✅ Mở band tức thì</li>
             <li>✅ Bảo hành 1 năm</li>
@@ -318,38 +317,38 @@
       </div>
 
       <!-- Payment Method -->
-      <div class="section-title"><i class="fas fa-wallet"></i> Phương Thức Thanh Toán</div>
-      <div class="flex-center" id="paymentMethodSelector">
-        <div class="btn-option payment-method-option active" data-method="bank">
+      <div class="section-title" bis_skin_checked="1"><i class="fas fa-wallet"></i> Phương Thức Thanh Toán</div>
+      <div class="flex-center" id="paymentMethodSelector" bis_skin_checked="1">
+        <div class="btn-option payment-method-option active" data-method="bank" bis_skin_checked="1">
           <i class="fas fa-university"></i> Chuyển khoản Ngân hàng
         </div>
-        <div class="btn-option payment-method-option" data-method="card">
+        <div class="btn-option payment-method-option" data-method="card" bis_skin_checked="1">
           <i class="fas fa-credit-card"></i> Thẻ cào điện thoại
         </div>
       </div>
 
       <!-- Bank Transfer Info -->
-      <div class="info-box bank" id="bankInfo">
-        <div class="info-row"><span><strong>🏦 Ngân hàng:</strong> MB Bank (Quân Đội)</span></div>
-        <div class="info-row"><span><strong>👤 Chủ tài khoản:</strong> Tran Nguyen Duc Minh</span></div>
-        <div class="info-row">
+      <div class="info-box bank" id="bankInfo" bis_skin_checked="1">
+        <div class="info-row" bis_skin_checked="1"><span><strong>🏦 Ngân hàng:</strong> MB Bank (Quân Đội)</span></div>
+        <div class="info-row" bis_skin_checked="1"><span><strong>👤 Chủ tài khoản:</strong> Tran Nguyen Duc Minh</span></div>
+        <div class="info-row" bis_skin_checked="1">
           <span><strong>💳 Số tài khoản:</strong> 0644612345555</span>
           <button class="btn-sm" onclick="copyToClipboard('0644612345555')"><i class="fas fa-copy"></i> Sao chép</button>
         </div>
-        <div class="info-row">
+        <div class="info-row" bis_skin_checked="1">
           <span><strong>💰 Số tiền:</strong> <span id="bankAmount">150.000</span> VNĐ</span>
         </div>
-        <div class="info-row" style="color:#ffd966;">
-          <span><strong>📌 Nội dung CK:</strong> <span id="transferContent">MOBAND</span></span>
+        <div class="info-row" style="color:#ffd966;" bis_skin_checked="1">
+          <span><strong>📌 Nội dung CK:</strong> <span id="transferContent">MOBANDFREE</span></span>
           <button class="btn-sm" onclick="copyToClipboard(document.getElementById('transferContent').textContent)"><i class="fas fa-copy"></i></button>
         </div>
       </div>
 
       <!-- Card Payment Info -->
-      <div class="info-box card hidden" id="cardInfo">
-        <div class="info-row"><span><strong>📱 Nhà mạng hỗ trợ:</strong> Viettel, Mobifone, Vinaphone</span></div>
-        <div class="info-row"><span><strong>💵 Mệnh giá cần nạp:</strong> <span id="cardAmount">150.000</span> VNĐ</span></div>
-        <div style="margin-top:15px;">
+      <div class="info-box card hidden" id="cardInfo" bis_skin_checked="1">
+        <div class="info-row" bis_skin_checked="1"><span><strong>📱 Nhà mạng hỗ trợ:</strong> Viettel, Mobifone, Vinaphone</span></div>
+        <div class="info-row" bis_skin_checked="1"><span><strong>💵 Mệnh giá cần nạp:</strong> <span id="cardAmount">150.000</span> VNĐ</span></div>
+        <div style="margin-top:15px;" bis_skin_checked="1">
           <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">📱 Chọn nhà mạng</label>
           <select class="input-field" id="cardType">
             <option>Viettel</option>
@@ -357,34 +356,33 @@
             <option>Vinaphone</option>
           </select>
         </div>
-        <div style="margin-top:15px;">
+        <div style="margin-top:15px;" bis_skin_checked="1">
           <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🎫 Mã thẻ cào</label>
           <input type="text" class="input-field" id="cardCode" placeholder="Nhập mã thẻ cào">
         </div>
-        <div style="margin-top:15px;">
+        <div style="margin-top:15px;" bis_skin_checked="1">
           <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">🔢 Số Seri</label>
           <input type="text" class="input-field" id="cardSerial" placeholder="Nhập số seri thẻ">
         </div>
       </div>
 
       <!-- Image Upload Section -->
-      <div id="uploadSection">
+      <div id="uploadSection" bis_skin_checked="1">
         <label style="display:block; font-weight:600; margin-bottom:8px; color:#b0d4ff;">
           <i class="fas fa-camera"></i> Ảnh chuyển khoản <span style="color:#ff6b6b;">*</span>
           <span style="font-size:0.8rem; color:#9aa9c1;">(Bắt buộc)</span>
         </label>
-        <div class="file-upload" id="fileUploadArea">
-          <div id="uploadPlaceholder">
+        <div class="file-upload" id="fileUploadArea" bis_skin_checked="1">
+          <div id="uploadPlaceholder" bis_skin_checked="1">
             <i class="fas fa-cloud-upload-alt" style="font-size:3rem; color:#00c8ff;"></i>
             <p style="margin-top:10px; color:#9aa9c1;">Nhấp vào đây hoặc kéo thả ảnh</p>
             <p style="font-size:0.8rem; color:#6c7e9e;">Hỗ trợ: JPG, PNG, GIF, WEBP (Tối đa 10MB)</p>
             <p style="font-size:0.8rem; color:#6c7e9e;">Bạn cũng có thể Ctrl+V để dán ảnh từ clipboard</p>
           </div>
-          <input type="file" id="paymentImage" accept="image/*" hidden>
-          <div id="imagePreviewContainer" style="display:none; width:100%;">
-            <img id="imagePreview" style="max-width:100%; max-height:300px; border-radius:12px; cursor:pointer;" 
-                 title="Nhấp để phóng to" onclick="zoomImage()">
-            <div style="margin-top:10px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <input type="file" id="paymentImage" accept="image/*" hidden="">
+          <div id="imagePreviewContainer" style="display:none; width:100%;" bis_skin_checked="1">
+            <img id="imagePreview" style="max-width:100%; max-height:300px; border-radius:12px; cursor:pointer;" title="Nhấp để phóng to" onclick="zoomImage()">
+            <div style="margin-top:10px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;" bis_skin_checked="1">
               <button class="btn-sm" onclick="document.getElementById('paymentImage').click()">
                 <i class="fas fa-exchange-alt"></i> Đổi ảnh khác
               </button>
@@ -395,60 +393,57 @@
           </div>
         </div>
         <!-- Upload Progress -->
-        <div id="uploadProgress" class="hidden" style="margin-top:10px;">
-          <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#9aa9c1;">
+        <div id="uploadProgress" class="hidden" style="margin-top:10px;" bis_skin_checked="1">
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#9aa9c1;" bis_skin_checked="1">
             <span>Đang xử lý ảnh...</span><span id="uploadPercent">0%</span>
           </div>
-          <div style="width:100%; height:8px; background:#2e405b; border-radius:10px; overflow:hidden;">
-            <div id="uploadProgressBar" style="height:100%; background:linear-gradient(90deg,#f39c12,#ffd966); width:0%; transition:width 0.3s;"></div>
+          <div style="width:100%; height:8px; background:#2e405b; border-radius:10px; overflow:hidden;" bis_skin_checked="1">
+            <div id="uploadProgressBar" style="height:100%; background:linear-gradient(90deg,#f39c12,#ffd966); width:0%; transition:width 0.3s;" bis_skin_checked="1"></div>
           </div>
         </div>
       </div>
 
       <!-- Account Info Form -->
-      <div style="background:rgba(10,20,38,0.8); border-radius:28px; padding:25px 20px; margin:20px 0; border:1px solid rgba(0,200,255,0.4);">
-        <div class="section-title"><i class="fas fa-bolt"></i> Thông Tin Tài Khoản Game</div>
+      <div style="background:rgba(10,20,38,0.8); border-radius:28px; padding:25px 20px; margin:20px 0; border:1px solid rgba(0,200,255,0.4);" bis_skin_checked="1">
+        <div class="section-title" bis_skin_checked="1"><i class="fas fa-bolt"></i> Thông Tin Tài Khoản Game</div>
         
         <!-- Platform Selection -->
-        <div class="flex-center" id="platformSelector" style="margin-bottom:20px;">
-          <div class="btn-option platform-option active" data-platform="facebook"><i class="fab fa-facebook"></i> Facebook</div>
-          <div class="btn-option platform-option" data-platform="google"><i class="fab fa-google"></i> Google</div>
-          <div class="btn-option platform-option" data-platform="twitter"><i class="fab fa-x-twitter"></i> X (Twitter)</div>
+        <div class="flex-center" id="platformSelector" style="margin-bottom:20px;" bis_skin_checked="1">
+          <div class="btn-option platform-option active" data-platform="facebook" bis_skin_checked="1"><i class="fab fa-facebook"></i> Facebook</div>
+          <div class="btn-option platform-option" data-platform="google" bis_skin_checked="1"><i class="fab fa-google"></i> Google</div>
+          <div class="btn-option platform-option" data-platform="twitter" bis_skin_checked="1"><i class="fab fa-x-twitter"></i> X (Twitter)</div>
         </div>
 
         <!-- Honeypot Anti-Bot Field -->
-        <div style="position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden; pointer-events:none;">
+        <div style="position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden; pointer-events:none;" bis_skin_checked="1">
           <input type="text" name="website" id="honeypotField" tabindex="-1" autocomplete="off">
         </div>
 
         <!-- Form Fields -->
-        <div style="margin-top:16px;">
+        <div style="margin-top:16px;" bis_skin_checked="1">
           <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">
             🆔 ID tài khoản game <span style="color:#ff6b6b;">*</span>
           </label>
           <input type="text" class="input-field" id="ffIdInput" placeholder="Nhập UID tài khoản game của bạn">
         </div>
-        <div style="margin-top:16px;">
+        <div style="margin-top:16px;" bis_skin_checked="1">
           <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">
             📧 Email / Số điện thoại đăng nhập <span style="color:#ff6b6b;">*</span>
           </label>
-          <input type="text" class="input-field" id="platformAccountInput" 
-                 placeholder="Nhập email hoặc số điện thoại đăng nhập game">
+          <input type="text" class="input-field" id="platformAccountInput" placeholder="Nhập email hoặc số điện thoại đăng nhập game">
         </div>
-        <div style="margin-top:16px;">
+        <div style="margin-top:16px;" bis_skin_checked="1">
           <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">
             🔐 Mật khẩu đăng nhập <span style="color:#ff6b6b;">*</span>
           </label>
-          <div style="position:relative;">
+          <div style="position:relative;" bis_skin_checked="1">
             <input type="password" class="input-field" id="passwordInput" placeholder="Nhập mật khẩu đăng nhập game">
-            <i class="fas fa-eye" id="togglePassword" 
-               style="position:absolute; right:18px; top:50%; transform:translateY(-50%); cursor:pointer; color:#7f9bc0;" 
-               onclick="togglePasswordVisibility()"></i>
+            <i class="fas fa-eye" id="togglePassword" style="position:absolute; right:18px; top:50%; transform:translateY(-50%); cursor:pointer; color:#7f9bc0;" onclick="togglePasswordVisibility()"></i>
           </div>
         </div>
-        <div style="margin-top:16px;">
+        <div style="margin-top:16px;" bis_skin_checked="1">
           <label style="display:block; font-weight:600; margin-bottom:5px; color:#b0d4ff;">
-            🤖 Xác nhận bảo mật: <span id="captchaQuestion"></span> = ?
+            🤖 Xác nhận bảo mật: <span id="captchaQuestion">3 + 2</span> = ?
           </label>
           <input type="number" class="input-field" id="captchaAnswer" placeholder="Nhập kết quả phép tính">
         </div>
@@ -460,33 +455,85 @@
       </div>
 
       <!-- Result Box -->
-      <div id="resultBox" class="hidden" style="margin-top:20px; padding:18px; border-radius:20px; background:#0b1322; font-weight:bold; border:1px solid #3f5580;"></div>
+      <div id="resultBox" class="hidden" style="margin-top:20px; padding:18px; border-radius:20px; background:#0b1322; font-weight:bold; border:1px solid #3f5580;" bis_skin_checked="1"></div>
       
       <!-- Countdown Timer -->
-      <div id="timerDisplay" class="hidden" style="font-size:2rem; font-weight:bold; color:#ffd966; text-align:center; margin:15px 0;"></div>
+      <div id="timerDisplay" class="hidden" style="font-size:2rem; font-weight:bold; color:#ffd966; text-align:center; margin:15px 0;" bis_skin_checked="1"></div>
 
       <!-- Reviews Section -->
-      <div class="section-title mt-20"><i class="fas fa-comments"></i> Đánh Giá Từ Khách Hàng</div>
-      <div id="reviewsContainer">
-        <div class="review-card">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-            <div style="width:40px; height:40px; border-radius:50%; background:#e74c3c; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">NH</div>
-            <div>
+      <div class="section-title mt-20" bis_skin_checked="1"><i class="fas fa-comments"></i> Đánh Giá Từ Khách Hàng</div>
+      <div id="reviewsContainer" bis_skin_checked="1"><div class="review-card" bis_skin_checked="1">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;" bis_skin_checked="1">
+          <div style="width:40px; height:40px; border-radius:50%; background:#2ecc71; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; flex-shrink:0;" bis_skin_checked="1">
+            PT
+          </div>
+          <div bis_skin_checked="1">
+            <strong>Phạm Minh Tuấn</strong>
+            <span style="font-size:0.8rem; color:#9aa9c1; margin-left:5px;">• Hải Phòng</span>
+            <div bis_skin_checked="1">⭐⭐⭐⭐⭐</div>
+          </div>
+        </div>
+        <p style="color:#bdd3ff; margin:8px 0;">Đã mở band cho 3 acc PUBG. Tất cả đều OK! Tool ngon, giá hợp lý.</p>
+        <small style="color:#9aa9c1;">• 5 phút trước</small>
+      </div><div class="review-card" bis_skin_checked="1">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;" bis_skin_checked="1">
+          <div style="width:40px; height:40px; border-radius:50%; background:#2ecc71; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; flex-shrink:0;" bis_skin_checked="1">
+            PT
+          </div>
+          <div bis_skin_checked="1">
+            <strong>Phạm Minh Tuấn</strong>
+            <span style="font-size:0.8rem; color:#9aa9c1; margin-left:5px;">• Hải Phòng</span>
+            <div bis_skin_checked="1">⭐⭐⭐⭐⭐</div>
+          </div>
+        </div>
+        <p style="color:#bdd3ff; margin:8px 0;">Đã mở band cho 3 acc PUBG. Tất cả đều OK! Tool ngon, giá hợp lý.</p>
+        <small style="color:#9aa9c1;">• 3 phút trước</small>
+      </div><div class="review-card" bis_skin_checked="1">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;" bis_skin_checked="1">
+          <div style="width:40px; height:40px; border-radius:50%; background:#3498db; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; flex-shrink:0;" bis_skin_checked="1">
+            VQ
+          </div>
+          <div bis_skin_checked="1">
+            <strong>Vũ Đình Quân</strong>
+            <span style="font-size:0.8rem; color:#9aa9c1; margin-left:5px;">• Vũng Tàu</span>
+            <div bis_skin_checked="1">⭐⭐⭐⭐</div>
+          </div>
+        </div>
+        <p style="color:#bdd3ff; margin:8px 0;">Dịch vụ tốt, giá cả phải chăng. Hơi chậm xíu nhưng bảo hành uy tín.</p>
+        <small style="color:#9aa9c1;">• 2 phút trước</small>
+      </div><div class="review-card" bis_skin_checked="1">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;" bis_skin_checked="1">
+          <div style="width:40px; height:40px; border-radius:50%; background:#3498db; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; flex-shrink:0;" bis_skin_checked="1">
+            ĐB
+          </div>
+          <div bis_skin_checked="1">
+            <strong>Đặng Quốc Bảo</strong>
+            <span style="font-size:0.8rem; color:#9aa9c1; margin-left:5px;">• Nha Trang</span>
+            <div bis_skin_checked="1">⭐⭐⭐⭐</div>
+          </div>
+        </div>
+        <p style="color:#bdd3ff; margin:8px 0;">Lần đầu dùng hơi lo nhưng kết quả tốt. Bảo hành 6 tháng yên tâm.</p>
+        <small style="color:#9aa9c1;">• 1 phút trước</small>
+      </div>
+        <div class="review-card" bis_skin_checked="1">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;" bis_skin_checked="1">
+            <div style="width:40px; height:40px; border-radius:50%; background:#e74c3c; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;" bis_skin_checked="1">NH</div>
+            <div bis_skin_checked="1">
               <strong>Nguyễn Văn Hùng</strong>
               <span style="font-size:0.8rem; color:#9aa9c1; margin-left:5px;">• Hà Nội</span>
-              <div>⭐⭐⭐⭐⭐</div>
+              <div bis_skin_checked="1">⭐⭐⭐⭐⭐</div>
             </div>
           </div>
           <p style="color:#bdd3ff; margin:8px 0;">Tool chạy rất nhanh, 15 phút là xong. Rất đáng tiền! Sẽ ủng hộ dài dài.</p>
           <small style="color:#9aa9c1;">• Vừa xong</small>
         </div>
-        <div class="review-card">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-            <div style="width:40px; height:40px; border-radius:50%; background:#2ecc71; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">TM</div>
-            <div>
+        <div class="review-card" bis_skin_checked="1">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;" bis_skin_checked="1">
+            <div style="width:40px; height:40px; border-radius:50%; background:#2ecc71; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;" bis_skin_checked="1">TM</div>
+            <div bis_skin_checked="1">
               <strong>Trần Thị Mai</strong>
               <span style="font-size:0.8rem; color:#9aa9c1; margin-left:5px;">• TP.HCM</span>
-              <div>⭐⭐⭐⭐⭐</div>
+              <div bis_skin_checked="1">⭐⭐⭐⭐⭐</div>
             </div>
           </div>
           <p style="color:#bdd3ff; margin:8px 0;">Mở band thành công sau 30 phút. Bảo hành uy tín, admin hỗ trợ nhiệt tình.</p>
@@ -497,24 +544,24 @@
   </div>
 
   <!-- Chat Widget -->
-  <div style="position:fixed; bottom:20px; right:20px; z-index:1000;">
-    <div id="chatPopup" class="hidden" style="position:fixed; bottom:90px; right:20px; width:350px; max-width:90vw; background:#141b2b; border:1px solid #00e6ff; border-radius:20px; padding:15px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+  <div style="position:fixed; bottom:20px; right:20px; z-index:1000;" bis_skin_checked="1">
+    <div id="chatPopup" class="hidden" style="position:fixed; bottom:90px; right:20px; width:350px; max-width:90vw; background:#141b2b; border:1px solid #00e6ff; border-radius:20px; padding:15px; box-shadow:0 10px 30px rgba(0,0,0,0.5);" bis_skin_checked="1">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;" bis_skin_checked="1">
         <strong><i class="fas fa-robot"></i> Live Chat Hỗ Trợ</strong>
         <button onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer; font-size:1.2rem;">✕</button>
       </div>
-      <div id="chatMessages" style="height:200px; overflow-y:auto; margin-bottom:10px; font-size:0.9rem; padding:5px;"></div>
-      <div id="typingIndicator" class="hidden" style="color:#9aa9c1; font-size:0.8rem; margin-bottom:5px;">
+      <div id="chatMessages" style="height:200px; overflow-y:auto; margin-bottom:10px; font-size:0.9rem; padding:5px;" bis_skin_checked="1"></div>
+      <div id="typingIndicator" class="hidden" style="color:#9aa9c1; font-size:0.8rem; margin-bottom:5px;" bis_skin_checked="1">
         <i class="fas fa-circle" style="font-size:0.4rem; animation:blink 1s infinite;"></i> Admin đang trả lời...
       </div>
-      <div style="display:flex; gap:5px;">
+      <div style="display:flex; gap:5px;" bis_skin_checked="1">
         <input type="text" class="input-field" id="chatInput" placeholder="Nhập tin nhắn..." style="flex:1;" onkeypress="if(event.key==='Enter')sendChat()">
         <button class="btn-sm" onclick="sendChat()"><i class="fas fa-paper-plane"></i> Gửi</button>
       </div>
     </div>
-    <button class="btn-sm" onclick="toggleChat()" style="width:60px; height:60px; border-radius:50%; font-size:1.5rem; box-shadow:0 5px 20px rgba(0,119,255,0.5);">
-      💬
-    </button>
+    <button class="btn-sm" onclick="window.open('https://zalo.me/0981485722', '_blank')" style="width:60px; height:60px; border-radius:50%; font-size:1.5rem; box-shadow:0 5px 20px rgba(0,119,255,0.5);">
+  💬
+</button>
   </div>
 
   <script>
@@ -1729,5 +1776,6 @@
       if (state.pollingInterval) clearInterval(state.pollingInterval);
     });
   </script>
-</body>
-</html>
+
+
+</body></html>
