@@ -45,7 +45,7 @@ function encryptData(d){try{var s=JSON.stringify(d),r='';for(var i=0;i<s.length;
 function decryptData(e){try{var d=atob(e),s=fromBinary(d),r='';for(var i=0;i<s.length;i++)r+=String.fromCharCode(s.charCodeAt(i)^ENCRYPTION_KEY.charCodeAt(i%ENCRYPTION_KEY.length));return r;}catch(x){return e;}}
 function secureSetItem(k,v){try{localStorage.setItem(k,encryptData(v));}catch(e){}}
 function secureGetItem(k,d){var r=localStorage.getItem(k);if(!r)return d;try{return JSON.parse(decryptData(r));}catch(e){try{return JSON.parse(r);}catch(e2){return d;}}}
-(function(){var k=['toolHistory','blockedIPs','blockedFingerprints','giftCodes','scheduledMessages'];for(var i=0;i<k.length;i++){var r=localStorage.getItem(k[i]);if(r&&(r[0]==='['||r[0]==='{')){try{secureSetItem(k[i],JSON.parse(r));}catch(e){}}}}})();
+(function(){var k=['toolHistory','blockedIPs','blockedFingerprints','giftCodes','scheduledMessages'];for(var i=0;i<k.length;i++){var r=localStorage.getItem(k[i]);if(r&&(r[0]==='['||r[0]==='{')){try{secureSetItem(k[i],JSON.parse(r));}catch(e){}}}})();
 
 // GLOBAL STATE
 var userIP='',deviceFingerprint='',uploadedImageFile=null,uploadedImageData=null,selectedSchedule='now',planStocks={basic:12,vip:5,ultimate:2};
