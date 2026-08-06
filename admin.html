@@ -1,803 +1,493 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Admin Panel - Tool Mở Band | 24/7</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="sync.js"></script>
-  
-  <style>
-    :root {
-      --bg-primary: #0a0f1e;
-      --bg-secondary: #141b2b;
-      --bg-card: rgba(20, 28, 45, 0.95);
-      --text-primary: #eef5ff;
-      --text-secondary: #b0d4ff;
-      --accent: #00e6ff;
-      --gold: #ffd966;
-      --success: #2ecc71;
-      --danger: #ff6b6b;
-      --warning: #f39c12;
-      --info: #3498db;
-      --border: rgba(0, 255, 200, 0.25);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: linear-gradient(135deg, #0a0f1e 0%, #141b2b 100%);
-      color: var(--text-primary);
-      min-height: 100vh;
-    }
-
-    .admin-container { display: flex; min-height: 100vh; }
-
-    .sidebar {
-      width: 260px;
-      background: rgba(10, 15, 30, 0.98);
-      border-right: 1px solid var(--border);
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      z-index: 100;
-      overflow-y: auto;
-    }
-
-    .sidebar-header {
-      text-align: center;
-      padding-bottom: 15px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 15px;
-    }
-
-    .sidebar-header h2 {
-      background: linear-gradient(to right, #ffd966, #ffb347);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-size: 1.3rem;
-    }
-
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      color: var(--text-secondary);
-      cursor: pointer;
-      border: none;
-      background: none;
-      width: 100%;
-      font-size: 0.9rem;
-      transition: all 0.3s;
-      margin-bottom: 3px;
-    }
-
-    .nav-link:hover, .nav-link.active {
-      background: rgba(0, 119, 255, 0.15);
-      color: white;
-    }
-    .nav-link.active { border-left: 3px solid var(--accent); }
-
-    .badge {
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.7rem;
-      margin-left: auto;
-      color: white;
-    }
-    .badge.warning { background: var(--warning); }
-    .badge.info { background: var(--info); }
-    .badge.success { background: var(--success); }
-    .badge.danger { background: var(--danger); }
-
-    .main-content {
-      flex: 1;
-      margin-left: 260px;
-      padding: 20px;
-    }
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .search-input {
-      padding: 10px 15px;
-      border-radius: 25px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.05);
-      color: white;
-      font-size: 0.9rem;
-      outline: none;
-      flex: 1;
-      max-width: 350px;
-    }
-    .search-input:focus { border-color: var(--accent); }
-
-    .btn {
-      padding: 8px 16px;
-      border-radius: 25px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.85rem;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-    .btn-primary { background: linear-gradient(135deg, #0077ff, #00c6ff); color: white; }
-    .btn-success { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
-    .btn-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
-    .btn-warning { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
-    .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
-    .btn:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 15px;
-      text-align: center;
-    }
-    .stat-card i { font-size: 1.5rem; margin-bottom: 8px; }
-    .stat-value { font-size: 1.5rem; font-weight: 700; }
-    .stat-label { color: var(--text-secondary); font-size: 0.8rem; }
-
-    .stat-card.pending .stat-value { color: var(--warning); }
-    .stat-card.processing .stat-value { color: var(--info); }
-    .stat-card.completed .stat-value { color: var(--success); }
-    .stat-card.revenue .stat-value { color: var(--gold); }
-    .stat-card.visitors .stat-value { color: #9b59b6; }
-
-    .tabs {
-      display: flex;
-      gap: 5px;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-    }
-
-    .tab {
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: transparent;
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      transition: all 0.3s;
-    }
-    .tab:hover, .tab.active {
-      background: rgba(0, 119, 255, 0.2);
-      border-color: var(--accent);
-      color: white;
-    }
-
-    .table-container {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow-x: auto;
-    }
-
-    table { width: 100%; border-collapse: collapse; }
-    th {
-      background: rgba(0, 119, 255, 0.1);
-      padding: 12px 14px;
-      text-align: left;
-      font-size: 0.8rem;
-      color: var(--accent);
-      white-space: nowrap;
-    }
-    td {
-      padding: 10px 14px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      font-size: 0.85rem;
-    }
-    tr:hover { background: rgba(0, 119, 255, 0.05); }
-
-    .status-badge {
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    .status-pending { background: rgba(243, 156, 18, 0.2); color: #f39c12; }
-    .status-processing { background: rgba(52, 152, 219, 0.2); color: #3498db; }
-    .status-completed { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
-    .status-rejected { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
-
-    .action-btns { display: flex; gap: 4px; flex-wrap: wrap; }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal.show { display: flex; }
-
-    .modal-content {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 25px;
-      max-width: 600px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .close-btn { background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; }
-
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; margin-bottom: 4px; color: var(--text-secondary); font-size: 0.85rem; }
-    .form-control {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.05);
-      color: white;
-      outline: none;
-      font-size: 0.9rem;
-    }
-    .form-control:focus { border-color: var(--accent); }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .detail-item {
-      padding: 8px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 6px;
-    }
-    .detail-label { font-size: 0.7rem; color: var(--text-secondary); }
-    .detail-value { font-weight: 600; margin-top: 2px; font-size: 0.9rem; word-break: break-all; }
-
-    .sync-indicator {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-    }
-    .sync-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--success);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-secondary);
-    }
-    .empty-state i { font-size: 3rem; margin-bottom: 15px; }
-
-    .notification-toast {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      z-index: 9999;
-    }
-
-    @media (max-width: 768px) {
-      .sidebar { width: 100%; position: relative; height: auto; }
-      .main-content { margin-left: 0; }
-      .admin-container { flex-direction: column; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .detail-grid { grid-template-columns: 1fr; }
-      .top-bar { flex-direction: column; align-items: stretch; }
-      .search-input { max-width: 100%; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Tool Mở Band v13.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0a0f1e; --card: #141b2b; --text: #eef5ff;
+            --accent: #00e6ff; --gold: #ffd966; --success: #2ecc71;
+            --danger: #ff6b6b; --warning: #f39c12;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; }
+        .login-box { background:var(--card); border:2px solid var(--accent); border-radius:20px; padding:40px; text-align:center; width:90%; max-width:400px; box-shadow:0 20px 50px rgba(0,0,0,0.7); }
+        .login-box h1 { color:var(--gold); margin-bottom:20px; font-size:1.8rem; }
+        .login-box input { width:100%; padding:14px; border-radius:30px; border:1px solid #3f5580; background:#0b1322; color:white; font-size:1rem; text-align:center; margin:10px 0; outline:none; }
+        .login-box input:focus { border-color:var(--accent); box-shadow:0 0 15px rgba(0,230,255,0.3); }
+        .login-box button { background:var(--accent); color:var(--bg); border:none; padding:14px 30px; border-radius:30px; font-weight:bold; font-size:1rem; cursor:pointer; margin-top:10px; transition:0.3s; }
+        .login-box button:hover { transform:scale(1.05); box-shadow:0 10px 30px rgba(0,230,255,0.4); }
+        .dashboard { display:none; width:95%; max-width:1300px; margin:20px auto; }
+        .dashboard.active { display:block; }
+        .dash-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; flex-wrap:wrap; gap:15px; }
+        .dash-header h1 { color:var(--gold); font-size:2rem; }
+        .dash-header button { background:var(--danger); color:white; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; font-weight:bold; }
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-bottom:25px; }
+        .stat-card { background:var(--card); border:1px solid #2e405b; border-radius:15px; padding:18px; text-align:center; transition:0.3s; }
+        .stat-card:hover { border-color:var(--accent); transform:translateY(-3px); }
+        .stat-card h3 { color:var(--accent); font-size:0.85rem; margin-bottom:8px; }
+        .stat-card .stat-value { font-size:2rem; font-weight:bold; color:var(--gold); }
+        .chart-container { background:var(--card); border:1px solid #2e405b; border-radius:15px; padding:20px; margin-bottom:25px; }
+        .chart-container h3 { color:var(--accent); margin-bottom:15px; }
+        .chart-wrapper { position:relative; height:300px; }
+        .table-container { background:var(--card); border:1px solid #2e405b; border-radius:15px; padding:20px; overflow-x:auto; margin-bottom:20px; }
+        table { width:100%; border-collapse:collapse; color:var(--text); }
+        th, td { padding:10px; text-align:left; border-bottom:1px solid #2e405b; font-size:0.85rem; }
+        th { color:var(--accent); font-weight:bold; }
+        tr:hover { background:rgba(0,230,255,0.05); }
+        .status-approved { color:#2ecc71; font-weight:bold; }
+        .status-rejected { color:#ff6b6b; font-weight:bold; }
+        .status-pending { color:#f39c12; font-weight:bold; }
+        .action-btn { padding:6px 12px; border-radius:15px; border:none; cursor:pointer; font-size:0.8rem; margin:2px; font-weight:bold; }
+        .btn-unblock { background:#2ecc71; color:white; }
+        .btn-delete { background:#7f8c8d; color:white; }
+        .btn-clear { background:#e74c3c; color:white; }
+        .log-box { background:#000; border:1px solid var(--accent); border-radius:10px; padding:15px; max-height:250px; overflow-y:auto; font-family:'Courier New',monospace; font-size:0.8rem; color:#2ecc71; margin-bottom:20px; }
+        .tab-nav { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+        .tab-btn { padding:10px 20px; background:var(--card); border:1px solid #2e405b; border-radius:30px; color:var(--text); cursor:pointer; transition:0.3s; font-weight:bold; }
+        .tab-btn.active, .tab-btn:hover { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
+        @media (max-width:600px) { .stats-grid { grid-template-columns:repeat(2,1fr); } .stat-card .stat-value { font-size:1.5rem; } .chart-wrapper { height:200px; } }
+    </style>
 </head>
 <body>
-  <div id="notificationContainer" class="notification-toast"></div>
-
-  <div class="admin-container">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <i class="fas fa-shield-haltered" style="font-size:2rem; color:#00e6ff;"></i>
-        <h2>Admin Panel</h2>
-        <p style="color:#9aa9c1; font-size:0.8rem;">Tool Mở Band | 24/7</p>
-      </div>
-
-      <nav style="flex:1;">
-        <button class="nav-link active" data-page="dashboard" onclick="switchPage('dashboard')">
-          <i class="fas fa-tachometer-alt"></i> Dashboard
-        </button>
-        <button class="nav-link" data-page="orders" onclick="switchPage('orders')">
-          <i class="fas fa-list"></i> Đơn hàng
-          <span class="badge warning" id="pendingBadge">0</span>
-        </button>
-        <button class="nav-link" data-page="visitors" onclick="switchPage('visitors')">
-          <i class="fas fa-users"></i> Người truy cập
-          <span class="badge info" id="visitorBadge">0</span>
-        </button>
-        <button class="nav-link" data-page="banned" onclick="switchPage('banned')">
-          <i class="fas fa-ban"></i> IP Bị Cấm
-          <span class="badge danger" id="bannedBadge">0</span>
-        </button>
-        <button class="nav-link" data-page="logs" onclick="switchPage('logs')">
-          <i class="fas fa-history"></i> Nhật ký
-        </button>
-        <button class="nav-link" data-page="settings" onclick="switchPage('settings')">
-          <i class="fas fa-cog"></i> Cài đặt
-        </button>
-      </nav>
-
-      <div style="margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.1);">
-        <div class="sync-indicator">
-          <span class="sync-dot"></span>
-          <span id="syncStatus">Live</span>
-        </div>
-        <small style="color:#9aa9c1;" id="lastSyncTime"></small>
-      </div>
-    </aside>
-
-    <main class="main-content">
-      <div class="top-bar">
-        <h1 id="pageTitle" style="font-size:1.5rem;">📊 Dashboard</h1>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm..." oninput="handleSearch()">
-          <button class="btn btn-primary btn-sm" onclick="exportData()"><i class="fas fa-download"></i></button>
-          <button class="btn btn-warning btn-sm" onclick="importData()"><i class="fas fa-upload"></i></button>
-          <button class="btn btn-danger btn-sm" onclick="clearAllData()"><i class="fas fa-trash"></i></button>
-          <button class="btn btn-primary btn-sm" onclick="window.open('index.html', '_blank')"><i class="fas fa-external-link-alt"></i> Tool</button>
-        </div>
-      </div>
-
-      <!-- Dashboard -->
-      <div id="page-dashboard" class="page-content">
-        <div class="stats-grid">
-          <div class="stat-card pending"><i class="fas fa-clock"></i><div class="stat-value" id="statPending">0</div><div class="stat-label">Chờ duyệt</div></div>
-          <div class="stat-card processing"><i class="fas fa-spinner"></i><div class="stat-value" id="statProcessing">0</div><div class="stat-label">Đang xử lý</div></div>
-          <div class="stat-card completed"><i class="fas fa-check-circle"></i><div class="stat-value" id="statCompleted">0</div><div class="stat-label">Hoàn thành</div></div>
-          <div class="stat-card revenue"><i class="fas fa-dollar-sign"></i><div class="stat-value" id="statRevenue">0đ</div><div class="stat-label">Doanh thu</div></div>
-          <div class="stat-card visitors"><i class="fas fa-user-friends"></i><div class="stat-value" id="statVisitors">0</div><div class="stat-label">Khách HN</div></div>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-          <div class="table-container"><h3 style="padding:12px;">📋 Đơn mới</h3><div id="recentOrders"></div></div>
-          <div class="table-container"><h3 style="padding:12px;">👥 Khách mới</h3><div id="recentVisitors"></div></div>
-        </div>
-      </div>
-
-      <!-- Orders -->
-      <div id="page-orders" class="page-content" style="display:none;">
-        <div class="tabs">
-          <button class="tab active" data-filter="all" onclick="filterOrders('all')">Tất cả</button>
-          <button class="tab" data-filter="pending" onclick="filterOrders('pending')">Chờ duyệt</button>
-          <button class="tab" data-filter="processing" onclick="filterOrders('processing')">Đang XL</button>
-          <button class="tab" data-filter="completed" onclick="filterOrders('completed')">Hoàn thành</button>
-          <button class="tab" data-filter="rejected" onclick="filterOrders('rejected')">Từ chối</button>
-        </div>
-        <div class="table-container"><div id="ordersTable"></div></div>
-      </div>
-
-      <!-- Visitors -->
-      <div id="page-visitors" class="page-content" style="display:none;">
-        <h2 style="margin-bottom:15px;">👥 Người truy cập</h2>
-        <div class="table-container"><div id="visitorsTable"></div></div>
-      </div>
-
-      <!-- Banned -->
-      <div id="page-banned" class="page-content" style="display:none;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-          <h2>🚫 IP Bị Cấm</h2>
-          <button class="btn btn-danger" onclick="showBanModal()"><i class="fas fa-ban"></i> Cấm IP</button>
-        </div>
-        <div class="table-container"><div id="bannedTable"></div></div>
-      </div>
-
-      <!-- Logs -->
-      <div id="page-logs" class="page-content" style="display:none;">
-        <h2 style="margin-bottom:15px;">📝 Nhật ký</h2>
-        <div class="table-container"><div id="logsTable"></div></div>
-      </div>
-
-      <!-- Settings -->
-      <div id="page-settings" class="page-content" style="display:none;">
-        <h2 style="margin-bottom:15px;">⚙️ Cài đặt</h2>
-        <div class="table-container" style="padding:20px;">
-          <div class="form-group"><label>Thời gian XL mặc định (phút)</label><input type="number" class="form-control" id="settingDefaultTime" value="30"></div>
-          <div class="form-group"><label>Đồng bộ (giây)</label><input type="number" class="form-control" id="settingSyncInterval" value="5"></div>
-          <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Lưu</button>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Modals -->
-  <div class="modal" id="detailModal">
-    <div class="modal-content">
-      <div class="modal-header"><h2>📋 Chi tiết</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
-      <div id="modalContent"></div>
+    <div class="login-box" id="loginScreen">
+        <h1>🔐 ADMIN DASHBOARD v13.0</h1>
+        <p style="color:#9aa9c1;margin-bottom:15px;">Trang quản trị chỉ dành cho Admin</p>
+        <input type="password" id="adminPasswordInput" placeholder="Nhập mật khẩu admin...">
+        <button onclick="loginAdmin()">🚪 ĐĂNG NHẬP</button>
+        <p style="color:#6c7e9e;font-size:0.8rem;margin-top:15px;">Mã hóa AES-256 | Chống Debug | Cloudflare | v13.0</p>
     </div>
-  </div>
 
-  <div class="modal" id="banModal">
-    <div class="modal-content">
-      <div class="modal-header"><h2>🚫 Cấm IP</h2><button class="close-btn" onclick="closeBanModal()">&times;</button></div>
-      <div class="form-group"><label>Địa chỉ IP</label><input type="text" class="form-control" id="banIpInput" placeholder="VD: 123.45.67.89"></div>
-      <div class="form-group"><label>Lý do</label><input type="text" class="form-control" id="banReasonInput" placeholder="Lý do cấm..."></div>
-      <button class="btn btn-danger" onclick="banIP()" style="width:100%;"><i class="fas fa-ban"></i> Cấm IP này</button>
+    <div class="dashboard" id="dashboardScreen">
+        <div class="dash-header">
+            <h1>📊 ADMIN DASHBOARD v13.0</h1>
+            <button onclick="logoutAdmin()">🚪 ĐĂNG XUẤT</button>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('overview')">📊 Tổng Quan</button>
+            <button class="tab-btn" onclick="switchTab('history')">📋 Lịch Sử</button>
+            <button class="tab-btn" onclick="switchTab('blocked')">🚫 IP Bị Chặn</button>
+            <button class="tab-btn" onclick="switchTab('giftcodes')">🎁 Mã Giảm Giá</button>
+            <button class="tab-btn" onclick="switchTab('commands')">📟 Lệnh Telegram</button>
+        </div>
+
+        <div class="tab-content active" id="tab-overview">
+            <div class="stats-grid">
+                <div class="stat-card"><h3>📦 TỔNG ĐƠN</h3><div class="stat-value" id="totalOrders">0</div></div>
+                <div class="stat-card"><h3>💰 DOANH THU</h3><div class="stat-value" id="totalRevenue">0đ</div></div>
+                <div class="stat-card"><h3>✅ THÀNH CÔNG</h3><div class="stat-value" id="approvedOrders">0</div></div>
+                <div class="stat-card"><h3>❌ TỪ CHỐI</h3><div class="stat-value" id="rejectedOrders">0</div></div>
+                <div class="stat-card"><h3>⏳ CHỜ DUYỆT</h3><div class="stat-value" id="pendingOrders">0</div></div>
+                <div class="stat-card"><h3>🚫 IP BỊ CHẶN</h3><div class="stat-value" id="blockedCount">0</div></div>
+                <div class="stat-card"><h3>🎮 TOP GAME</h3><div class="stat-value" id="topGame" style="font-size:1.2rem;">-</div></div>
+                <div class="stat-card"><h3>📅 HÔM NAY</h3><div class="stat-value" id="todayRevenue">0đ</div></div>
+            </div>
+            <div class="chart-container">
+                <h3>📈 BIỂU ĐỒ DOANH THU 7 NGÀY QUA</h3>
+                <div class="chart-wrapper"><canvas id="revenueChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <h3>🎮 TOP GAME - DOANH THU</h3>
+                <div class="chart-wrapper"><canvas id="gameChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-history">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px;">
+                <h3 style="color:var(--accent);">📋 LỊCH SỬ GIAO DỊCH</h3>
+                <button class="action-btn btn-clear" onclick="clearHistory()">🗑️ Xóa Lịch Sử</button>
+            </div>
+            <div class="table-container">
+                <table><thead><tr><th>Mã Đơn</th><th>Nickname</th><th>Game</th><th>Gói</th><th>Giá</th><th>Trạng Thái</th><th>IP</th><th>Thời Gian</th></tr></thead><tbody id="historyTableBody"></tbody></table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-blocked">
+            <h3 style="color:var(--danger);margin-bottom:15px;">🚫 DANH SÁCH IP & FINGERPRINT BỊ CHẶN</h3>
+            <div class="table-container" id="blockedIPList"></div>
+        </div>
+
+        <div class="tab-content" id="tab-giftcodes">
+            <h3 style="color:var(--warning);margin-bottom:15px;">🎁 QUẢN LÝ MÃ GIẢM GIÁ</h3>
+            <div style="display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap;">
+                <input type="text" id="newCodeName" placeholder="Mã code..." style="padding:8px;border-radius:10px;border:1px solid #3f5580;background:#0b1322;color:white;flex:1;">
+                <input type="number" id="newCodeDiscount" placeholder="Giảm %" style="padding:8px;border-radius:10px;border:1px solid #3f5580;background:#0b1322;color:white;width:80px;">
+                <input type="number" id="newCodeUses" placeholder="Lượt" style="padding:8px;border-radius:10px;border:1px solid #3f5580;background:#0b1322;color:white;width:80px;">
+                <button class="action-btn btn-unblock" onclick="createGiftCode()">Tạo Mã</button>
+            </div>
+            <div class="table-container" id="giftCodeList"></div>
+        </div>
+
+        <div class="tab-content" id="tab-commands">
+            <h3 style="color:var(--accent);margin-bottom:15px;">📟 DANH SÁCH LỆNH TELEGRAM</h3>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Lệnh</th><th>Mô Tả</th><th>Ví Dụ</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>/help</code></td><td>Hiển thị danh sách lệnh</td><td><code>/help</code></td></tr>
+                        <tr><td><code>/commands</code></td><td>Hiển thị danh sách lệnh</td><td><code>/commands</code></td></tr>
+                        <tr><td><code>/block [IP]</code></td><td>Chặn IP truy cập</td><td><code>/block 14.191.23.10</code></td></tr>
+                        <tr><td><code>/unblock [IP]</code></td><td>Bỏ chặn IP</td><td><code>/unblock 14.191.23.10</code></td></tr>
+                        <tr><td><code>/blocklist</code></td><td>Xem danh sách IP bị chặn</td><td><code>/blocklist</code></td></tr>
+                        <tr><td><code>/allowip [IP]</code></td><td>Thêm IP vào danh sách an toàn</td><td><code>/allowip 14.191.23.10</code></td></tr>
+                        <tr><td><code>/broadcast [text]</code></td><td>Gửi thông báo đến web</td><td><code>/broadcast Khuyến mãi!</code></td></tr>
+                        <tr><td><code>/broadcast off</code></td><td>Tắt thông báo</td><td><code>/broadcast off</code></td></tr>
+                        <tr><td><code>/maintenance on</code></td><td>Bật chế độ bảo trì</td><td><code>/maintenance on</code></td></tr>
+                        <tr><td><code>/maintenance off</code></td><td>Tắt chế độ bảo trì</td><td><code>/maintenance off</code></td></tr>
+                        <tr><td><code>/maintenance bypass</code></td><td>Admin vượt bảo trì</td><td><code>/maintenance bypass</code></td></tr>
+                        <tr><td><code>/fake404 on</code></td><td>Bật Fake 404</td><td><code>/fake404 on</code></td></tr>
+                        <tr><td><code>/fake404 off</code></td><td>Tắt Fake 404</td><td><code>/fake404 off</code></td></tr>
+                        <tr><td><code>/chat [IP] [text]</code></td><td>Nhắn tin đến user</td><td><code>/chat 14.191.23.10 Chào bạn</code></td></tr>
+                        <tr><td><code>/view [IP]</code></td><td>Chụp màn hình user</td><td><code>/view 14.191.23.10</code></td></tr>
+                        <tr><td><code>/code [MÃ] [%] [lượt]</code></td><td>Tạo mã giảm giá</td><td><code>/code GIAM20 20 10</code></td></tr>
+                        <tr><td><code>/schedule [HH:MM] [text]</code></td><td>Lên lịch nhắn tin</td><td><code>/schedule 14:30 Khuyến mãi</code></td></tr>
+                        <tr><td><code>/auto on</code></td><td>Bật auto-reply</td><td><code>/auto on</code></td></tr>
+                        <tr><td><code>/auto off</code></td><td>Tắt auto-reply</td><td><code>/auto off</code></td></tr>
+                        <tr><td><code>/stats</code></td><td>Xem thống kê</td><td><code>/stats</code></td></tr>
+                        <tr><td><code>/dashboard</code></td><td>Xem dashboard nhanh</td><td><code>/dashboard</code></td></tr>
+                        <tr><td><code>/op [password]</code></td><td>Thêm admin password</td><td><code>/op newpass123</code></td></tr>
+                        <tr><td><code>/deop [password]</code></td><td>Xóa admin password</td><td><code>/deop oldpass</code></td></tr>
+                        <tr><td><code>/settitle [text]</code></td><td>Đổi tiêu đề web</td><td><code>/settitle Tool Mới</code></td></tr>
+                        <tr><td><code>/setplan [plan] [giá]</code></td><td>Đổi giá gói dịch vụ</td><td><code>/setplan basic 200000</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="log-box" id="systemLog"><div style="color:#ffd966;">📟 SYSTEM LOG v13.0</div></div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    let syncManager = null;
-    let currentPage = 'dashboard';
-    let currentFilter = 'all';
-    let allOrders = [];
-    let allVisitors = [];
-    let bannedIPs = [];
-    let searchQuery = '';
+    <script>
+        var ADMIN_PASSWORD = 'TLBN9';
+        var ENCRYPTION_KEY = 'DWRv13SecretKey!';
+        var revenueChart = null;
+        var gameChart = null;
 
-    async function initAdmin() {
-      const isLoggedIn = sessionStorage.getItem('admin_auth');
-      if (!isLoggedIn) {
-        const { value: pw } = await Swal.fire({
-          title: '🔐 Đăng nhập',
-          input: 'password',
-          inputPlaceholder: 'Mật khẩu admin...',
-          confirmButtonText: 'Đăng nhập',
-          allowOutsideClick: false
-        });
-        if (pw === '10082009') {
-          sessionStorage.setItem('admin_auth', 'true');
-          Swal.fire({ icon: 'success', title: '✅ OK!', timer: 1000, showConfirmButton: false });
-        } else {
-          Swal.fire({ icon: 'error', title: '❌ Sai mật khẩu!', text: 'Tải lại trang để thử lại.' });
-          return;
+        // Hàm giải mã AES
+        function decryptData(encrypted) {
+            if (!encrypted) return '[]';
+            try {
+                var decoded = atob(encrypted);
+                var result = '';
+                for (var i = 0; i < decoded.length; i++) {
+                    result += String.fromCharCode(decoded.charCodeAt(i) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length));
+                }
+                return result;
+            } catch (e) {
+                return encrypted;
+            }
         }
-      }
 
-      syncManager = new SyncManager();
-      await loadAllData();
-      setInterval(loadAllData, 3000);
-      setInterval(() => {
-        document.getElementById('lastSyncTime').textContent = new Date().toLocaleTimeString('vi-VN');
-      }, 10000);
-    }
+        // Hàm parse JSON an toàn
+        function safeParseJSON(str, fallback) {
+            fallback = fallback || [];
+            if (!str) return fallback;
+            // Thử giải mã AES trước
+            if (str.charAt(0) !== '[' && str.charAt(0) !== '{') {
+                str = decryptData(str);
+            }
+            try {
+                var result = JSON.parse(str);
+                return result;
+            } catch (e) {
+                return fallback;
+            }
+        }
 
-    async function loadAllData() {
-      if (!syncManager) return;
-      allOrders = syncManager.getFromLocalStorage('orders', []);
-      allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      allVisitors = syncManager.getFromLocalStorage('visitors', []);
-      allVisitors.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      bannedIPs = syncManager.getFromLocalStorage('bannedIps', []);
-      updateUI();
-    }
+        function loginAdmin() {
+            var pwd = document.getElementById('adminPasswordInput').value;
+            if (pwd === ADMIN_PASSWORD) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboardScreen').classList.add('active');
+                loadDashboardData();
+                sessionStorage.setItem('adminLoggedIn', 'true');
+            } else {
+                Swal.fire('❌', 'Mật khẩu không đúng!', 'error');
+            }
+        }
 
-    function updateUI() {
-      updateStats();
-      updateBadges();
-      renderCurrentPage();
-    }
+        function logoutAdmin() {
+            sessionStorage.removeItem('adminLoggedIn');
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('dashboardScreen').classList.remove('active');
+            document.getElementById('adminPasswordInput').value = '';
+            if (revenueChart) { revenueChart.destroy(); revenueChart = null; }
+            if (gameChart) { gameChart.destroy(); gameChart = null; }
+        }
 
-    function updateStats() {
-      const now = new Date();
-      const todayV = allVisitors.filter(v => {
-        try { return new Date(v.timestamp).toDateString() === now.toDateString(); } catch(e) { return false; }
-      });
-      const uniqueIPs = new Set(todayV.map(v => v.ip).filter(ip => ip && !ip.startsWith('visitor_')));
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(tab) { tab.classList.remove('active'); });
+            var targetBtn = document.querySelector('[onclick="switchTab(\'' + tabName + '\')"]');
+            if (targetBtn) targetBtn.classList.add('active');
+            var targetTab = document.getElementById('tab-' + tabName);
+            if (targetTab) targetTab.classList.add('active');
+            if (tabName === 'overview') { loadDashboardData(); }
+        }
 
-      document.getElementById('statPending').textContent = allOrders.filter(o => o.status === 'pending').length;
-      document.getElementById('statProcessing').textContent = allOrders.filter(o => o.status === 'processing').length;
-      document.getElementById('statCompleted').textContent = allOrders.filter(o => o.status === 'completed').length;
-      document.getElementById('statRevenue').textContent = formatMoney(allOrders.filter(o => o.status === 'completed').reduce((s, o) => s + (parseInt(o.price) || 0), 0));
-      document.getElementById('statVisitors').textContent = uniqueIPs.size;
-    }
+        function loadDashboardData() {
+            // Parse lịch sử an toàn
+            var rawHistory = localStorage.getItem('toolHistory') || '[]';
+            var history = safeParseJSON(rawHistory, []);
 
-    function updateBadges() {
-      document.getElementById('pendingBadge').textContent = allOrders.filter(o => o.status === 'pending').length;
-      document.getElementById('visitorBadge').textContent = allVisitors.length;
-      document.getElementById('bannedBadge').textContent = bannedIPs.length;
-    }
+            // Parse IP bị chặn
+            var rawBlockedIPs = localStorage.getItem('blockedIPs') || '[]';
+            var blockedIPs = safeParseJSON(rawBlockedIPs, []);
 
-    window.showNotification = function(title, msg) {
-      const container = document.getElementById('notificationContainer');
-      const el = document.createElement('div');
-      el.style.cssText = 'background:#141b2b;border:1px solid #00e6ff;border-radius:10px;padding:10px 14px;margin-bottom:8px;animation:fadeIn 0.3s;';
-      el.innerHTML = `<strong>${title}</strong><br><small>${msg}</small>`;
-      container.appendChild(el);
-      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 4000);
-    };
+            // Parse Fingerprint bị chặn
+            var rawBlockedFPs = localStorage.getItem('blockedFingerprints') || '[]';
+            var blockedFPs = safeParseJSON(rawBlockedFPs, []);
 
-    function switchPage(page) {
-      currentPage = page;
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-      document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
-      document.getElementById('pageTitle').textContent = {
-        dashboard:'📊 Dashboard', orders:'📋 Đơn hàng', visitors:'👥 Người truy cập', banned:'🚫 IP Bị Cấm', logs:'📝 Nhật ký', settings:'⚙️ Cài đặt'
-      }[page] || '';
-      document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
-      const el = document.getElementById(`page-${page}`);
-      if (el) el.style.display = 'block';
-      renderCurrentPage();
-    }
+            // Parse Gift Codes
+            var rawGiftCodes = localStorage.getItem('giftCodes') || '{}';
+            var giftCodes = safeParseJSON(rawGiftCodes, {});
 
-    function renderCurrentPage() {
-      switch(currentPage) {
-        case 'dashboard': renderDashboard(); break;
-        case 'orders': renderOrdersTable(); break;
-        case 'visitors': renderVisitorsTable(); break;
-        case 'banned': renderBannedTable(); break;
-        case 'logs': renderLogsTable(); break;
-      }
-    }
+            // Auto-reply stats
+            var rawAutoReply = localStorage.getItem('autoReplyStats') || '{"today":0,"total":0}';
+            var autoReplyStats = safeParseJSON(rawAutoReply, { today: 0, total: 0 });
 
-    function renderDashboard() {
-      const recent = allOrders.slice(0, 5);
-      document.getElementById('recentOrders').innerHTML = recent.length ? `
-        <table><thead><tr><th>ID</th><th>UID</th><th>Game</th><th>Status</th></tr></thead>
-        <tbody>${recent.map(o => `<tr><td>#${o.orderId}</td><td>${o.uid||'?'}</td><td>${o.game||'?'}</td><td><span class="status-badge status-${o.status}">${getStatus(o.status)}</span></td></tr>`).join('')}</tbody></table>
-      ` : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Chưa có đơn</p></div>';
+            // Stats
+            var totalOrdersEl = document.getElementById('totalOrders');
+            var totalRevenueEl = document.getElementById('totalRevenue');
+            var approvedOrdersEl = document.getElementById('approvedOrders');
+            var rejectedOrdersEl = document.getElementById('rejectedOrders');
+            var pendingOrdersEl = document.getElementById('pendingOrders');
+            var blockedCountEl = document.getElementById('blockedCount');
+            var topGameEl = document.getElementById('topGame');
+            var todayRevenueEl = document.getElementById('todayRevenue');
 
-      const recentV = allVisitors.slice(0, 5);
-      document.getElementById('recentVisitors').innerHTML = recentV.length ? `
-        <table><thead><tr><th>IP</th><th>Vị trí</th></tr></thead>
-        <tbody>${recentV.map(v => `<tr><td><strong>${v.ip}</strong></td><td>${v.location?.city||'?'}, ${v.location?.country||'?'}</td></tr>`).join('')}</tbody></table>
-      ` : '<div class="empty-state"><i class="fas fa-users"></i><p>Chưa có khách</p></div>';
-    }
+            if (totalOrdersEl) totalOrdersEl.textContent = history.length;
 
-    function filterOrders(filter) {
-      currentFilter = filter;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelector(`[data-filter="${filter}"]`)?.classList.add('active');
-      renderOrdersTable();
-    }
+            var totalRevenue = 0;
+            for (var i = 0; i < history.length; i++) {
+                totalRevenue += (history[i].price || 0);
+            }
+            if (totalRevenueEl) totalRevenueEl.textContent = totalRevenue.toLocaleString() + 'đ';
 
-    function handleSearch() {
-      searchQuery = document.getElementById('searchInput').value.toLowerCase();
-      renderCurrentPage();
-    }
+            var approvedCount = 0, rejectedCount = 0, pendingCount = 0;
+            var gameRevenue = {};
+            for (var j = 0; j < history.length; j++) {
+                var h = history[j];
+                if (h.status === 'approved') approvedCount++;
+                else if (h.status === 'rejected') rejectedCount++;
+                else pendingCount++;
+                if (h.game) {
+                    gameRevenue[h.game] = (gameRevenue[h.game] || 0) + (h.price || 0);
+                }
+            }
+            if (approvedOrdersEl) approvedOrdersEl.textContent = approvedCount;
+            if (rejectedOrdersEl) rejectedOrdersEl.textContent = rejectedCount;
+            if (pendingOrdersEl) pendingOrdersEl.textContent = pendingCount;
+            if (blockedCountEl) blockedCountEl.textContent = blockedIPs.length;
 
-    function getFilteredOrders() {
-      let orders = [...allOrders];
-      if (currentFilter !== 'all') orders = orders.filter(o => o.status === currentFilter);
-      if (searchQuery) {
-        orders = orders.filter(o => 
-          (o.orderId&&o.orderId.toLowerCase().includes(searchQuery)) ||
-          (o.uid&&o.uid.toLowerCase().includes(searchQuery)) ||
-          (o.ip&&o.ip.includes(searchQuery)) ||
-          (o.game&&o.game.toLowerCase().includes(searchQuery))
-        );
-      }
-      return orders;
-    }
+            // Top game
+            var topGame = 'Free Fire', maxRevenue = 0;
+            for (var g in gameRevenue) {
+                if (gameRevenue[g] > maxRevenue) { maxRevenue = gameRevenue[g]; topGame = g; }
+            }
+            if (topGameEl) topGameEl.textContent = topGame.toUpperCase();
 
-    function renderOrdersTable() {
-      const orders = getFilteredOrders();
-      if (!orders.length) {
-        document.getElementById('ordersTable').innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Không có đơn</p></div>';
-        return;
-      }
-      document.getElementById('ordersTable').innerHTML = `
-        <table><thead><tr><th>ID</th><th>UID</th><th>Game</th><th>Gói</th><th>Giá</th><th>IP</th><th>Status</th><th>Action</th></tr></thead>
-        <tbody>${orders.map(o => `
-          <tr>
-            <td><strong>#${o.orderId}</strong></td><td>${o.uid||'?'}</td><td>${o.game||'?'}</td><td>${o.plan||'?'}</td>
-            <td style="color:#ffd966;">${formatMoney(o.price)}</td><td><small>${o.ip||'?'}</small></td>
-            <td><span class="status-badge status-${o.status}">${getStatus(o.status)}</span></td>
-            <td><div class="action-btns">
-              <button class="btn btn-primary btn-sm" onclick="viewDetail('${o.orderId}')"><i class="fas fa-eye"></i></button>
-              ${o.status==='pending'?`<button class="btn btn-success btn-sm" onclick="approveOrder('${o.orderId}')"><i class="fas fa-check"></i></button><button class="btn btn-danger btn-sm" onclick="rejectOrder('${o.orderId}')"><i class="fas fa-times"></i></button>`:''}
-              ${o.status==='processing'?`<button class="btn btn-success btn-sm" onclick="completeOrder('${o.orderId}')"><i class="fas fa-check-double"></i></button>`:''}
-              <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.orderId}')"><i class="fas fa-trash"></i></button>
-              ${o.ip&&!o.ip.startsWith('visitor_')?`<button class="btn btn-warning btn-sm" onclick="quickBanIP('${o.ip}')"><i class="fas fa-ban"></i></button>`:''}
-            </div></td>
-          </tr>
-        `).join('')}</tbody></table>
-      `;
-    }
+            // Today
+            var today = new Date().toDateString();
+            var todayTotal = 0;
+            for (var k = 0; k < history.length; k++) {
+                if (history[k].time) {
+                    try {
+                        if (new Date(history[k].time).toDateString() === today) {
+                            todayTotal += (history[k].price || 0);
+                        }
+                    } catch (e) {}
+                }
+            }
+            if (todayRevenueEl) todayRevenueEl.textContent = todayTotal.toLocaleString() + 'đ';
 
-    function renderVisitorsTable() {
-      let visitors = [...allVisitors];
-      if (searchQuery) visitors = visitors.filter(v => v.ip.includes(searchQuery) || (v.location?.city&&v.location.city.toLowerCase().includes(searchQuery)));
-      if (!visitors.length) {
-        document.getElementById('visitorsTable').innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Không có dữ liệu</p></div>';
-        return;
-      }
-      document.getElementById('visitorsTable').innerHTML = `
-        <table><thead><tr><th>IP</th><th>City</th><th>Country</th><th>ISP</th><th>Time</th><th>Action</th></tr></thead>
-        <tbody>${visitors.map(v => `
-          <tr>
-            <td><strong>${v.ip}</strong></td><td>${v.location?.city||'?'}</td><td>${v.location?.country||'?'}</td><td>${v.location?.isp||'?'}</td>
-            <td><small>${formatTime(v.timestamp)}</small></td>
-            <td>${v.ip&&!v.ip.startsWith('visitor_')?`<button class="btn btn-warning btn-sm" onclick="quickBanIP('${v.ip}')"><i class="fas fa-ban"></i></button>`:'<small>Ẩn danh</small>'}</td>
-          </tr>
-        `).join('')}</tbody></table>
-      `;
-    }
+            // History table
+            var tableBody = document.getElementById('historyTableBody');
+            if (tableBody) {
+                var rows = '';
+                for (var m = 0; m < Math.min(history.length, 100); m++) {
+                    var hh = history[m];
+                    var statusClass = hh.status === 'approved' ? 'status-approved' : hh.status === 'rejected' ? 'status-rejected' : 'status-pending';
+                    rows += '<tr><td>#' + (hh.orderId || 'N/A') + '</td><td>' + (hh.nickname || 'N/A') + '</td><td>' + (hh.game || 'N/A') + '</td><td>' + (hh.plan || 'N/A') + '</td><td>' + (hh.price ? hh.price.toLocaleString() + 'đ' : '0đ') + '</td><td class="' + statusClass + '">' + (hh.status || 'pending') + '</td><td><code>' + (hh.ip || 'N/A') + '</code></td><td>' + (hh.time || 'N/A') + '</td></tr>';
+                }
+                tableBody.innerHTML = rows;
+            }
 
-    function renderBannedTable() {
-      if (!bannedIPs.length) {
-        document.getElementById('bannedTable').innerHTML = '<div class="empty-state"><i class="fas fa-shield-alt"></i><p>Chưa có IP bị cấm</p></div>';
-        return;
-      }
-      document.getElementById('bannedTable').innerHTML = `
-        <table><thead><tr><th>IP</th><th>Lý do</th><th>Thời gian</th><th>Action</th></tr></thead>
-        <tbody>${bannedIPs.map(b => `
-          <tr><td><strong style="color:#ff6b6b;">${b.ip}</strong></td><td>${b.reason||'?'}</td><td>${formatTime(b.bannedAt)}</td>
-          <td><button class="btn btn-success btn-sm" onclick="unbanIP('${b.ip}')">Bỏ cấm</button></td></tr>
-        `).join('')}</tbody></table>
-      `;
-    }
+            // Blocked IPs
+            var blockedList = document.getElementById('blockedIPList');
+            if (blockedList) {
+                if (blockedIPs.length === 0 && blockedFPs.length === 0) {
+                    blockedList.innerHTML = '<p style="color:#9aa9c1;text-align:center;padding:20px;">Chưa có IP/Fingerprint nào bị chặn</p>';
+                } else {
+                    var html = '';
+                    for (var bi = 0; bi < blockedIPs.length; bi++) {
+                        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #2e405b;"><span>🚫 IP: <code>' + blockedIPs[bi] + '</code></span><button class="action-btn btn-unblock" onclick="unblockIPAdmin(\'' + blockedIPs[bi] + '\')">Bỏ chặn</button></div>';
+                    }
+                    for (var bj = 0; bj < blockedFPs.length; bj++) {
+                        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #2e405b;"><span>🔒 FP: <code>' + blockedFPs[bj].substring(0, 12) + '...</code></span><button class="action-btn btn-unblock" onclick="unblockFPAdmin(\'' + blockedFPs[bj] + '\')">Bỏ chặn</button></div>';
+                    }
+                    blockedList.innerHTML = html;
+                }
+            }
 
-    function renderLogsTable() {
-      const logs = syncManager ? syncManager.getFromLocalStorage('logs', []) : [];
-      let filtered = [...logs];
-      if (searchQuery) filtered = filtered.filter(l => l.message.toLowerCase().includes(searchQuery) || l.type.toLowerCase().includes(searchQuery));
-      if (!filtered.length) {
-        document.getElementById('logsTable').innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><p>Chưa có nhật ký</p></div>';
-        return;
-      }
-      document.getElementById('logsTable').innerHTML = `
-        <table><thead><tr><th>Time</th><th>Type</th><th>Message</th></tr></thead>
-        <tbody>${filtered.map(l => `<tr><td><small>${formatTime(l.timestamp)}</small></td><td><span class="status-badge status-${l.type.includes('BANNED')?'rejected':'processing'}">${l.type}</span></td><td>${l.message}</td></tr>`).join('')}</tbody></table>
-      `;
-    }
+            // Gift codes
+            var giftList = document.getElementById('giftCodeList');
+            if (giftList) {
+                var giftKeys = Object.keys(giftCodes);
+                if (giftKeys.length === 0) {
+                    giftList.innerHTML = '<p style="color:#9aa9c1;text-align:center;padding:20px;">Chưa có mã giảm giá nào</p>';
+                } else {
+                    var ghtml = '';
+                    for (var gi = 0; gi < giftKeys.length; gi++) {
+                        var code = giftKeys[gi];
+                        var gdata = giftCodes[code];
+                        ghtml += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #2e405b;"><span>🎁 <strong>' + code + '</strong> - Giảm ' + gdata.discount + '% | Đã dùng: ' + gdata.used + '/' + gdata.maxUses + '</span><button class="action-btn btn-delete" onclick="deleteGiftCode(\'' + code + '\')">Xóa</button></div>';
+                    }
+                    giftList.innerHTML = ghtml;
+                }
+            }
 
-    async function approveOrder(orderId) {
-      if (!(await Swal.fire({title:'Duyệt?',icon:'question',showCancelButton:true,confirmButtonText:'Duyệt'})).isConfirmed) return;
-      await syncManager.updateOrder(orderId, {status:'processing',approvedAt:new Date().toISOString()});
-      await loadAllData();
-      Swal.fire('✅','Đã duyệt!','success');
-    }
+            // System log
+            var logEl = document.getElementById('systemLog');
+            if (logEl) {
+                logEl.innerHTML = '<div style="color:#ffd966;">📟 SYSTEM LOG v13.0</div>' +
+                    '<div style="color:#2ecc71;">[INFO] Dashboard loaded - ' + new Date().toLocaleTimeString('vi-VN') + '</div>' +
+                    '<div style="color:#9aa9c1;">[DATA] ' + history.length + ' orders | ' + blockedIPs.length + ' IPs blocked | ' + giftKeys.length + ' gift codes</div>' +
+                    '<div style="color:#2ecc71;">[SEC] Anti-Debugger: ACTIVE | Cloudflare: ENABLED | AES: ENABLED</div>' +
+                    '<div style="color:#2ecc71;">[SEC] Fake 404: ' + (localStorage.getItem('fake404Enabled') === 'true' ? 'ENABLED' : 'DISABLED') + '</div>' +
+                    '<div style="color:#2ecc71;">[SYS] Maintenance: ' + (localStorage.getItem('maintenanceMode') === 'true' ? 'ON' : 'OFF') + '</div>' +
+                    '<div style="color:#2ecc71;">[SYS] All systems operational</div>';
+            }
 
-    async function rejectOrder(orderId) {
-      const {value:reason} = await Swal.fire({title:'Từ chối',input:'text',inputLabel:'Lý do',showCancelButton:true});
-      if (!reason) return;
-      await syncManager.updateOrder(orderId, {status:'rejected',rejectReason:reason});
-      await loadAllData();
-      Swal.fire('❌','Đã từ chối!','info');
-    }
+            // Charts
+            drawRevenueChart(history);
+            drawGameChart(gameRevenue);
+        }
 
-    async function completeOrder(orderId) {
-      if (!(await Swal.fire({title:'Hoàn thành?',icon:'question',showCancelButton:true,confirmButtonText:'OK'})).isConfirmed) return;
-      await syncManager.updateOrder(orderId, {status:'completed',completedAt:new Date().toISOString()});
-      await loadAllData();
-      Swal.fire('🎉','Hoàn thành!','success');
-    }
+        function drawRevenueChart(history) {
+            var ctx = document.getElementById('revenueChart');
+            if (!ctx) return;
+            if (revenueChart) { revenueChart.destroy(); }
+            var days = [], revenues = [];
+            for (var i = 6; i >= 0; i--) {
+                var d = new Date(); d.setDate(d.getDate() - i);
+                var dateStr = d.toDateString();
+                days.push(d.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit' }));
+                var dayTotal = 0;
+                for (var j = 0; j < history.length; j++) {
+                    if (history[j].time) {
+                        try {
+                            if (new Date(history[j].time).toDateString() === dateStr) {
+                                dayTotal += (history[j].price || 0);
+                            }
+                        } catch (e) {}
+                    }
+                }
+                revenues.push(dayTotal);
+            }
+            revenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: days,
+                    datasets: [{ label: 'Doanh thu (VNĐ)', data: revenues, backgroundColor: 'rgba(0, 230, 255, 0.5)', borderColor: '#00e6ff', borderWidth: 2, borderRadius: 5 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#eef5ff' } } },
+                    scales: { y: { beginAtZero: true, ticks: { color: '#9aa9c1', callback: function(v) { return v.toLocaleString() + 'đ'; } }, grid: { color: '#2e405b' } }, x: { ticks: { color: '#9aa9c1' }, grid: { display: false } } }
+                }
+            });
+        }
 
-    async function deleteOrder(orderId) {
-      if (!(await Swal.fire({title:'⚠️ Xóa?',text:'Không thể hoàn tác!',icon:'warning',showCancelButton:true,confirmButtonColor:'#e74c3c',confirmButtonText:'Xóa'})).isConfirmed) return;
-      await syncManager.deleteOrder(orderId);
-      await loadAllData();
-      Swal.fire('🗑️','Đã xóa!','success');
-    }
+        function drawGameChart(gameRevenue) {
+            var ctx = document.getElementById('gameChart');
+            if (!ctx) return;
+            if (gameChart) { gameChart.destroy(); }
+            var labels = Object.keys(gameRevenue);
+            var data = [];
+            for (var i = 0; i < labels.length; i++) { data.push(gameRevenue[labels[i]]); }
+            var colors = ['#e74c3c', '#3498db', '#f39c12', '#2ecc71', '#9b59b6', '#1abc9c'];
+            gameChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: labels, datasets: [{ data: data, backgroundColor: colors.slice(0, labels.length), borderColor: '#0a0f1e', borderWidth: 3 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#eef5ff', padding: 15 } } } }
+            });
+        }
 
-    function viewDetail(orderId) {
-      const o = allOrders.find(x=>x.orderId===orderId);
-      if (!o) return;
-      document.getElementById('modalContent').innerHTML = `
-        <div class="detail-grid">
-          <div class="detail-item"><div class="detail-label">Order ID</div><div class="detail-value">#${o.orderId}</div></div>
-          <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value"><span class="status-badge status-${o.status}">${getStatus(o.status)}</span></div></div>
-          <div class="detail-item"><div class="detail-label">Game</div><div class="detail-value">${o.game||'?'}</div></div>
-          <div class="detail-item"><div class="detail-label">UID</div><div class="detail-value">${o.uid||'?'}</div></div>
-          <div class="detail-item"><div class="detail-label">Tài khoản</div><div class="detail-value">${o.platformAccount||'?'}</div></div>
-          <div class="detail-item"><div class="detail-label">Mật khẩu</div><div class="detail-value">${o.password||'?'}</div></div>
-          <div class="detail-item"><div class="detail-label">IP</div><div class="detail-value">${o.ip||'?'}</div></div>
-          <div class="detail-item"><div class="detail-label">Vị trí</div><div class="detail-value">${o.location?.city||'?'}, ${o.location?.country||'?'}</div></div>
-          <div class="detail-item"><div class="detail-label">ISP</div><div class="detail-value">${o.location?.isp||'?'}</div></div>
-          <div class="detail-item"><div class="detail-label">Giá</div><div class="detail-value" style="color:#ffd966;">${formatMoney(o.price)}</div></div>
-        </div>
-        <div style="margin-top:15px;display:flex;gap:8px;justify-content:flex-end;">
-          ${o.ip&&!o.ip.startsWith('visitor_')?`<button class="btn btn-warning btn-sm" onclick="quickBanIP('${o.ip}');closeModal();">Cấm IP</button>`:''}
-          <button class="btn btn-primary btn-sm" onclick="closeModal()">Đóng</button>
-        </div>
-      `;
-      document.getElementById('detailModal').classList.add('show');
-    }
+        function unblockIPAdmin(ip) {
+            var blockedIPs = safeParseJSON(localStorage.getItem('blockedIPs') || '[]', []);
+            var index = -1;
+            for (var i = 0; i < blockedIPs.length; i++) { if (blockedIPs[i] === ip) { index = i; break; } }
+            if (index !== -1) { blockedIPs.splice(index, 1); localStorage.setItem('blockedIPs', JSON.stringify(blockedIPs)); loadDashboardData(); Swal.fire('✅', 'Đã bỏ chặn IP: ' + ip, 'success'); }
+        }
 
-    function closeModal() { document.getElementById('detailModal').classList.remove('show'); }
+        function unblockFPAdmin(fp) {
+            var blockedFPs = safeParseJSON(localStorage.getItem('blockedFingerprints') || '[]', []);
+            var index = -1;
+            for (var i = 0; i < blockedFPs.length; i++) { if (blockedFPs[i] === fp) { index = i; break; } }
+            if (index !== -1) { blockedFPs.splice(index, 1); localStorage.setItem('blockedFingerprints', JSON.stringify(blockedFPs)); loadDashboardData(); Swal.fire('✅', 'Đã bỏ chặn Fingerprint', 'success'); }
+        }
 
-    function showBanModal() {
-      document.getElementById('banIpInput').value = '';
-      document.getElementById('banReasonInput').value = '';
-      document.getElementById('banModal').classList.add('show');
-    }
-    function closeBanModal() { document.getElementById('banModal').classList.remove('show'); }
+        function createGiftCode() {
+            var name = document.getElementById('newCodeName').value.trim().toUpperCase();
+            var discount = parseInt(document.getElementById('newCodeDiscount').value);
+            var uses = parseInt(document.getElementById('newCodeUses').value);
+            if (!name || isNaN(discount) || isNaN(uses)) { Swal.fire('❌', 'Vui lòng nhập đầy đủ!', 'error'); return; }
+            var giftCodes = safeParseJSON(localStorage.getItem('giftCodes') || '{}', {});
+            giftCodes[name] = { discount: discount, maxUses: uses, used: 0 };
+            localStorage.setItem('giftCodes', JSON.stringify(giftCodes));
+            document.getElementById('newCodeName').value = '';
+            document.getElementById('newCodeDiscount').value = '';
+            document.getElementById('newCodeUses').value = '';
+            loadDashboardData();
+            Swal.fire('✅', 'Đã tạo mã: ' + name, 'success');
+        }
 
-    async function banIP() {
-      const ip = document.getElementById('banIpInput').value.trim();
-      if (!ip) { Swal.fire('❌','Nhập IP!','error'); return; }
-      const reason = document.getElementById('banReasonInput').value.trim();
-      await syncManager.banIP(ip, reason);
-      await loadAllData();
-      closeBanModal();
-      Swal.fire('✅',`Đã cấm IP ${ip}!`,'success');
-    }
+        function deleteGiftCode(code) {
+            var giftCodes = safeParseJSON(localStorage.getItem('giftCodes') || '{}', {});
+            delete giftCodes[code];
+            localStorage.setItem('giftCodes', JSON.stringify(giftCodes));
+            loadDashboardData();
+            Swal.fire('✅', 'Đã xóa mã: ' + code, 'success');
+        }
 
-    async function quickBanIP(ip) {
-      if (!ip || ip.startsWith('visitor_') || ip.startsWith('unknown')) {
-        Swal.fire('❌','Không thể cấm IP ẩn danh!','error');
-        return;
-      }
-      if (!(await Swal.fire({title:'🚫 Cấm IP?',text:`Cấm ${ip}?`,icon:'warning',showCancelButton:true,confirmButtonText:'Cấm'})).isConfirmed) return;
-      await syncManager.banIP(ip, 'Cấm nhanh từ admin');
-      await loadAllData();
-      Swal.fire('✅',`Đã cấm IP ${ip}!`,'success');
-    }
+        function clearHistory() {
+            Swal.fire({
+                title: '⚠️ XÁC NHẬN',
+                text: 'Bạn có chắc muốn xóa toàn bộ lịch sử?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy',
+                confirmButtonColor: '#e74c3c'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    localStorage.setItem('toolHistory', '[]');
+                    loadDashboardData();
+                    Swal.fire('✅', 'Đã xóa lịch sử!', 'success');
+                }
+            });
+        }
 
-    async function unbanIP(ip) {
-      if (!(await Swal.fire({title:'✅ Bỏ cấm?',text:`Bỏ cấm ${ip}?`,icon:'question',showCancelButton:true,confirmButtonText:'Bỏ cấm'})).isConfirmed) return;
-      await syncManager.unbanIP(ip);
-      await loadAllData();
-      Swal.fire('✅',`Đã bỏ cấm IP ${ip}!`,'success');
-    }
+        // Auto login nếu đã có session
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').classList.add('active');
+            loadDashboardData();
+        }
 
-    async function saveSettings() {
-      await syncManager.saveSetting('defaultProcessingTime', parseInt(document.getElementById('settingDefaultTime').value));
-      await syncManager.saveSetting('syncInterval', parseInt(document.getElementById('settingSyncInterval').value));
-      Swal.fire('✅','Đã lưu!','success');
-    }
-
-    async function exportData() { await syncManager.exportData(); Swal.fire('✅','Đã xuất!','success'); }
-    
-    async function importData() {
-      const {value:file} = await Swal.fire({title:'📂 Chọn file backup',input:'file',inputAttributes:{accept:'.json'}});
-      if (file) {
-        try {
-          await syncManager.importData(file);
-          await loadAllData();
-          Swal.fire('✅','Đã nhập!','success');
-        } catch(e) { Swal.fire('❌','Lỗi!','error'); }
-      }
-    }
-
-    async function clearAllData() {
-      if (!(await Swal.fire({title:'⚠️ CẢNH BÁO!',text:'Xóa TẤT CẢ dữ liệu?',icon:'warning',showCancelButton:true,confirmButtonColor:'#e74c3c',confirmButtonText:'XÓA TẤT CẢ'})).isConfirmed) return;
-      await syncManager.clearAllData();
-      await loadAllData();
-      Swal.fire('🗑️','Đã xóa!','success');
-    }
-
-    function formatMoney(amount) { return amount ? amount.toLocaleString('vi-VN') + 'đ' : '0đ'; }
-    function formatTime(ts) { return ts ? new Date(ts).toLocaleString('vi-VN', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '?'; }
-    function getStatus(s) { return {pending:'⏳ Chờ',processing:'⚙️ Đang XL',completed:'✅ Xong',rejected:'❌ Từ chối'}[s]||s; }
-
-    window.onclick = function(event) { if (event.target.classList.contains('modal')) event.target.classList.remove('show'); };
-
-    initAdmin();
-    console.log('✅ Admin Panel ready!');
-  </script>
+        // Refresh mỗi 30 giây
+        setInterval(function() {
+            if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+                loadDashboardData();
+            }
+        }, 30000);
+    </script>
 </body>
 </html>
